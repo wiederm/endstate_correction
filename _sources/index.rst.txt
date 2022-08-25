@@ -6,6 +6,8 @@
 Welcome to endstate_correction's documentation!
 =========================================================
 
+Das ist ein kleiner Test
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
