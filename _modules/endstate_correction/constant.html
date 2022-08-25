@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endstate_correction.constant &mdash; endstate_correction  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> endstate_correction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory.html">Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">endstate_correction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>endstate_correction.constant</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endstate_correction.constant</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
+<span class="kn">from</span> <span class="nn">openmmtools.constants</span> <span class="kn">import</span> <span class="n">kB</span>
+
+<span class="c1">### define units</span>
+<span class="n">distance_unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">angstrom</span>
+<span class="n">time_unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">femtoseconds</span>
+<span class="n">speed_unit</span> <span class="o">=</span> <span class="n">distance_unit</span> <span class="o">/</span> <span class="n">time_unit</span>
+
+<span class="c1"># constants</span>
+<span class="n">stepsize</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">time_unit</span>
+<span class="n">collision_rate</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">unit</span><span class="o">.</span><span class="n">picosecond</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kelvin</span>
+
+<span class="n">kBT</span> <span class="o">=</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">temperature</span>
+
+<span class="n">jctc_systems</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;1_octanol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ethane&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;methylformate&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;2_methoxyphenol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ethanol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;p_cresol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;3_methylindole&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ethyl_methylsulfide&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;phenyl_trifluoroethyl_ether&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;4_methylimidazole&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;propane&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;acetamide&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;propionamide&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bis_2_chloroethylether&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;methanethiol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;triacetylglycerol&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">zinc_systems</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span>
+        <span class="s2">&quot;ZINC00061095&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CCOc1ccc2nc(/N=C\c3ccccc3O)sc2c1&quot;</span><span class="p">,</span>
+    <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00077329&quot;</span><span class="p">,</span> <span class="s2">&quot;Cn1cc(Cl)c(/C=N/O)n1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 2</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00079729&quot;</span><span class="p">,</span> <span class="s2">&quot;S=c1cc(-c2ccc(Cl)cc2)ss1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 3</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00086442&quot;</span><span class="p">,</span> <span class="s2">&quot;CN1C(=O)C/C(=N\O)N(C)C1=O&quot;</span><span class="p">),</span>  <span class="c1"># hipen 4</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00087557&quot;</span><span class="p">,</span> <span class="s2">&quot;NNC(=O)[C@H]1C(c2ccccc2)[C@@H]1C(=O)NN&quot;</span><span class="p">),</span>  <span class="c1"># hipen 5</span>
+    <span class="p">(</span>
+        <span class="s2">&quot;ZINC00095858&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CCO/C(O)=N/S(=O)(=O)c1ccccc1Cl&quot;</span><span class="p">,</span>
+    <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00107550&quot;</span><span class="p">,</span> <span class="s2">&quot;C/C(=N\O)c1oc(C)nc1C&quot;</span><span class="p">),</span>  <span class="c1"># hipen 7</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00107778&quot;</span><span class="p">,</span> <span class="s2">&quot;O/N=C/C1=C(Cl)c2cc(Cl)ccc2OC1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 8</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00123162&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(=O)/C(=N/Nc1ccc(Cl)cc1)C(=O)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 9</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00133435&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2nc3ccccc3nc2-c2ccccn2)nc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 10</span>
+    <span class="p">(</span>
+        <span class="s2">&quot;ZINC00138607&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O=C(CC1=NO[C@H](c2ccccc2O)N1)N1CCCC1&quot;</span><span class="p">,</span>
+    <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00140610&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1cc(C)c2c(=O)[nH]sc2n1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 12</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00164361&quot;</span><span class="p">,</span> <span class="s2">&quot;CCON1C(=O)c2ccccc2C1=O&quot;</span><span class="p">),</span>  <span class="c1"># hipen 13</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00167648&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1ccc(COn2c(-c3ccccc3)nc3ccccc3c2=O)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 14</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00169358&quot;</span><span class="p">,</span> <span class="s2">&quot;CC1=Cn2c(=O)c3ccccc3c(=O)n2C1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 15</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01036618&quot;</span><span class="p">,</span> <span class="s2">&quot;COc1ccc(/C=C2/N=C(c3ccccc3)NNC2=O)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen n/a</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01755198&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(C)C(=O)NNC(=O)C(C)C&quot;</span><span class="p">),</span>  <span class="c1"># hipen 16</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01867000&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2ccccc2-c2ccccc2)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 17</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC03127671&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(CSCC(=O)Nc1ccccc1)NNC(=O)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 18</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC04344392&quot;</span><span class="p">,</span> <span class="s2">&quot;CCOC(=O)NNC(=O)NCCCc1ccc2ccc3cccc4ccc1c2c34&quot;</span><span class="p">),</span>  <span class="c1"># hipen 19</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC04363792&quot;</span><span class="p">,</span> <span class="s2">&quot;Clc1cc(Cl)cc(/N=c2\ssnc2-c2ccccc2Cl)c1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 20</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC06568023&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(NNC(=O)c1ccccc1)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 21</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC33381936&quot;</span><span class="p">,</span> <span class="s2">&quot;O=S(=O)(O/N=C1/CCc2ccccc21)c1ccc(Cl)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 22</span>
+<span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+
+<div class="viewcode-block" id="check_implementation"><a class="viewcode-back" href="../../autosummary/endstate_correction.constant.check_implementation.html#endstate_correction.constant.check_implementation">[docs]</a><span class="k">def</span> <span class="nf">check_implementation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="c1"># check whether the CUDA platform is available and if yes,</span>
+    <span class="c1"># if also the NNPOPS implementation of torchani is installed</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">NNPOps</span> <span class="kn">import</span> <span class="n">OptimizedTorchANI</span> <span class="k">as</span> <span class="n">_</span>
+
+        <span class="n">implementation</span> <span class="o">=</span> <span class="s2">&quot;nnpops&quot;</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="s2">&quot;CUDA&quot;</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="s2">&quot;CPU&quot;</span>
+        <span class="n">implementation</span> <span class="o">=</span> <span class="s2">&quot;torchani&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">openmm</span> <span class="k">as</span> <span class="nn">mm</span>
+        <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">OpenMMException</span>
+
+        <span class="c1"># test if platform is possible, otherwise return &#39;CPU&#39;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">OpenMMException</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#------------ FALL BACK TO CPU PLATFORM -----------#&quot;</span><span class="p">)</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="s2">&quot;CPU&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">implementation</span><span class="p">,</span> <span class="n">platform</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">implementation</span><span class="p">,</span> <span class="n">platform</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Marcus Wieder. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.6.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

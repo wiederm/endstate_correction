@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_misc.test\_converting
+======================================================
+
+.. currentmodule:: endstate_correction.tests.test_misc
+
+.. autofunction:: test_converting

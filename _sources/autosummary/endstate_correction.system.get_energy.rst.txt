@@ -1,0 +1,6 @@
+endstate\_correction.system.get\_energy
+=======================================
+
+.. currentmodule:: endstate_correction.system
+
+.. autofunction:: get_energy

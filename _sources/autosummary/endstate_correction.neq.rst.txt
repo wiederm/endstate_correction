@@ -1,0 +1,31 @@
+endstate\_correction.neq
+========================
+
+.. automodule:: endstate_correction.neq
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      perform_switching
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

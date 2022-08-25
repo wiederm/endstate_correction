@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_neq.test\_collect\_work\_values
+================================================================
+
+.. currentmodule:: endstate_correction.tests.test_neq
+
+.. autofunction:: test_collect_work_values

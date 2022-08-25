@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_equ.load\_equ\_samples
+=======================================================
+
+.. currentmodule:: endstate_correction.tests.test_equ
+
+.. autofunction:: load_equ_samples

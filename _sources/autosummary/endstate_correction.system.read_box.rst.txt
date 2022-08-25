@@ -1,0 +1,6 @@
+endstate\_correction.system.read\_box
+=====================================
+
+.. currentmodule:: endstate_correction.system
+
+.. autofunction:: read_box

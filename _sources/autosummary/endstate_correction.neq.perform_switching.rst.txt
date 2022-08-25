@@ -1,0 +1,6 @@
+endstate\_correction.neq.perform\_switching
+===========================================
+
+.. currentmodule:: endstate_correction.neq
+
+.. autofunction:: perform_switching

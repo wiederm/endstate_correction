@@ -1,0 +1,6 @@
+endstate\_correction.equ.calculate\_u\_kn
+=========================================
+
+.. currentmodule:: endstate_correction.equ
+
+.. autofunction:: calculate_u_kn

@@ -1,0 +1,39 @@
+﻿endstate\_correction
+====================
+
+.. automodule:: endstate_correction
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   endstate_correction.analysis
+   endstate_correction.constant
+   endstate_correction.endstate_correction
+   endstate_correction.equ
+   endstate_correction.neq
+   endstate_correction.protocoll
+   endstate_correction.system
+   endstate_correction.tests
+   endstate_correction.utils
+   endstate_correction.vis
+

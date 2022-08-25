@@ -1,0 +1,6 @@
+endstate\_correction.protocoll.perform\_endstate\_correction
+============================================================
+
+.. currentmodule:: endstate_correction.protocoll
+
+.. autofunction:: perform_endstate_correction

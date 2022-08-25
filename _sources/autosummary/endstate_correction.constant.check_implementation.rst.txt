@@ -1,0 +1,6 @@
+endstate\_correction.constant.check\_implementation
+===================================================
+
+.. currentmodule:: endstate_correction.constant
+
+.. autofunction:: check_implementation

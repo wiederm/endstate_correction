@@ -1,0 +1,6 @@
+endstate\_correction.endstate\_correction.canvas
+================================================
+
+.. currentmodule:: endstate_correction.endstate_correction
+
+.. autofunction:: canvas

@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_equ.test\_collect\_equ\_samples
+================================================================
+
+.. currentmodule:: endstate_correction.tests.test_equ
+
+.. autofunction:: test_collect_equ_samples

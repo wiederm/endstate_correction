@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_endstate\_correction.test\_endstate\_correction\_imported
+==========================================================================================
+
+.. currentmodule:: endstate_correction.tests.test_endstate_correction
+
+.. autofunction:: test_endstate_correction_imported

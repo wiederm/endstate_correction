@@ -1,0 +1,6 @@
+endstate\_correction.system.generate\_samples
+=============================================
+
+.. currentmodule:: endstate_correction.system
+
+.. autofunction:: generate_samples

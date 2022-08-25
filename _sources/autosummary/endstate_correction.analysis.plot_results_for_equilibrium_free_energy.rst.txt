@@ -1,0 +1,6 @@
+endstate\_correction.analysis.plot\_results\_for\_equilibrium\_free\_energy
+===========================================================================
+
+.. currentmodule:: endstate_correction.analysis
+
+.. autofunction:: plot_results_for_equilibrium_free_energy

@@ -1,0 +1,33 @@
+endstate\_correction.tests.test\_equ
+====================================
+
+.. automodule:: endstate_correction.tests.test_equ
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      load_equ_samples
+      test_collect_equ_samples
+      test_equilibrium_free_energy
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,41 @@
+endstate\_correction.protocoll
+==============================
+
+.. automodule:: endstate_correction.protocoll
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      perform_endstate_correction
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      Protocoll
+      Results
+   
+   
+
+   
+   
+   
+
+
+

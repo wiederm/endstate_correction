@@ -1,0 +1,6 @@
+endstate\_correction.analysis.plot\_endstate\_correction\_results
+=================================================================
+
+.. currentmodule:: endstate_correction.analysis
+
+.. autofunction:: plot_endstate_correction_results

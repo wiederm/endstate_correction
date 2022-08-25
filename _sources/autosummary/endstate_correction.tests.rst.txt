@@ -1,0 +1,36 @@
+endstate\_correction.tests
+==========================
+
+.. automodule:: endstate_correction.tests
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   endstate_correction.tests.test_analysis
+   endstate_correction.tests.test_endstate_correction
+   endstate_correction.tests.test_equ
+   endstate_correction.tests.test_misc
+   endstate_correction.tests.test_neq
+   endstate_correction.tests.test_sampling
+   endstate_correction.tests.test_system
+

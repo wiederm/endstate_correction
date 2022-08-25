@@ -1,0 +1,31 @@
+endstate\_correction.constant
+=============================
+
+.. automodule:: endstate_correction.constant
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      check_implementation
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

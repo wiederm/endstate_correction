@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_endstate\_correction.test\_FEP\_protocoll
+==========================================================================
+
+.. currentmodule:: endstate_correction.tests.test_endstate_correction
+
+.. autofunction:: test_FEP_protocoll

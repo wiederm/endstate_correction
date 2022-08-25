@@ -1,0 +1,32 @@
+endstate\_correction.equ
+========================
+
+.. automodule:: endstate_correction.equ
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      calculate_u_kn
+      generate_samples
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

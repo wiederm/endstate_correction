@@ -1,0 +1,6 @@
+endstate\_correction.system.get\_positions
+==========================================
+
+.. currentmodule:: endstate_correction.system
+
+.. autofunction:: get_positions

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy &mdash; endstate_correction  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html" />
+    <link rel="prev" title="endstate_correction.analysis.plot_endstate_correction_results" href="endstate_correction.analysis.plot_endstate_correction_results.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> endstate_correction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory.html">Theory</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endstate_correction.html">endstate_correction</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.analysis.html">endstate_correction.analysis</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.get_indices.html">endstate_correction.analysis.get_indices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.get_traj.html">endstate_correction.analysis.get_traj</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_endstate_correction_results.html">endstate_correction.analysis.plot_endstate_correction_results</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html">endstate_correction.analysis.plot_results_for_equilibrium_free_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.save_mol_pic.html">endstate_correction.analysis.save_mol_pic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.vis_torsions.html">endstate_correction.analysis.vis_torsions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.constant.html">endstate_correction.constant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.endstate_correction.html">endstate_correction.endstate_correction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.equ.html">endstate_correction.equ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.neq.html">endstate_correction.neq</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.protocoll.html">endstate_correction.protocoll</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.tests.html">endstate_correction.tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endstate_correction.utils.html">endstate_correction.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">endstate_correction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../api.html">API Documentation</a> &raquo;</li>
+          <li><a href="endstate_correction.html">endstate_correction</a> &raquo;</li>
+          <li><a href="endstate_correction.analysis.html">endstate_correction.analysis</a> &raquo;</li>
+      <li>endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/autosummary/endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endstate-correction-analysis-plot-overlap-for-equilibrium-free-energy">
+<h1>endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy<a class="headerlink" href="#endstate-correction-analysis-plot-overlap-for-equilibrium-free-energy" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy">
+<span class="sig-prename descclassname"><span class="pre">endstate_correction.analysis.</span></span><span class="sig-name descname"><span class="pre">plot_overlap_for_equilibrium_free_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_kn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endstate_correction/analysis.html#plot_overlap_for_equilibrium_free_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the overlap for each state with each other state. THe overlap is normalized to be 1 for each row.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>N_k (np.array): numnber of samples for each state k
+u_kn (np.ndarray): each of the potential energy functions <cite>u</cite> describing a state <cite>k</cite> are applied to each sample <cite>n</cite> from each of the states <cite>k</cite>
+name (str): name of the system in the plot</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endstate_correction.analysis.plot_endstate_correction_results.html" class="btn btn-neutral float-left" title="endstate_correction.analysis.plot_endstate_correction_results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html" class="btn btn-neutral float-right" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Marcus Wieder. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.6.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_equ.test\_equilibrium\_free\_energy
+====================================================================
+
+.. currentmodule:: endstate_correction.tests.test_equ
+
+.. autofunction:: test_equilibrium_free_energy

@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_sampling.test\_sampling
+========================================================
+
+.. currentmodule:: endstate_correction.tests.test_sampling
+
+.. autofunction:: test_sampling

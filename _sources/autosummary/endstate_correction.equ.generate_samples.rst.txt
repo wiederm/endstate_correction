@@ -1,0 +1,6 @@
+endstate\_correction.equ.generate\_samples
+==========================================
+
+.. currentmodule:: endstate_correction.equ
+
+.. autofunction:: generate_samples

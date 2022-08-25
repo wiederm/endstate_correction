@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endstate_correction.system &mdash; endstate_correction  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> endstate_correction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory.html">Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">endstate_correction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>endstate_correction.system</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endstate_correction.system</h1><div class="highlight"><pre>
+<span></span><span class="c1"># general imports</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">openmm</span> <span class="k">as</span> <span class="nn">mm</span>
+<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
+<span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">PME</span><span class="p">,</span> <span class="n">CharmmParameterSet</span><span class="p">,</span> <span class="n">CharmmPsfFile</span><span class="p">,</span> <span class="n">NoCutoff</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">collision_rate</span><span class="p">,</span>
+    <span class="n">stepsize</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">,</span>
+    <span class="n">check_implementation</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_box"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.read_box.html#endstate_correction.system.read_box">[docs]</a><span class="k">def</span> <span class="nf">read_box</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sysinfo</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">))</span>
+        <span class="n">boxlx</span><span class="p">,</span> <span class="n">boxly</span><span class="p">,</span> <span class="n">boxlz</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">sysinfo</span><span class="p">[</span><span class="s2">&quot;dimensions&quot;</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">):</span>
+            <span class="n">segments</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;BOXLX&quot;</span><span class="p">:</span>
+                <span class="n">boxlx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;BOXLY&quot;</span><span class="p">:</span>
+                <span class="n">boxly</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;BOXLZ&quot;</span><span class="p">:</span>
+                <span class="n">boxlz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">psf</span><span class="o">.</span><span class="n">setBox</span><span class="p">(</span><span class="n">boxlx</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">angstroms</span><span class="p">,</span> <span class="n">boxly</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">angstroms</span><span class="p">,</span> <span class="n">boxlz</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">angstroms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">psf</span></div>
+
+
+<div class="viewcode-block" id="create_charmm_system"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.create_charmm_system.html#endstate_correction.system.create_charmm_system">[docs]</a><span class="k">def</span> <span class="nf">create_charmm_system</span><span class="p">(</span>
+    <span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">CharmmParameterSet</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ml_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="c1">###################</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating charmm system in </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">env</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;waterbox&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="s2">&quot;complex&quot;</span><span class="p">)</span>
+    <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">,</span> <span class="n">platform</span> <span class="o">=</span> <span class="n">check_implementation</span><span class="p">()</span>
+
+    <span class="c1">###################</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1">###################</span>
+    <span class="c1"># TODO: add additional parameters for complex</span>
+    <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">:</span>
+        <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">NoCutoff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1">#####################</span>
+    <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
+    <span class="n">ml_system</span> <span class="o">=</span> <span class="n">potential</span><span class="o">.</span><span class="n">createMixedSystem</span><span class="p">(</span>
+        <span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">mm_system</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="c1">#####################</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="n">LangevinIntegrator</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">collision_rate</span><span class="p">,</span> <span class="n">stepsize</span><span class="p">)</span>
+    <span class="n">platform</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_positions"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.get_positions.html#endstate_correction.system.get_positions">[docs]</a><span class="k">def</span> <span class="nf">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get position of system in a state&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getPositions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPositions</span><span class="p">(</span><span class="n">asNumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.get_energy.html#endstate_correction.system.get_energy">[docs]</a><span class="k">def</span> <span class="nf">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get energy of system in a state&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="generate_samples"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.generate_samples.html#endstate_correction.system.generate_samples">[docs]</a><span class="k">def</span> <span class="nf">generate_samples</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> <span class="n">n_steps_per_sample</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;generate samples using a defined system&quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generate samples with mixed System: </span><span class="si">{</span><span class="n">n_samples</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)):</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">n_steps_per_sample</span><span class="p">)</span>
+        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Marcus Wieder. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.6.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

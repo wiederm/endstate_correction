@@ -1,0 +1,6 @@
+endstate\_correction.analysis.get\_indices
+==========================================
+
+.. currentmodule:: endstate_correction.analysis
+
+.. autofunction:: get_indices

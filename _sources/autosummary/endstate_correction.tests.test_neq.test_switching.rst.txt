@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_neq.test\_switching
+====================================================
+
+.. currentmodule:: endstate_correction.tests.test_neq
+
+.. autofunction:: test_switching
