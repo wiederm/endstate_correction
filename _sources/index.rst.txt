@@ -21,6 +21,7 @@ free energy perturbation (FEP).
    :caption: Contents:
 
    getting_started
+   theory
    api
 
 
