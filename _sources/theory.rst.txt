@@ -1,8 +1,6 @@
 Theory
 ==================================
 
-
-
 Equilibrium free energy endstate corrections
 **********************************************
 In equilibrium free energy calculations samples are drawn from the Boltzmann distrubtion 
@@ -19,7 +17,7 @@ Non-equilibrium work protocol
 Non-equilibrium work protocols, and the fluctuation theorems connecting non-equilibrium driven 
 processes to equilibrium properties, can be used to estimate free energy differences between different
 levels of theory efficiently.
-A specific NEQ protocol typically consists of a series of perturbation kernel $\alpha_t(x,y)$ and a
+A specific NEQ protocol typically consists of a series of perturbation kernel .. math::\alpha_t(x,y)$ and a
 propagation kernel $\kappa_t(x,y)$, which are used in an alternating pattern to drive the system
 out of equilibrium.
 Each perturbation kernel $\alpha$ drives an alchemical coupling parameter $\lambda$, and each 
