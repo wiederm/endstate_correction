@@ -114,8 +114,8 @@ This can be controlled by setting the number using the variable <code class="cod
 <h2>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here
-<a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py">https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py</a>) with:</p>
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py)">here</a>)
+with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocoll</span> <span class="o">=</span> <span class="n">Protocoll</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>

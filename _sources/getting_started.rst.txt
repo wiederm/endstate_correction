@@ -61,8 +61,8 @@ Perform unidirectional NEQ from :math:`\pi(x, \lambda=0)`
 ----------------------------------
 The endstate correction can be performed using the script :code:`perform_correction.py`.
 Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here 
-https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py) with:
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown `here <https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py)>`_) 
+with:
 
 .. code:: python
 
