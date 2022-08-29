@@ -95,22 +95,37 @@ We will start by describing the use of the  <code class="code docutils literal n
 <h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
 <p>### Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></p>
 <p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
-If samples are not already available, the <cite>sampling.py</cite> script provides and easy way to obtain these samples.</p>
+If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
 <p>We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
 <p>and then we define the atoms that should be perturbed using the coupling parameter <span class="math notranslate nohighlight">\(\lambda\)</span> with</p>
-<p>ml_atoms = [atom.index for atom in chains[0].atoms()]</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
+</pre></div>
+</div>
 <p>Depending if all atoms in your system are included in the <code class="code docutils literal notranslate"><span class="pre">ml_atoms</span></code> list or only a subset, you can set up your QML or QML/MM simulation object using</p>
-<p>sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>That is everything you need to define to run the equilibrium sampling.
 The parameters defining the number of samples to save and time interval between samples can be defined in the script.
 Keep in mind that if you want to perform bidirectional FEP you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
-This can be controlled by setting the number using the variable <cite>nr_lambda_states</cite>.</p>
+This can be controlled by setting the number using the variable <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.</p>
 </section>
 <section id="perform-unidirectional-neq-from-pi-x-lambda-0">
 <h2>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py">https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py</a>) with:</p>
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here
+<a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py">https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py</a>) with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocoll</span> <span class="o">=</span> <span class="n">Protocoll</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>.
 This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
 </section>

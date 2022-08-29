@@ -24,7 +24,7 @@ A typical NEQ workflow
 
 
 In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
-If samples are not already available, the `sampling.py` script provides and easy way to obtain these samples.
+If samples are not already available, the :code:`sampling.py` script provides and easy way to obtain these samples.
 
 We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a ``CharmmPsfFile``, ``PDBFile`` and ``CharmmParameterSet``:  
 
@@ -42,26 +42,30 @@ We start by setting up an openMM system object. Here, we use CHARMM parameter an
 and then we define the atoms that should be perturbed using the coupling parameter :math:`\lambda` with
 
 .. code:: python
-ml_atoms = [atom.index for atom in chains[0].atoms()]
+
+    ml_atoms = [atom.index for atom in chains[0].atoms()]
 
 Depending if all atoms in your system are included in the :code:`ml_atoms` list or only a subset, you can set up your QML or QML/MM simulation object using 
 
 .. code:: python
-sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)
+
+    sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)
 
 
 That is everything you need to define to run the equilibrium sampling. 
 The parameters defining the number of samples to save and time interval between samples can be defined in the script.
 Keep in mind that if you want to perform bidirectional FEP you need to sample at :math:`\pi(x, \lambda=0)` and :math:`\pi(x, \lambda=1)`. 
-This can be controlled by setting the number using the variable `nr_lambda_states`.
+This can be controlled by setting the number using the variable :code:`nr_lambda_states`.
 
 Perform unidirectional NEQ from :math:`\pi(x, \lambda=0)`
 ----------------------------------
 The endstate correction can be performed using the script :code:`perform_correction.py`.
 Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py) with:
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here 
+https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py) with:
 
 .. code:: python
+
   fep_protocoll = Protocoll(
       method="NEQ",
       direction="unidirectional",
