@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Theory &mdash; endstate_correction  documentation</title>
+  <title>&lt;no title&gt; &mdash; endstate_correction  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -39,14 +39,8 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Theory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#equilibrium-free-energy-endstate-corrections">Equilibrium free energy endstate corrections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#non-equilibrium-work-protocol">Non-equilibrium work protocol</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#free-energy-perturbation-fep">Free energy perturbation (FEP)</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 </ul>
 
@@ -64,9 +58,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Theory</li>
+      <li>&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/theory.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/theory.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -74,22 +68,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="theory">
-<h1>Theory<a class="headerlink" href="#theory" title="Permalink to this heading"></a></h1>
-<section id="equilibrium-free-energy-endstate-corrections">
-<h2>Equilibrium free energy endstate corrections<a class="headerlink" href="#equilibrium-free-energy-endstate-corrections" title="Permalink to this heading"></a></h2>
+  <p>Theory</p>
+<p># Equilibrium free energy endstate corrections</p>
 <p>In equilibrium free energy calculations samples are drawn from the Boltzmann distrubtion
 at specific interpolation states between thermodynamic states (in our specific case: different energetic
 descriptions of the molecular system, i.e. the source level of theory and the target level of theroy) and,
 given sufficient overlap of its pdfs, a free energy can be estimated. This protocol is expensive
 (it needs iid samples at each lambda state connecting the Boltzmann distribution at the endstates)
 but also reliable and accureate (with low variance).</p>
-<figure class="align-default">
-<img alt="_images/equi.png" src="_images/equi.png" />
-</figure>
-</section>
-<section id="non-equilibrium-work-protocol">
-<h2>Non-equilibrium work protocol<a class="headerlink" href="#non-equilibrium-work-protocol" title="Permalink to this heading"></a></h2>
+<p>![image](images/equi.png)</p>
+<p># Non-equilibrium work protocol</p>
 <p>Non-equilibrium work protocols, and the fluctuation theorems connecting non-equilibrium driven
 processes to equilibrium properties, can be used to estimate free energy differences between different
 levels of theory efficiently.
@@ -104,9 +92,7 @@ to seed the NEQ protocol are only drawn from $pi(x, lambda=0)$ and the NEQ proto
 from $lambda=0$ to $lambda=1$) or the Crooks’ fluctuation theorem (if samples to seed the NEQ protocol
 are drawn from $pi(x, lambda=0)$ and $pi(x, lambda=1)$ and the perturbation kernels are set for a bidirectinoal
 protocol).</p>
-</section>
-<section id="free-energy-perturbation-fep">
-<h2>Free energy perturbation (FEP)<a class="headerlink" href="#free-energy-perturbation-fep" title="Permalink to this heading"></a></h2>
+<p># Free energy perturbation (FEP)</p>
 <p>Here, we define FEP as a special case of the NEQ protocol (and the Jarzynski equation) in which the protocol
 consists only of a single perturbation kernel $alpha_t(x,y)$, without a propagation kernel.
 $alpha_t(x,y)$ perturbates the alchemical DOF from one ‘endstate’, without any intermediate states,
@@ -114,8 +100,6 @@ to another ‘endstate’.
 In the limiting cases of infinitely fast switching the Jarzynski equality reduces to the well-known FEP equation:
 $e^{-beta Delta F} = langle e^{−β[E(x,lambda=1)− E(x,lambda=0)]} rangle_{lambda=0}$.
 $langle rangle_{lambda=0}$ indicate that samples are drawn from the equilibrium distribution $pi(x, lambda=0)$.</p>
-</section>
-</section>
 
 
            </div>
