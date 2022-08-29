@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,12 +44,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-use-this-package">How to use this package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution $\pi(x, \lambda=0)$</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-neq-from-math-pi-x-lambda-0">Perform unidirectional NEQ from :math:$\pi(x, \lambda=0)$</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theory</a></li>
@@ -71,7 +69,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Getting Started</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/getting_started.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -84,69 +82,41 @@
 <p>This page details how to get started with endstate_correction.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
-<p>We recommend setting up a new python conda environment with <code class="docutils literal notranslate"><span class="pre">python=3.9</span></code> and installing the packages defined here using <code class="docutils literal notranslate"><span class="pre">mamba</span></code>: https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml.
+<p>We recommend setting up a new python conda environment with <code class="code docutils literal notranslate"><span class="pre">python=3.9</span></code> and installing the packages defined here using <code class="code docutils literal notranslate"><span class="pre">mamba</span></code>: <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml">https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml</a>.
 This package can be installed using:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/wiederm/endstate_correction.git</span></code>.</p>
+<code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/wiederm/endstate_correction.git</span></code>.</p>
 </section>
 <section id="how-to-use-this-package">
 <h2>How to use this package<a class="headerlink" href="#how-to-use-this-package" title="Permalink to this heading"></a></h2>
-<p>We have prepared two scripts that should help to use this package, both are located in <code class="docutils literal notranslate"><span class="pre">endstate_correction/scripts</span></code>.
-We will start by describing the use of the <code class="docutils literal notranslate"><span class="pre">sampling.py</span></code> script and then discuss the <code class="docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
+<p>We have prepared two scripts that should help to use this package, both are located in <code class="code docutils literal notranslate"><span class="pre">endstate_correction/scripts</span></code>.
+We will start by describing the use of the  <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script and then discuss the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
 </section>
 <section id="a-typical-neq-workflow">
 <h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
-<section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
-<h3>Generate the equilibrium distribution $\pi(x, \lambda=0)$<a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
+<p>### Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></p>
 <p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
-If samples are not already available, the <code class="docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
+If samples are not already available, the <cite>sampling.py</cite> script provides and easy way to obtain these samples.</p>
 <p>We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
-    <span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.psf&quot;</span><span class="p">)</span>
-    <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.pdb&quot;</span><span class="p">)</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.rtf&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.prm&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/top_all36_cgenff.rtf&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>and then we define the atoms that should be perturbed using the coupling parameter $\lambda$ with</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
-</pre></div>
-</div>
-<p>Depending if all atoms in your system are included in the <code class="docutils literal notranslate"><span class="pre">ml_atoms</span></code> list or only a subset, you can set up your QML or QML/MM simulation object using</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>and then we define the atoms that should be perturbed using the coupling parameter <span class="math notranslate nohighlight">\(\lambda\)</span> with</p>
+<p>ml_atoms = [atom.index for atom in chains[0].atoms()]</p>
+<p>Depending if all atoms in your system are included in the <code class="code docutils literal notranslate"><span class="pre">ml_atoms</span></code> list or only a subset, you can set up your QML or QML/MM simulation object using</p>
+<p>sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)</p>
 <p>That is everything you need to define to run the equilibrium sampling.
 The parameters defining the number of samples to save and time interval between samples can be defined in the script.
-Keep in mind that if you want to perform bidirectional FEP you need to sample at $\pi(x, \lambda=0)$ and $\pi(x, \lambda=1)$.
-This can be controlled by setting the number using the variable <code class="docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.</p>
+Keep in mind that if you want to perform bidirectional FEP you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
+This can be controlled by setting the number using the variable <cite>nr_lambda_states</cite>.</p>
 </section>
-<section id="perform-unidirectional-neq-from-math-pi-x-lambda-0">
-<h3>Perform unidirectional NEQ from :math:$\pi(x, \lambda=0)$<a class="headerlink" href="#perform-unidirectional-neq-from-math-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
-<p>The endstate correction can be performed using the script <code class="docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
+<section id="perform-unidirectional-neq-from-pi-x-lambda-0">
+<h2>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
+<p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py) with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="n">fep_protocoll</span> <span class="o">=</span> <span class="n">Protocoll</span><span class="p">(</span>
-      <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-      <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
-      <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-      <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
-      <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-      <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
-  <span class="p">)</span>
-</pre></div>
-</div>
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py">https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py</a>) with:</p>
 <p>.
-This protocol is then passed to the actual function performing the protocol: <code class="docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
+This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
-<h3>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h3>
-<p>To analyse the results generated by <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.</p>
-</section>
+<h2>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h2>
+<p>To analyse the results generated by <code class="code docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="code docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.</p>
 </section>
 </section>
 

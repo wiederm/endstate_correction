@@ -25,8 +25,8 @@ levels of theory efficiently.
 A specific NEQ protocol typically consists of a series of perturbation kernel  :math:`\alpha_t(x,y)` and a
 propagation kernel  :math:`\kappa_t(x,y)`, which are used in an alternating pattern to drive the system
 out of equilibrium.
-Each perturbation kernel $\alpha$ drives an alchemical coupling parameter $\lambda$, and each 
-propagation kernel $\kappa$ propagates the coordinates of the system at fixed $\lambda$ according 
+Each perturbation kernel :math:`\alpha` drives an alchemical coupling parameter :math:`\lambda`, and each 
+propagation kernel :math:`\kappa`$` propagates the coordinates of the system at fixed :math:`\lambda`$` according 
 to a defined MD process.
 The free energy difference can then be recovered using either the Jarzynski equation (if initial conformations 
 to seed the NEQ protocol are only drawn from :math:`\pi(x, \lambda=0)` and the NEQ protocol perturbations only 
