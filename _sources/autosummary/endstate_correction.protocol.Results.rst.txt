@@ -1,0 +1,34 @@
+endstate\_correction.protocol.Results
+=====================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: Results
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Results.W_mm_to_qml
+      ~Results.W_qml_to_mm
+      ~Results.dE_mm_to_qml
+      ~Results.dE_qml_to_mm
+      ~Results.equ_mbar
+   
+   

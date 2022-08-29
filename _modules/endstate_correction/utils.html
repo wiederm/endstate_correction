@@ -75,21 +75,21 @@
 
 <div class="viewcode-block" id="convert_pickle_to_dcd_file"><a class="viewcode-back" href="../../autosummary/endstate_correction.utils.convert_pickle_to_dcd_file.html#endstate_correction.utils.convert_pickle_to_dcd_file">[docs]</a><span class="k">def</span> <span class="nf">convert_pickle_to_dcd_file</span><span class="p">(</span>
     <span class="n">pickle_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">path_to_topology</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">path_to_coords</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">path_to_psf</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">path_to_crd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">dcd_output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">pdb_output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">):</span>
+    <span class="c1"># helper function that converts pickle trajectory file to dcd file</span>
 
     <span class="n">f</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pickle_file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
     <span class="n">traj</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
-    <span class="n">topology</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="n">path_to_topology</span><span class="p">)</span><span class="o">.</span><span class="n">topology</span>
-    <span class="n">positions</span> <span class="o">=</span> <span class="n">CharmmCrdFile</span><span class="p">(</span><span class="n">path_to_coords</span><span class="p">)</span>
+    <span class="n">topology</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="n">path_to_psf</span><span class="p">)</span><span class="o">.</span><span class="n">topology</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">CharmmCrdFile</span><span class="p">(</span><span class="n">path_to_crd</span><span class="p">)</span>
 
     <span class="n">PDBFile</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">positions</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">pdb_output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span>
     <span class="n">traj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topology</span><span class="p">)</span>
-    <span class="n">traj</span><span class="o">.</span><span class="n">save_dcd</span><span class="p">(</span><span class="n">dcd_output_path</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished converting ...&quot;</span><span class="p">)</span></div>
+    <span class="n">traj</span><span class="o">.</span><span class="n">save_dcd</span><span class="p">(</span><span class="n">dcd_output_path</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -1,0 +1,35 @@
+endstate\_correction.protocol.Protocol
+======================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: Protocol
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Protocol.direction
+      ~Protocol.neq_switching_length
+      ~Protocol.nr_of_switches
+      ~Protocol.method
+      ~Protocol.sim
+      ~Protocol.trajectories
+   
+   
