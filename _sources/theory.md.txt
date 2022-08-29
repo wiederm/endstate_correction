@@ -1,7 +1,8 @@
 Theory
+===============
 
 
-# Equilibrium free energy endstate corrections
+## Equilibrium free energy endstate corrections
 
 In equilibrium free energy calculations samples are drawn from the Boltzmann distrubtion 
 at specific interpolation states between thermodynamic states (in our specific case: different energetic
@@ -14,7 +15,7 @@ but also reliable and accureate (with low variance).
 
 
 
-# Non-equilibrium work protocol 
+## Non-equilibrium work protocol 
 
 Non-equilibrium work protocols, and the fluctuation theorems connecting non-equilibrium driven 
 processes to equilibrium properties, can be used to estimate free energy differences between different
@@ -31,7 +32,7 @@ from $\lambda=0$ to $\lambda=1$) or the Crooks' fluctuation theorem (if samples 
 are drawn from $\pi(x, \lambda=0)$ and $\pi(x, \lambda=1)$ and the perturbation kernels are set for a bidirectinoal 
 protocol).
 
-# Free energy perturbation (FEP)
+## Free energy perturbation (FEP)
 
 Here, we define FEP as a special case of the NEQ protocol (and the Jarzynski equation) in which the protocol 
 consists only of a single perturbation kernel $\alpha_t(x,y)$, without a propagation kernel.
