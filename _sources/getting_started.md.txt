@@ -3,14 +3,14 @@ Getting Started
 
 This page details how to get started with endstate_correction. 
 
-# Installation
+## Installation
 
 We recommend setting up a new python conda environment with `python=3.9` and installing the packages defined here using ``mamba``: https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml.
 This package can be installed using:
 ``pip install git+https://github.com/wiederm/endstate_correction.git``.
 
 
-# How to use this package
+## How to use this package
 
 We have prepared two scripts that should help to use this package, both are located in `endstate_correction/scripts`.
 We will start by describing the use of the `sampling.py` script and then discuss the `perform_correction.py` script.
