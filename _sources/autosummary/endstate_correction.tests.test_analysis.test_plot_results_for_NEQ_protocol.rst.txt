@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_analysis.test\_plot\_results\_for\_NEQ\_protocol
+=================================================================================
+
+.. currentmodule:: endstate_correction.tests.test_analysis
+
+.. autofunction:: test_plot_results_for_NEQ_protocol

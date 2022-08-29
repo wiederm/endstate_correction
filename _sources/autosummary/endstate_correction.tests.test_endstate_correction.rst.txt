@@ -15,9 +15,10 @@ endstate\_correction.tests.test\_endstate\_correction
       :toctree:
       :nosignatures:
    
-      test_EQU_protocoll
-      test_FEP_protocoll
-      test_NEQ_protocoll
+      test_ALL_protocol
+      test_EQU_protocol
+      test_FEP_protocol
+      test_NEQ_protocol
       test_endstate_correction_imported
    
    
