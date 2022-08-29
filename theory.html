@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -41,12 +42,10 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Theory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#equilibrium-free-energy-endstate-corrections">Equilibrium free energy endstate corrections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#non-equilibrium-work-protocol">Non-equilibrium work protocol</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#free-energy-perturbation-fep">Free energy perturbation (FEP)</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#equilibrium-free-energy-endstate-corrections">Equilibrium free energy endstate corrections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#non-equilibrium-work-protocol">Non-equilibrium work protocol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#free-energy-perturbation-fep">Free energy perturbation (FEP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 </ul>
 
@@ -66,7 +65,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Theory</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/theory.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/theory.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -76,43 +75,43 @@
              
   <section id="theory">
 <h1>Theory<a class="headerlink" href="#theory" title="Permalink to this heading"></a></h1>
+</section>
 <section id="equilibrium-free-energy-endstate-corrections">
-<h2>Equilibrium free energy endstate corrections<a class="headerlink" href="#equilibrium-free-energy-endstate-corrections" title="Permalink to this heading"></a></h2>
+<h1>Equilibrium free energy endstate corrections<a class="headerlink" href="#equilibrium-free-energy-endstate-corrections" title="Permalink to this heading"></a></h1>
 <p>In equilibrium free energy calculations samples are drawn from the Boltzmann distrubtion
 at specific interpolation states between thermodynamic states (in our specific case: different energetic
 descriptions of the molecular system, i.e. the source level of theory and the target level of theroy) and,
 given sufficient overlap of its pdfs, a free energy can be estimated. This protocol is expensive
 (it needs iid samples at each lambda state connecting the Boltzmann distribution at the endstates)
 but also reliable and accureate (with low variance).</p>
-<p><img alt="image" src="_images/equi.png" /></p>
+<p>![image](images/equi.png)</p>
 </section>
 <section id="non-equilibrium-work-protocol">
-<h2>Non-equilibrium work protocol<a class="headerlink" href="#non-equilibrium-work-protocol" title="Permalink to this heading"></a></h2>
+<h1>Non-equilibrium work protocol<a class="headerlink" href="#non-equilibrium-work-protocol" title="Permalink to this heading"></a></h1>
 <p>Non-equilibrium work protocols, and the fluctuation theorems connecting non-equilibrium driven
 processes to equilibrium properties, can be used to estimate free energy differences between different
 levels of theory efficiently.
-A specific NEQ protocol typically consists of a series of perturbation kernel .. math::\alpha_t(x,y)$ and a
-propagation kernel $\kappa_t(x,y)$, which are used in an alternating pattern to drive the system
+A specific NEQ protocol typically consists of a series of perturbation kernel  <span class="math notranslate nohighlight">\(\alpha_t(x,y)\)</span> and a
+propagation kernel  <span class="math notranslate nohighlight">\(\kappa_t(x,y)\)</span>, which are used in an alternating pattern to drive the system
 out of equilibrium.
-Each perturbation kernel $\alpha$ drives an alchemical coupling parameter $\lambda$, and each
-propagation kernel $\kappa$ propagates the coordinates of the system at fixed $\lambda$ according
+Each perturbation kernel $alpha$ drives an alchemical coupling parameter $lambda$, and each
+propagation kernel $kappa$ propagates the coordinates of the system at fixed $lambda$ according
 to a defined MD process.
 The free energy difference can then be recovered using either the Jarzynski equation (if initial conformations
-to seed the NEQ protocol are only drawn from $\pi(x, \lambda=0)$ and the NEQ protocol perturbations only
-from $\lambda=0$ to $\lambda=1$) or the Crooks’ fluctuation theorem (if samples to seed the NEQ protocol
-are drawn from $\pi(x, \lambda=0)$ and $\pi(x, \lambda=1)$ and the perturbation kernels are set for a bidirectinoal
+to seed the NEQ protocol are only drawn from $pi(x, lambda=0)$ and the NEQ protocol perturbations only
+from $lambda=0$ to $lambda=1$) or the Crooks’ fluctuation theorem (if samples to seed the NEQ protocol
+are drawn from $pi(x, lambda=0)$ and $pi(x, lambda=1)$ and the perturbation kernels are set for a bidirectinoal
 protocol).</p>
 </section>
 <section id="free-energy-perturbation-fep">
-<h2>Free energy perturbation (FEP)<a class="headerlink" href="#free-energy-perturbation-fep" title="Permalink to this heading"></a></h2>
+<h1>Free energy perturbation (FEP)<a class="headerlink" href="#free-energy-perturbation-fep" title="Permalink to this heading"></a></h1>
 <p>Here, we define FEP as a special case of the NEQ protocol (and the Jarzynski equation) in which the protocol
-consists only of a single perturbation kernel $\alpha_t(x,y)$, without a propagation kernel.
-$\alpha_t(x,y)$ perturbates the alchemical DOF from one ‘endstate’, without any intermediate states,
+consists only of a single perturbation kernel $alpha_t(x,y)$, without a propagation kernel.
+$alpha_t(x,y)$ perturbates the alchemical DOF from one ‘endstate’, without any intermediate states,
 to another ‘endstate’.
 In the limiting cases of infinitely fast switching the Jarzynski equality reduces to the well-known FEP equation:
-$e^{-\beta \Delta F} = \langle e^{−β[E(x,\lambda=1)− E(x,\lambda=0)]} \rangle_{\lambda=0}$.
-$\langle \rangle_{\lambda=0}$ indicate that samples are drawn from the equilibrium distribution $\pi(x, \lambda=0)$.</p>
-</section>
+$e^{-beta Delta F} = langle e^{−β[E(x,lambda=1)− E(x,lambda=0)]} rangle_{lambda=0}$.
+$langle rangle_{lambda=0}$ indicate that samples are drawn from the equilibrium distribution $pi(x, lambda=0)$.</p>
 </section>
 
 
