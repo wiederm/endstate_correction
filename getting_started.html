@@ -61,7 +61,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Getting Started</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/getting_started.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -72,6 +72,67 @@
   <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
 <p>This page details how to get started with endstate_correction.</p>
+<p># Installation</p>
+<p>We recommend setting up a new python conda environment with <cite>python=3.9</cite> and installing the packages defined here using <code class="docutils literal notranslate"><span class="pre">mamba</span></code>: <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml">https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml</a>.
+This package can be installed using:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/wiederm/endstate_correction.git</span></code>.</p>
+<p># How to use this package</p>
+<p>We have prepared two scripts that should help to use this package, both are located in <cite>endstate_correction/scripts</cite>.
+We will start by describing the use of the <cite>sampling.py</cite> script and then discuss the <cite>perform_correction.py</cite> script.</p>
+<p>## A typical NEQ workflow</p>
+<p>### Generate the equilibrium distribution $pi(x, lambda=0)$</p>
+<p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
+If samples are not already available, the <cite>sampling.py</cite> script provides and easy way to obtain these samples.</p>
+<p>We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python</p>
+<blockquote>
+<div><p>psf = CharmmPsfFile(f”{parameter_base}/{system_name}/charmm-gui/openmm/step3_input.psf”)
+pdb = PDBFile(f”{parameter_base}/{system_name}/charmm-gui/openmm/step3_input.pdb”)
+params = CharmmParameterSet(</p>
+<blockquote>
+<div><p>f”{parameter_base}/{system_name}/charmm-gui/unk/unk.rtf”,
+f”{parameter_base}/{system_name}/charmm-gui/unk/unk.prm”,
+f”{parameter_base}/toppar/top_all36_cgenff.rtf”,
+f”{parameter_base}/toppar/par_all36_cgenff.prm”,
+f”{parameter_base}/toppar/toppar_water_ions.str”,</p>
+</div></blockquote>
+<p>)</p>
+</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a>`
+and then we define the atoms that should be perturbed using the coupling parameter $lambda$ with</p>
+<p><code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">ml_atoms</span> <span class="pre">=</span> <span class="pre">[atom.index</span> <span class="pre">for</span> <span class="pre">atom</span> <span class="pre">in</span> <span class="pre">chains[0].atoms()]</span>
+<span class="pre">`</span></code></p>
+<p>Depending if all atoms in your system are included in the <cite>ml_atoms</cite> list or only a subset, you can set up your QML or QML/MM simulation object using</p>
+<p><code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">sim</span> <span class="pre">=</span> <span class="pre">create_charmm_system(psf=psf,</span> <span class="pre">parameters=params,</span> <span class="pre">env=env,</span> <span class="pre">ml_atoms=ml_atoms)</span>
+<span class="pre">`</span></code></p>
+<p>That is everything you need to define to run the equilibrium sampling.
+The parameters defining the number of samples to save and time interval between samples can be defined in the script.
+Keep in mind that if you want to perform bidirectional FEP you need to sample at $pi(x, lambda=0)$ and $pi(x, lambda=1)$.
+This can be controlled by setting the number using the variable <cite>nr_lambda_states</cite>.</p>
+<p>### Perform unidirectional NEQ from :math:$pi(x, lambda=0)$</p>
+<p>The endstate correction can be performed using the script <cite>perform_correction.py</cite>.
+Again, we need to initialize the simulation object as described above.
+To perform a specific endstate correction we need to define a protocol (some standard protocols are shown here <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py">https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py</a>) with:</p>
+<dl>
+<dt><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a>python</dt><dd><dl class="simple">
+<dt>fep_protocoll = Protocoll(</dt><dd><p>method=”NEQ”,
+direction=”unidirectional”,
+sim=sim,
+trajectories=[mm_samples],
+nr_of_switches=400,
+neq_switching_length=5_000, # in fs</p>
+</dd>
+</dl>
+<p>)</p>
+</dd>
+</dl>
+<p><a href="#id11"><span class="problematic" id="id12">``</span></a>`
+.
+This protocol is then passed to the actual function performing the protocol: <cite>perform_endstate_correction(fep_protocoll)</cite>.</p>
+<p>### Analyse results of an unidirection NEQ protocol</p>
+<p>To analyse the results generated by <cite>r = perform_endstate_correction()</cite> pass the return value to <cite>plot_endstate_correction_results(system_name, r, “results_neq_unidirectional.png”)</cite> and results will be plotted and printed.</p>
 </section>
 
 
