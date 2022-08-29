@@ -45,6 +45,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-use-this-package">How to use this package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
 </ul>
@@ -93,10 +94,23 @@ We will start by describing the use of the  <code class="code docutils literal n
 </section>
 <section id="a-typical-neq-workflow">
 <h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
-<p>### Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></p>
+</section>
+<section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
+<h2>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
 <p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
 If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
 <p>We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.psf&quot;</span><span class="p">)</span>
+<span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.pdb&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.rtf&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.prm&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/top_all36_cgenff.rtf&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>and then we define the atoms that should be perturbed using the coupling parameter <span class="math notranslate nohighlight">\(\lambda\)</span> with</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
 </pre></div>
@@ -126,8 +140,7 @@ with:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>.
-This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
+<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
 <h2>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h2>
