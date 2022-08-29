@@ -12,7 +12,7 @@ endstate corrections at the nodes of the thermodynamic cycle to a desired
 target level of theory.
 In this work we have performed the endstate corrections using equilibrium 
 free energy calculations, non-equilibrium (NEQ) work protocols and 
-free energy perturbation (FEP).
+free energy perturbation (FEP).  :math:`\Delta G = 0`
 
 .. figure:: images/td_cycle.png
 
