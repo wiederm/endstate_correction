@@ -47,6 +47,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-fep-from-pi-x-lambda-0">Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#available-protocols">Available protocols</a></li>
 </ul>
@@ -148,6 +150,36 @@ with:</p>
 </pre></div>
 </div>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
+</section>
+<section id="perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">
+<h2>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h2>
+<p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> and the following protocol.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
+</section>
+<section id="perform-unidirectional-fep-from-pi-x-lambda-0">
+<h2>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
+<p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
+The protocol has to be adopted slightly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FE{&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
 <h2>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h2>

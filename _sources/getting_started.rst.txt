@@ -86,6 +86,41 @@ with:
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
 
+Perform bidirectional NEQ from :math:`\pi(x, \lambda=0)` and :math:`\pi(x, \lambda=1)`
+--------------------------------------------------------------------
+The endstate correction can be performed using the script :code:`perform_correction.py` and the following protocol.
+
+.. code:: python
+
+  neq_protocol = Protocol(
+      method="NEQ",
+      direction="bidirectional",
+      sim=sim,
+      trajectories=[mm_samples, qml_samples],
+      nr_of_switches=400,
+      neq_switching_length=5_000, # in fs
+  )
+
+This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
+
+
+Perform unidirectional FEP from :math:`\pi(x, \lambda=0)`
+--------------------------------------------------------------------
+The endstate correction can be performed using the script :code:`perform_correction.py`.
+The protocol has to be adopted slightly:
+
+.. code:: python
+
+  fep_protocol = Protocol(
+      method="FE{",
+      direction="unidirectional",
+      sim=sim,
+      trajectories=[mm_samples],
+      nr_of_switches=400,
+  )
+This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(fep_protocol)`.
+
+
 Analyse results of an unidirection NEQ protocol
 --------------------------------------------------------------------
 
