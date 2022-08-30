@@ -70,7 +70,7 @@
 <span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">pymbar</span> <span class="kn">import</span> <span class="n">MBAR</span>
@@ -132,6 +132,9 @@
             <span class="c1">####################################################</span>
             <span class="c1"># ------------------- bidirectional-----------------</span>
             <span class="c1"># perform switching from mm to qml</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
             <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -188,6 +191,9 @@
             <span class="c1">####################################################</span>
             <span class="c1"># ------------------- bidirectional-----------------</span>
             <span class="c1"># perform switching from mm to qml</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
             <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
             <span class="n">Ws_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>

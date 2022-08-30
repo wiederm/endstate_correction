@@ -16,9 +16,9 @@ endstate\_correction.tests.test\_endstate\_correction
       :nosignatures:
    
       test_ALL_protocol
-      test_EQU_protocol
       test_FEP_protocol
       test_NEQ_protocol
+      test_each_protocol
       test_endstate_correction_imported
    
    

@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.system.generate_samples" href="endstate_correction.system.generate_samples.html" />
+    <link rel="next" title="endstate_correction.system.get_energy" href="endstate_correction.system.get_energy.html" />
     <link rel="prev" title="endstate_correction.system" href="endstate_correction.system.html" /> 
 </head>
 
@@ -52,7 +52,6 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.protocol.html">endstate_correction.protocol</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.system.create_charmm_system</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.generate_samples.html">endstate_correction.system.generate_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_energy.html">endstate_correction.system.get_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_positions.html">endstate_correction.system.get_positions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.read_box.html">endstate_correction.system.read_box</a></li>
@@ -97,8 +96,18 @@
 <h1>endstate_correction.system.create_charmm_system<a class="headerlink" href="#endstate-correction-system-create-charmm-system" title="Permalink to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="endstate_correction.system.create_charmm_system">
-<span class="sig-prename descclassname"><span class="pre">endstate_correction.system.</span></span><span class="sig-name descname"><span class="pre">create_charmm_system</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmPsfFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmParameterSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endstate_correction/system.html#create_charmm_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.system.create_charmm_system" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">endstate_correction.system.</span></span><span class="sig-name descname"><span class="pre">create_charmm_system</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmPsfFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmParameterSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Simulation</span></span></span><a class="reference internal" href="../_modules/endstate_correction/system.html#create_charmm_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.system.create_charmm_system" title="Permalink to this definition"></a></dt>
+<dd><p>Generate an openMM simulation object using CHARMM topology and parameter files</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>psf (CharmmPsfFile): topology instance
+parameters (CharmmParameterSet): parameter instance
+env (str): either complex, waterbox or vacuum
+ml_atoms (list): list of atoms described by the QML potential</p>
+</dd>
+<dt>Returns:</dt><dd><p>Simulation: openMM simulation instance</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -107,7 +116,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="endstate_correction.system.html" class="btn btn-neutral float-left" title="endstate_correction.system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.system.generate_samples.html" class="btn btn-neutral float-right" title="endstate_correction.system.generate_samples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.system.get_energy.html" class="btn btn-neutral float-right" title="endstate_correction.system.get_energy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
