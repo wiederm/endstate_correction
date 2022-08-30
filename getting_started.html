@@ -48,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-protocols">Available protocols</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="theory.html">Theory</a></li>
@@ -97,9 +98,12 @@ We will start by describing the use of the  <code class="code docutils literal n
 </section>
 <section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
 <h2>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
-<p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our trial moves.
+<p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing moves.
 If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
-<p>We start by setting up an openMM system object. Here, we use CHARMM parameter and files, but any other supported parameter set and files can be used. We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
+<p>In the following we will use 1-octanol in a waterbox as a test system. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
+Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script are explained — but they should work for 1-octanol without any modifications.</p>
+<p>The scripts starts by defining an openMM system object. Here, CHARMM parameter, topology and coordinate files are used, but any other supported parameter set and files can be used.
+We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.psf&quot;</span><span class="p">)</span>
 <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.pdb&quot;</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
@@ -120,17 +124,20 @@ If samples are not already available, the <code class="code docutils literal not
 </pre></div>
 </div>
 <p>That is everything you need to define to run the equilibrium sampling.
-The parameters defining the number of samples to save and time interval between samples can be defined in the script.
-Keep in mind that if you want to perform bidirectional FEP you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
-This can be controlled by setting the number using the variable <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.</p>
+The parameters controling the number of samples to save and time interval between samples can be set in the script in the relevant parts.
+Keep in mind that if you want to perform bidirectional FEP or NEQ you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> <em>and</em> <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
+This can be controlled by setting the number using the variable <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.
+The default value set in the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script is <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states=2</span></code>, generating samples from both endstate equilibrium distributions.</p>
 </section>
 <section id="perform-unidirectional-neq-from-pi-x-lambda-0">
 <h2>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
-Again, we need to initialize the simulation object as described above.
-To perform a specific endstate correction we need to define a protocol (some standard protocols are shown <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/endstate_correction/tests/test_endstate_correction.py)">here</a>)
+1-octanol in a waterbox will be the test system again. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
+Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for 1-octanol without any modifications.</p>
+<p>To perform a specific endstate correction we need to define a protocol
+(some standard protocols are shown <span class="xref std std-ref">here</span>)
 with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocoll</span> <span class="o">=</span> <span class="n">Protocoll</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
@@ -140,11 +147,52 @@ with:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocoll)</span></code>.</p>
+<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
 <h2>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h2>
 <p>To analyse the results generated by <code class="code docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="code docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.</p>
+</section>
+<section id="available-protocols">
+<h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 
