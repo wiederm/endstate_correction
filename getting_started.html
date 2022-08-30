@@ -44,12 +44,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-use-this-package">How to use this package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#perform-unidirectional-fep-from-pi-x-lambda-0">Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-fep-from-pi-x-lambda-0">Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#available-protocols">Available protocols</a></li>
 </ul>
 </li>
@@ -97,9 +99,8 @@ We will start by describing the use of the  <code class="code docutils literal n
 </section>
 <section id="a-typical-neq-workflow">
 <h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
-</section>
 <section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
-<h2>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
+<h3>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing moves.
 If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
 <p>In the following we will use 1-octanol in a waterbox as a test system. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
@@ -132,7 +133,7 @@ This can be controlled by setting the number using the variable <code class="cod
 The default value set in the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script is <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states=2</span></code>, generating samples from both endstate equilibrium distributions.</p>
 </section>
 <section id="perform-unidirectional-neq-from-pi-x-lambda-0">
-<h2>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
+<h3>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 1-octanol in a waterbox will be the test system again. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
 Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for 1-octanol without any modifications.</p>
@@ -152,7 +153,7 @@ with:</p>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
 </section>
 <section id="perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">
-<h2>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h2>
+<h3>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> and the following protocol.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
@@ -167,7 +168,7 @@ with:</p>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
 </section>
 <section id="perform-unidirectional-fep-from-pi-x-lambda-0">
-<h2>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h2>
+<h3>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 The protocol has to be adopted slightly:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
@@ -182,8 +183,9 @@ The protocol has to be adopted slightly:</p>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
-<h2>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h2>
+<h3>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h3>
 <p>To analyse the results generated by <code class="code docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="code docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.</p>
+</section>
 </section>
 <section id="available-protocols">
 <h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
