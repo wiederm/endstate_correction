@@ -144,46 +144,46 @@
     <span class="c1"># ----------------------- NEQ ----------------------</span>
     <span class="c1">####################################################</span>
 
-    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">fep_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 
-    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">fep_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">fep_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span></div>
 
-    <span class="c1"># generate data for plotting tests</span>
-    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-        <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
-        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-        <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># # generate data for plotting tests</span>
+    <span class="c1"># protocol = Protocol(</span>
+    <span class="c1">#     method=&quot;NEQ&quot;,</span>
+    <span class="c1">#     direction=&quot;bidirectional&quot;,</span>
+    <span class="c1">#     sim=sim,</span>
+    <span class="c1">#     trajectories=[mm_samples, qml_samples],</span>
+    <span class="c1">#     nr_of_switches=100,</span>
+    <span class="c1"># )</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
+    <span class="c1"># r = perform_endstate_correction(protocol)</span>
     <span class="c1"># pickle.dump(</span>
     <span class="c1">#     r,</span>
     <span class="c1">#     open(</span>
@@ -191,15 +191,15 @@
     <span class="c1">#     ),</span>
     <span class="c1"># )</span>
 
-    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-        <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
-        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-        <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># protocol = Protocol(</span>
+    <span class="c1">#     method=&quot;NEQ&quot;,</span>
+    <span class="c1">#     direction=&quot;unidirectional&quot;,</span>
+    <span class="c1">#     sim=sim,</span>
+    <span class="c1">#     trajectories=[mm_samples, qml_samples],</span>
+    <span class="c1">#     nr_of_switches=100,</span>
+    <span class="c1"># )</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span></div>
+    <span class="c1"># r = perform_endstate_correction(protocol)</span>
     <span class="c1"># pickle.dump(</span>
     <span class="c1">#     r,</span>
     <span class="c1">#     open(</span>
