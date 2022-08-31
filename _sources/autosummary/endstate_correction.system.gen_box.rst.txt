@@ -1,0 +1,6 @@
+endstate\_correction.system.gen\_box
+====================================
+
+.. currentmodule:: endstate_correction.system
+
+.. autofunction:: gen_box
