@@ -67,10 +67,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for endstate_correction.neq</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Provide the functions for non-equilibrium switching.&quot;&quot;&quot;</span>
-
-
-<span class="kn">import</span> <span class="nn">pickle</span>
+<span></span><span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
@@ -81,7 +78,6 @@
 <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">distance_unit</span><span class="p">,</span> <span class="n">temperature</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">get_positions</span>
 <span class="kn">import</span> <span class="nn">openmm</span>
-
 
 <div class="viewcode-block" id="perform_switching"><a class="viewcode-back" href="../../autosummary/endstate_correction.neq.perform_switching.html#endstate_correction.neq.perform_switching">[docs]</a><span class="k">def</span> <span class="nf">perform_switching</span><span class="p">(</span>
     <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">save_traj</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -117,7 +113,6 @@
             <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">openmm</span><span class="o">.</span><span class="n">OpenMMException</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">endstate_correction.equ</span> <span class="kn">import</span> <span class="n">_seed_velocities</span><span class="p">,</span> <span class="n">_get_masses</span>
-
             <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocities</span><span class="p">(</span><span class="n">_seed_velocities</span><span class="p">(</span><span class="n">_get_masses</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">system</span><span class="p">)))</span>
         <span class="c1"># initialize work</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">0.0</span>

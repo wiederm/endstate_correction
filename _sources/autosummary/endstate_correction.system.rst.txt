@@ -16,6 +16,8 @@ endstate\_correction.system
       :nosignatures:
    
       create_charmm_system
+      gen_box
+      generate_samples
       get_energy
       get_positions
       read_box

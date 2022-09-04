@@ -52,6 +52,8 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.protocol.html">endstate_correction.protocol</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">endstate_correction.system</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.create_charmm_system.html">endstate_correction.system.create_charmm_system</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.gen_box.html">endstate_correction.system.gen_box</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.generate_samples.html">endstate_correction.system.generate_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_energy.html">endstate_correction.system.get_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_positions.html">endstate_correction.system.get_positions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.read_box.html">endstate_correction.system.read_box</a></li>
@@ -101,7 +103,13 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.system.create_charmm_system.html#endstate_correction.system.create_charmm_system" title="endstate_correction.system.create_charmm_system"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_charmm_system</span></code></a></p></td>
-<td><p>Generate an openMM simulation object using CHARMM topology and parameter files</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.system.gen_box.html#endstate_correction.system.gen_box" title="endstate_correction.system.gen_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_box</span></code></a></p></td>
+<td><p>Function to create psf file containing information about the box used (only for waterbox or commplex simulations).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.system.generate_samples.html#endstate_correction.system.generate_samples" title="endstate_correction.system.generate_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_samples</span></code></a></p></td>
+<td><p>generate samples using a defined system</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.system.get_energy.html#endstate_correction.system.get_energy" title="endstate_correction.system.get_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_energy</span></code></a></p></td>
 <td><p>get energy of system in a state</p></td>
@@ -110,7 +118,7 @@
 <td><p>get position of system in a state</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.system.read_box.html#endstate_correction.system.read_box" title="endstate_correction.system.read_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_box</span></code></a></p></td>
-<td><p>set waterbox dimensions given the sysinfo file provided by CHARMM-GUI</p></td>
+<td><p>Reads in box information from e.g.</p></td>
 </tr>
 </tbody>
 </table>
