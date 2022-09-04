@@ -53,7 +53,6 @@
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.create_charmm_system.html">endstate_correction.system.create_charmm_system</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.gen_box.html">endstate_correction.system.gen_box</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.generate_samples.html">endstate_correction.system.generate_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_energy.html">endstate_correction.system.get_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.system.get_positions.html">endstate_correction.system.get_positions</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.system.read_box</a></li>
@@ -99,7 +98,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="endstate_correction.system.read_box">
 <span class="sig-prename descclassname"><span class="pre">endstate_correction.system.</span></span><span class="sig-name descname"><span class="pre">read_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmPsfFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">CharmmPsfFile</span></span></span><a class="reference internal" href="../_modules/endstate_correction/system.html#read_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.system.read_box" title="Permalink to this definition"></a></dt>
-<dd><p>Reads in box information from e.g. sysinfo.dat file containing the boxlengths (x,y,z)</p>
+<dd><p>set waterbox dimensions given the sysinfo.dat file containing the boxlengths (x,y,z) provided by CHARMM-GUI</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>psf (CharmmPsfFile): topology instance
+filename (str): filename for sysinfo file</p>
+</dd>
+<dt>Returns:</dt><dd><p>CharmmPsfFile: topology instance with box dimensions set</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
