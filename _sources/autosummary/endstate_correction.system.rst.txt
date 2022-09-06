@@ -17,6 +17,7 @@ endstate\_correction.system
    
       create_charmm_system
       gen_box
+      generate_samples
       get_energy
       get_positions
       read_box

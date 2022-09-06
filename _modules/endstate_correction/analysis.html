@@ -67,8 +67,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for endstate_correction.analysis</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Provide the analysis functions.&quot;&quot;&quot;</span>
-
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
@@ -81,8 +80,9 @@
 <span class="kn">from</span> <span class="nn">matplotlib.offsetbox</span> <span class="kn">import</span> <span class="n">AnnotationBbox</span><span class="p">,</span> <span class="n">DrawingArea</span><span class="p">,</span> <span class="n">OffsetImage</span><span class="p">,</span> <span class="n">TextArea</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">FormatStrFormatter</span>
 <span class="kn">from</span> <span class="nn">pymbar</span> <span class="kn">import</span> <span class="n">BAR</span><span class="p">,</span> <span class="n">EXP</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">wasserstein_distance</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">Results</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">zinc_systems</span>
+<span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">kBT</span><span class="p">,</span> <span class="n">zinc_systems</span>
 
 
 <div class="viewcode-block" id="plot_overlap_for_equilibrium_free_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_overlap_for_equilibrium_free_energy</span><span class="p">(</span>
