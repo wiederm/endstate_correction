@@ -16,6 +16,7 @@ endstate\_correction.tests.test\_system
       :nosignatures:
    
       test_generate_simulation_instances_with_charmmff
+      test_simulating
    
    
 

@@ -118,8 +118,14 @@
 
 
 <div class="viewcode-block" id="read_box"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.read_box.html#endstate_correction.system.read_box">[docs]</a><span class="k">def</span> <span class="nf">read_box</span><span class="p">(</span><span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharmmPsfFile</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reads in box information from e.g. sysinfo.dat file containing the boxlengths (x,y,z)</span>
+    <span class="sd">&quot;&quot;&quot;set waterbox dimensions given the sysinfo.dat file containing the boxlengths (x,y,z) provided by CHARMM-GUI</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        psf (CharmmPsfFile): topology instance</span>
+<span class="sd">        filename (str): filename for sysinfo file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        CharmmPsfFile: topology instance with box dimensions set</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -143,13 +149,25 @@
     <span class="n">parameters</span><span class="p">:</span> <span class="n">CharmmParameterSet</span><span class="p">,</span>
     <span class="n">env</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">ml_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generate an openMM simulation object using CHARMM topology and parameter files</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        psf (CharmmPsfFile): topology instance</span>
+<span class="sd">        parameters (CharmmParameterSet): parameter instance</span>
+<span class="sd">        env (str): either complex, waterbox or vacuum</span>
+<span class="sd">        ml_atoms (list): list of atoms described by the QML potential</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Simulation: openMM simulation instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1">###################</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating charmm system in </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">env</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;waterbox&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="s2">&quot;complex&quot;</span><span class="p">)</span>
     <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
-    <span class="n">implementation</span><span class="p">,</span> <span class="n">platform</span> <span class="o">=</span> <span class="n">check_implementation</span><span class="p">()</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">platform</span> <span class="o">=</span> <span class="n">check_implementation</span><span class="p">()</span>
 
     <span class="c1">###################</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -184,17 +202,6 @@
 <div class="viewcode-block" id="get_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.get_energy.html#endstate_correction.system.get_energy">[docs]</a><span class="k">def</span> <span class="nf">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;get energy of system in a state&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="generate_samples"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.generate_samples.html#endstate_correction.system.generate_samples">[docs]</a><span class="k">def</span> <span class="nf">generate_samples</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> <span class="n">n_steps_per_sample</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;generate samples using a defined system&quot;&quot;&quot;</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generate samples with mixed System: </span><span class="si">{</span><span class="n">n_samples</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)):</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">n_steps_per_sample</span><span class="p">)</span>
-        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">samples</span></div>
 </pre></div>
 
            </div>
