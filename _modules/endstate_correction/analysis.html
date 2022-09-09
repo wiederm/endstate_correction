@@ -356,9 +356,13 @@
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="o">.</span><span class="n">size</span> <span class="ow">or</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span>
         <span class="n">cum_stddev_dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">cum_stddev_dEs_from_mm_to_qml</span><span class="p">,</span>
@@ -367,9 +371,13 @@
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="o">.</span><span class="n">size</span> <span class="ow">or</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span>
         <span class="n">cum_stddev_dEs_from_qml_to_mm</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">cum_stddev_dEs_from_qml_to_mm</span><span class="p">,</span>
