@@ -69,9 +69,8 @@
   <h1>Source code for endstate_correction.analysis</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Provide the analysis functions.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -361,8 +360,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span>
         <span class="n">cum_stddev_dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">cum_stddev_dEs_from_mm_to_qml</span><span class="p">,</span>
@@ -376,8 +374,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span>
         <span class="n">cum_stddev_dEs_from_qml_to_mm</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">cum_stddev_dEs_from_qml_to_mm</span><span class="p">,</span>
@@ -443,76 +440,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">WriteDrawingText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span></div>
-
-
-<span class="c1"># get trajectory</span>
-<div class="viewcode-block" id="get_traj"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.get_traj.html#endstate_correction.analysis.get_traj">[docs]</a><span class="k">def</span> <span class="nf">get_traj</span><span class="p">(</span>
-    <span class="n">samples</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">ff</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">w_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">switching</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">switching_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-<span class="p">):</span>
-
-    <span class="c1"># get sampling data</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">switching</span><span class="p">:</span>
-
-        <span class="c1"># depending on endstate, get correct label</span>
-        <span class="k">if</span> <span class="n">samples</span> <span class="o">==</span> <span class="s2">&quot;mm&quot;</span><span class="p">:</span>
-            <span class="n">endstate</span> <span class="o">=</span> <span class="s2">&quot;0.0000&quot;</span>
-        <span class="k">elif</span> <span class="n">samples</span> <span class="o">==</span> <span class="s2">&quot;qml&quot;</span><span class="p">:</span>
-            <span class="n">endstate</span> <span class="o">=</span> <span class="s2">&quot;1.0000&quot;</span>
-
-        <span class="c1"># get pickle files for traj</span>
-        <span class="n">pickle_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">w_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">/sampling_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/run*/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_samples_5000_steps_1000_lamb_</span><span class="si">{</span><span class="n">endstate</span><span class="si">}</span><span class="s2">.pickle&quot;</span>
-        <span class="p">)</span>
-
-        <span class="c1"># list for collecting sampling data</span>
-        <span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="c1"># generate traj instance only if at least one pickle file exists</span>
-        <span class="k">if</span> <span class="n">pickle_files</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">pickle_files</span><span class="p">:</span>
-                <span class="c1"># load pickle file</span>
-                <span class="n">coord</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
-                <span class="c1"># check, if sampling data is complete (MODIFY IF NR OF SAMPLING STEPS != 5000)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5000</span><span class="p">:</span>
-                    <span class="c1"># remove first 1k samples</span>
-                    <span class="n">coordinates</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1000</span><span class="p">:])</span>
-                    <span class="c1"># load topology from pdb file</span>
-                    <span class="n">top</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;mol.pdb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">topology</span>
-                    <span class="c1"># generate trajectory instance</span>
-                    <span class="n">traj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">(</span><span class="n">xyz</span><span class="o">=</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="n">traj</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">run</span><span class="si">}</span><span class="s2"> file contains incomplete sampling data&quot;</span><span class="p">)</span>
-
-    <span class="c1"># get trajectory data after switching</span>
-    <span class="k">else</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="n">switching_length</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">swi_length</span> <span class="o">=</span> <span class="s2">&quot;5001&quot;</span>
-        <span class="k">elif</span> <span class="n">switching_length</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">swi_length</span> <span class="o">=</span> <span class="s2">&quot;10001&quot;</span>
-        <span class="k">elif</span> <span class="n">switching_length</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
-            <span class="n">swi_length</span> <span class="o">=</span> <span class="s2">&quot;20001&quot;</span>
-
-        <span class="c1"># get pickle file for traj</span>
-        <span class="n">pickle_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">w_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">/switching_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_samples_5000_steps_1000_lamb_</span><span class="si">{</span><span class="n">samples</span><span class="si">}</span><span class="s2">_endstate_nr_samples_500_switching_length_</span><span class="si">{</span><span class="n">swi_length</span><span class="si">}</span><span class="s2">.pickle&quot;</span>
-
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pickle_file</span><span class="p">):</span>
-            <span class="c1"># load pickle file</span>
-            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pickle_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
-            <span class="c1"># load topology from pdb file</span>
-            <span class="n">top</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;mol.pdb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">topology</span>
-            <span class="c1"># generate trajectory instance</span>
-            <span class="n">traj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">(</span><span class="n">xyz</span><span class="o">=</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">traj</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No pickle file found.&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1"># get indices of dihedral bonds</span>
@@ -588,33 +515,10 @@
 
 
 <span class="c1"># plot torsion profiles</span>
-<div class="viewcode-block" id="vis_torsions"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.vis_torsions.html#endstate_correction.analysis.vis_torsions">[docs]</a><span class="k">def</span> <span class="nf">vis_torsions</span><span class="p">(</span>
-    <span class="n">zinc_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">ff</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">w_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/data/shared/projects/endstate_correction/&quot;</span><span class="p">,</span>
-    <span class="n">switching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">switching_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="c1">############################################ LOAD MOLECULE AND GET BOND INFO ##########################################################################################</span>
-
-    <span class="c1"># get zinc_id(name of the zinc system)</span>
-    <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">zinc_systems</span><span class="p">[</span><span class="n">zinc_id</span><span class="p">]</span>
-
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;################################## SYSTEM </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> ##################################&quot;</span>
-    <span class="p">)</span>
-
-    <span class="c1"># generate mol from name</span>
-    <span class="n">mol</span> <span class="o">=</span> <span class="n">generate_molecule</span><span class="p">(</span><span class="n">forcefield</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
-    <span class="c1"># write mol as pdb</span>
-    <span class="c1"># NOTE: pdb file is needed for mdtraj, which reads the topology in get_traj()</span>
-    <span class="c1"># this is not very elegant # FIXME: try to load topology directly</span>
-    <span class="n">mol</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">&quot;mol.pdb&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;pdb&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="visualize_torsion_profile"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.visualize_torsion_profile.html#endstate_correction.analysis.visualize_torsion_profile">[docs]</a><span class="k">def</span> <span class="nf">visualize_torsion_profile</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">trajectories</span><span class="p">:</span> <span class="n">dataclass</span><span class="p">):</span>
 
     <span class="c1"># get all bonds</span>
     <span class="n">bonds</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">bonds</span>
-
     <span class="c1"># get all rotatable bonds</span>
     <span class="n">rot_bond_list</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">find_rotatable_bonds</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rot_bond_list</span><span class="p">),</span> <span class="s2">&quot;rotatable bonds found.&quot;</span><span class="p">)</span>
@@ -651,39 +555,10 @@
             <span class="n">all_indices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 
             <span class="c1"># check if traj data can be retrieved</span>
-            <span class="n">traj_mm</span> <span class="o">=</span> <span class="n">get_traj</span><span class="p">(</span>
-                <span class="n">samples</span><span class="o">=</span><span class="s2">&quot;mm&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span>
-                <span class="n">w_dir</span><span class="o">=</span><span class="n">w_dir</span><span class="p">,</span>
-                <span class="n">switching</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">traj_qml</span> <span class="o">=</span> <span class="n">get_traj</span><span class="p">(</span>
-                <span class="n">samples</span><span class="o">=</span><span class="s2">&quot;qml&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span>
-                <span class="n">w_dir</span><span class="o">=</span><span class="n">w_dir</span><span class="p">,</span>
-                <span class="n">switching</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">traj_mm</span> <span class="o">=</span> <span class="n">trajectories</span><span class="o">.</span><span class="n">equilibrium_mm_trajectory</span>
+            <span class="n">traj_qml</span> <span class="o">=</span> <span class="n">trajectories</span><span class="o">.</span><span class="n">equilibrium_qml_trajectory</span>
 
             <span class="c1"># if also &#39;post-switching&#39; data has to be plotted, check if it can be retrieved</span>
-            <span class="k">if</span> <span class="n">switching</span><span class="p">:</span>
-                <span class="n">traj_mm_switching</span> <span class="o">=</span> <span class="n">get_traj</span><span class="p">(</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="s2">&quot;mm&quot;</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span>
-                    <span class="n">w_dir</span><span class="o">=</span><span class="n">w_dir</span><span class="p">,</span>
-                    <span class="n">switching</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">switching_length</span><span class="o">=</span><span class="n">switching_length</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">traj_qml_switching</span> <span class="o">=</span> <span class="n">get_traj</span><span class="p">(</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="s2">&quot;qml&quot;</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span>
-                    <span class="n">w_dir</span><span class="o">=</span><span class="n">w_dir</span><span class="p">,</span>
-                    <span class="n">switching</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">switching_length</span><span class="o">=</span><span class="n">switching_length</span><span class="p">,</span>
-                <span class="p">)</span>
 
             <span class="c1"># if both, mm and qml samples are found, compute dihedrals</span>
             <span class="k">if</span> <span class="n">traj_mm</span> <span class="ow">and</span> <span class="n">traj_qml</span><span class="p">:</span>
