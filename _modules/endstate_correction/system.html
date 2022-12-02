@@ -183,8 +183,8 @@
         <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span>
             <span class="n">parameters</span><span class="p">,</span>
             <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">,</span>
-            <span class="n">nonbondedCutoff</span><span class="o">=</span><span class="n">r_off</span> <span class="o">*</span> <span class="n">nanometers</span><span class="p">,</span>
-            <span class="n">switchDistance</span><span class="o">=</span><span class="n">r_on</span> <span class="o">*</span> <span class="n">nanometers</span><span class="p">,</span>
+            <span class="n">nonbondedCutoff</span><span class="o">=</span><span class="n">r_off</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">nanometers</span><span class="p">,</span>
+            <span class="n">switchDistance</span><span class="o">=</span><span class="n">r_on</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">nanometers</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
