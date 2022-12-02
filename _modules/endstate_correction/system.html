@@ -150,6 +150,8 @@
     <span class="n">parameters</span><span class="p">:</span> <span class="n">CharmmParameterSet</span><span class="p">,</span>
     <span class="n">env</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">ml_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">r_off</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">r_on</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Generate an openMM simulation object using CHARMM topology and parameter files</span>
 
@@ -166,7 +168,7 @@
 
     <span class="c1">###################</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating charmm system in </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">env</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;waterbox&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="s2">&quot;complex&quot;</span><span class="p">)</span>
+
     <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">platform</span> <span class="o">=</span> <span class="n">check_implementation</span><span class="p">()</span>
 
@@ -178,7 +180,12 @@
     <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">:</span>
         <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">NoCutoff</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">)</span>
+        <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">,</span>
+            <span class="n">nonbondedCutoff</span><span class="o">=</span><span class="n">r_off</span> <span class="o">*</span> <span class="n">nanometers</span><span class="p">,</span>
+            <span class="n">switchDistance</span><span class="o">=</span><span class="n">r_on</span> <span class="o">*</span> <span class="n">nanometers</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
 
