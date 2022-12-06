@@ -80,6 +80,7 @@
     <span class="n">CharmmCrdFile</span><span class="p">,</span>
     <span class="n">NoCutoff</span><span class="p">,</span>
     <span class="n">Simulation</span><span class="p">,</span>
+    <span class="n">PDBFile</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
@@ -152,6 +153,7 @@
     <span class="n">ml_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="n">r_off</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">r_on</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">rigidWater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Generate an openMM simulation object using CHARMM topology and parameter files</span>
 
