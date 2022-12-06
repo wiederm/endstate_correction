@@ -10,6 +10,7 @@ from openmm.app import (
     CharmmCrdFile,
     NoCutoff,
     Simulation,
+    PDBFile,
 )
 from openmmml import MLPotential
 from tqdm import tqdm
@@ -82,6 +83,7 @@ def create_charmm_system(
     ml_atoms: list,
     r_off: int = 1.0,
     r_on: int = 0,
+    rigidWater: bool = True,
 ) -> Simulation:
     """Generate an openMM simulation object using CHARMM topology and parameter files
 
