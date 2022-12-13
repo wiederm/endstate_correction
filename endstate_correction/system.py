@@ -83,7 +83,7 @@ def create_charmm_system(
     ml_atoms: list,
     r_off: int = 1.0,
     r_on: int = 0,
-    rigidWater: bool = True,
+    implementation: str = check_implementation()[0]
 ) -> Simulation:
     """Generate an openMM simulation object using CHARMM topology and parameter files
 
@@ -124,7 +124,11 @@ def create_charmm_system(
     #####################
     potential = MLPotential("ani2x")
     ml_system = potential.createMixedSystem(
-        psf.topology, mm_system, ml_atoms, interpolate=True
+        psf.topology,
+        mm_system,
+        ml_atoms,
+        interpolate=True,
+        implementation=implementation,
     )
     #####################
 
