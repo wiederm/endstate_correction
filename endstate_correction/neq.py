@@ -15,7 +15,7 @@ import openmm
 
 
 def perform_switching(
-    sim, lambdas: list, samples: list, nr_of_switches: int = 50, save_traj: bool = False
+    sim, lambdas: list, samples: list, nr_of_switches: int = 50, save_traj: bool = True
 ) -> Tuple[list, list]:
     """performs NEQ switching using the lambda sheme passed from randomly dranw samples"""
 
