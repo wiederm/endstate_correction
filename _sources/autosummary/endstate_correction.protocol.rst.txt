@@ -28,6 +28,7 @@ endstate\_correction.protocol
       :template: custom-class-template.rst
       :nosignatures:
    
+      BSSProtocol
       Protocol
       Results
    

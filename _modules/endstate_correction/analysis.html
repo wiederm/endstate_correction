@@ -88,7 +88,7 @@
 <div class="viewcode-block" id="plot_overlap_for_equilibrium_free_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_overlap_for_equilibrium_free_energy</span><span class="p">(</span>
     <span class="n">N_k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">u_kn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the overlap for each state with each other state. THe overlap is normalized to be 1 for each row.</span>
 
 <span class="sd">    Args:</span>
@@ -120,7 +120,7 @@
 <div class="viewcode-block" id="plot_results_for_equilibrium_free_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_results_for_equilibrium_free_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_results_for_equilibrium_free_energy</span><span class="p">(</span>
     <span class="n">N_k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">u_kn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the accumulated free energy along the mutation progress.</span>
 
 
@@ -179,7 +179,7 @@
         <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation bidirectional: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation bidirectional: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="c1">##############################################</span>
@@ -196,7 +196,7 @@
         <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Crooks&#39; equation: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Crooks&#39; equation: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="c1">##############################################</span>
@@ -660,7 +660,7 @@
                 <span class="p">}</span>
 
                 <span class="c1"># if needed, compute wasserstein distance</span>
-                <span class="sd">&quot;&quot;&quot;  # compute wasserstein distance</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;  # compute wasserstein distance</span>
 <span class="sd">                w_distance = wasserstein_distance(u_values = list(chain.from_iterable(torsions_mm[idx_counter])), v_values = list(chain.from_iterable(torsions_qml[idx_counter])))</span>
 <span class="sd">                w_distance_qml_switch_mm = wasserstein_distance(u_values = list(chain.from_iterable(torsions_qml[idx_counter])), v_values = list(chain.from_iterable(torsions_mm_switching[idx_counter])))</span>
 <span class="sd">                w_distance_mm_switch_qml = wasserstein_distance(u_values = list(chain.from_iterable(torsions_mm[idx_counter])), v_values = list(chain.from_iterable(torsions_qml_switching[idx_counter]))) &quot;&quot;&quot;</span>
@@ -707,7 +707,7 @@
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>  <span class="c1"># remove tick values on y axis</span>
 
             <span class="c1"># if wasserstein distance is computed, it can be added as an annotation box next to the plot</span>
-            <span class="sd">&quot;&quot;&quot; text_div = f&#39;Wasserstein distance\n\nmm (sampling) &amp; qml (sampling): {w_distance:.3f}\nmm (sampling) &amp; qml ({switching_length}ps switch): {w_distance_mm_switch_qml:.3f}\nqml (sampling) &amp; mm ({switching_length}ps switch): {w_distance_qml_switch_mm:.3f}&#39;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; text_div = f&#39;Wasserstein distance\n\nmm (sampling) &amp; qml (sampling): {w_distance:.3f}\nmm (sampling) &amp; qml ({switching_length}ps switch): {w_distance_mm_switch_qml:.3f}\nqml (sampling) &amp; mm ({switching_length}ps switch): {w_distance_qml_switch_mm:.3f}&#39;</span>
 <span class="sd">            offsetbox = TextArea(text_div,</span>
 <span class="sd">                                 textprops=dict(ha=&#39;left&#39;, size = 13))</span>
 <span class="sd">            xy = (0,0)</span>

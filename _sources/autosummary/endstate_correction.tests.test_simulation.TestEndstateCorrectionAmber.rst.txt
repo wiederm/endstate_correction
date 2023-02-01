@@ -1,0 +1,28 @@
+endstate\_correction.tests.test\_simulation.TestEndstateCorrectionAmber
+=======================================================================
+
+.. currentmodule:: endstate_correction.tests.test_simulation
+
+.. autoclass:: TestEndstateCorrectionAmber
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestEndstateCorrectionAmber.bss_protocol
+      ~TestEndstateCorrectionAmber.setup
+      ~TestEndstateCorrectionAmber.test_dcd
+      ~TestEndstateCorrectionAmber.test_sanity
+   
+   
+
+   
+   
+   

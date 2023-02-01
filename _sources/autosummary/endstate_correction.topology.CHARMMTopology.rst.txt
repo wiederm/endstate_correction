@@ -1,0 +1,33 @@
+endstate\_correction.topology.CHARMMTopology
+============================================
+
+.. currentmodule:: endstate_correction.topology
+
+.. autoclass:: CHARMMTopology
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CHARMMTopology.psf_file_path
+      ~CHARMMTopology.crd_file_path
+      ~CHARMMTopology.parameter_set
+      ~CHARMMTopology.input_config
+   
+   

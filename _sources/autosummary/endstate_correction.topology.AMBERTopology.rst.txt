@@ -1,0 +1,31 @@
+endstate\_correction.topology.AMBERTopology
+===========================================
+
+.. currentmodule:: endstate_correction.topology
+
+.. autoclass:: AMBERTopology
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AMBERTopology.rst7_file_path
+      ~AMBERTopology.prm7_file_path
+   
+   

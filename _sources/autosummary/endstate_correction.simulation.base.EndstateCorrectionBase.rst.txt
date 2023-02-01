@@ -1,0 +1,28 @@
+endstate\_correction.simulation.base.EndstateCorrectionBase
+===========================================================
+
+.. currentmodule:: endstate_correction.simulation.base
+
+.. autoclass:: EndstateCorrectionBase
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~EndstateCorrectionBase.get_initial_coordinates
+      ~EndstateCorrectionBase.get_integrator
+      ~EndstateCorrectionBase.get_mm_topology
+      ~EndstateCorrectionBase.start
+   
+   
+
+   
+   
+   

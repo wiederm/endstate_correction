@@ -1,0 +1,28 @@
+endstate\_correction.simulation.charmm.EndstateCorrectionCHARMM
+===============================================================
+
+.. currentmodule:: endstate_correction.simulation.charmm
+
+.. autoclass:: EndstateCorrectionCHARMM
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~EndstateCorrectionCHARMM.get_initial_coordinates
+      ~EndstateCorrectionCHARMM.get_integrator
+      ~EndstateCorrectionCHARMM.get_mm_topology
+      ~EndstateCorrectionCHARMM.start
+   
+   
+
+   
+   
+   

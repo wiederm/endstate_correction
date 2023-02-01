@@ -71,17 +71,107 @@
 <span></span><span class="sd">&quot;&quot;&quot;Provide functions for the endstate correction workflow.&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
+<span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
 <span class="kn">from</span> <span class="nn">pymbar</span> <span class="kn">import</span> <span class="n">MBAR</span>
+
+
+<div class="viewcode-block" id="BSSProtocol"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.BSSProtocol.html#endstate_correction.protocol.BSSProtocol">[docs]</a><span class="k">class</span> <span class="nc">BSSProtocol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This is a dataclass mimicking the BioSimSpace.Protocol.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">timestep</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">n_integration_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">pressure</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">report_interval</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">restart_interval</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">rlist</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">collision_rate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">switchDistance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">lam</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class for storing the run information</span>
+
+<span class="sd">        :param timestep: fs</span>
+<span class="sd">        :param n_integration_steps:</span>
+<span class="sd">        :param temperature: K</span>
+<span class="sd">        :param pressure: atm</span>
+<span class="sd">        :param report_interval: The frequency at which energy are recorded (In integration steps).</span>
+<span class="sd">        :param restart_interval: The frequency at which frames are recorded (In integration steps).</span>
+<span class="sd">        :param rlist: short-range cutoff in nanometers.</span>
+<span class="sd">        :param collision_rate: 1/picosecond</span>
+<span class="sd">        :param switchDistance: nanometers</span>
+<span class="sd">        :param lam: Current lambda</span>
+<span class="sd">        :param restart: Whether to reset the velocity or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestep</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="o">=</span> <span class="n">timestep</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">femtosecond</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`timestep` should be a time unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="o">=</span> <span class="n">timestep</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">femtosecond</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_integration_steps</span> <span class="o">=</span> <span class="n">n_integration_steps</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kelvin</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`temperature` should be a temperature unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kelvin</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">pressure</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">atmosphere</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`pressure` should be a pressure unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">pressure</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">atmosphere</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_interval</span> <span class="o">=</span> <span class="n">report_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart_interval</span> <span class="o">=</span> <span class="n">restart_interval</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rlist</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rlist</span> <span class="o">=</span> <span class="n">rlist</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`rlist` should be a length unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rlist</span> <span class="o">=</span> <span class="n">rlist</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collision_rate</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">collision_rate</span> <span class="o">=</span> <span class="n">collision_rate</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">picosecond</span><span class="o">**-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`collision_rate` should be a 1/time unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collision_rate</span> <span class="o">=</span> <span class="n">collision_rate</span> <span class="o">/</span> <span class="n">unit</span><span class="o">.</span><span class="n">picosecond</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">switchDistance</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">collision_rate</span> <span class="o">=</span> <span class="n">collision_rate</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`switchDistance` should be a length unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">switchDistance</span> <span class="o">=</span> <span class="n">switchDistance</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="n">lam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span></div>
 
 
 <div class="viewcode-block" id="Protocol"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.Protocol.html#endstate_correction.protocol.Protocol">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Protocol</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Defining the endstate correction protocol&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defining the endstate correction protocol&quot;&quot;&quot;</span>
 
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span>
@@ -93,7 +183,7 @@
 
 <div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.Results.html#endstate_correction.protocol.Results">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Results</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Provides a dataclass containing the results of a protocol&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a dataclass containing the results of a protocol&quot;&quot;&quot;</span>
 
     <span class="n">dE_mm_to_qml</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
     <span class="n">dE_qml_to_mm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
@@ -103,7 +193,7 @@
 
 
 <div class="viewcode-block" id="perform_endstate_correction"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.perform_endstate_correction.html#endstate_correction.protocol.perform_endstate_correction">[docs]</a><span class="k">def</span> <span class="nf">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">:</span> <span class="n">Protocol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Perform endstate correction using the provided protocol.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform endstate correction using the provided protocol.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        protocol (Protocol): defines the endstatte correction</span>

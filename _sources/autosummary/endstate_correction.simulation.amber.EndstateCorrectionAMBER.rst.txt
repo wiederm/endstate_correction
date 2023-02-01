@@ -1,0 +1,28 @@
+endstate\_correction.simulation.amber.EndstateCorrectionAMBER
+=============================================================
+
+.. currentmodule:: endstate_correction.simulation.amber
+
+.. autoclass:: EndstateCorrectionAMBER
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~EndstateCorrectionAMBER.get_initial_coordinates
+      ~EndstateCorrectionAMBER.get_integrator
+      ~EndstateCorrectionAMBER.get_mm_topology
+      ~EndstateCorrectionAMBER.start
+   
+   
+
+   
+   
+   

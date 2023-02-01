@@ -1,0 +1,28 @@
+endstate\_correction.tests.test\_simulation.TestEndstateCorrectionCharmm
+========================================================================
+
+.. currentmodule:: endstate_correction.tests.test_simulation
+
+.. autoclass:: TestEndstateCorrectionCharmm
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestEndstateCorrectionCharmm.bss_protocol
+      ~TestEndstateCorrectionCharmm.setup
+      ~TestEndstateCorrectionCharmm.test_dcd
+      ~TestEndstateCorrectionCharmm.test_sanity
+   
+   
+
+   
+   
+   
