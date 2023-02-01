@@ -1,0 +1,28 @@
+endstate\_correction.tests.test\_perform\_endstate\_correction.TestPerformCorrection
+====================================================================================
+
+.. currentmodule:: endstate_correction.tests.test_perform_endstate_correction
+
+.. autoclass:: TestPerformCorrection
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestPerformCorrection.bss_protocol
+      ~TestPerformCorrection.ec
+      ~TestPerformCorrection.perform_correction
+      ~TestPerformCorrection.test_sanity
+   
+   
+
+   
+   
+   

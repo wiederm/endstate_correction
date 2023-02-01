@@ -19,6 +19,9 @@ endstate\_correction.simulation.charmm.EndstateCorrectionCHARMM
       ~EndstateCorrectionCHARMM.get_initial_coordinates
       ~EndstateCorrectionCHARMM.get_integrator
       ~EndstateCorrectionCHARMM.get_mm_topology
+      ~EndstateCorrectionCHARMM.get_simulation
+      ~EndstateCorrectionCHARMM.get_trajectory
+      ~EndstateCorrectionCHARMM.get_xyz
       ~EndstateCorrectionCHARMM.start
    
    

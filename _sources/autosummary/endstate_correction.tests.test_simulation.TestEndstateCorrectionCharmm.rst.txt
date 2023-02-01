@@ -18,8 +18,10 @@ endstate\_correction.tests.test\_simulation.TestEndstateCorrectionCharmm
    
       ~TestEndstateCorrectionCharmm.bss_protocol
       ~TestEndstateCorrectionCharmm.setup
-      ~TestEndstateCorrectionCharmm.test_dcd
+      ~TestEndstateCorrectionCharmm.test_get_xyz
       ~TestEndstateCorrectionCharmm.test_sanity
+      ~TestEndstateCorrectionCharmm.test_traj
+      ~TestEndstateCorrectionCharmm.test_trajfile_exist
    
    
 

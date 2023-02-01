@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endstate_correction.tests.test_endstate_correction.test_NEQ_protocol &mdash; endstate_correction  documentation</title>
+  <title>endstate_correction.tests.test_perform_endstate_correction &mdash; endstate_correction  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.tests.test_endstate_correction.test_each_protocol" href="endstate_correction.tests.test_endstate_correction.test_each_protocol.html" />
-    <link rel="prev" title="endstate_correction.tests.test_endstate_correction.test_FEP_protocol" href="endstate_correction.tests.test_endstate_correction.test_FEP_protocol.html" /> 
+    <link rel="next" title="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection" href="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection.html" />
+    <link rel="prev" title="endstate_correction.tests.test_neq.test_switching" href="endstate_correction.tests.test_neq.test_switching.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,11 +55,11 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.tests.html">endstate_correction.tests</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_analysis.html">endstate_correction.tests.test_analysis</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_equ.html">endstate_correction.tests.test_equ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_misc.html">endstate_correction.tests.test_misc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_neq.html">endstate_correction.tests.test_neq</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_perform_endstate_correction.html">endstate_correction.tests.test_perform_endstate_correction</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.tests.test_perform_endstate_correction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_sampling.html">endstate_correction.tests.test_sampling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_simulation.html">endstate_correction.tests.test_simulation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_system.html">endstate_correction.tests.test_system</a></li>
@@ -90,10 +90,9 @@
           <li class="breadcrumb-item"><a href="../api.html">API Documentation</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.html">endstate_correction</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.tests.html">endstate_correction.tests</a></li>
-          <li class="breadcrumb-item"><a href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
-      <li class="breadcrumb-item active">endstate_correction.tests.test_endstate_correction.test_NEQ_protocol</li>
+      <li class="breadcrumb-item active">endstate_correction.tests.test_perform_endstate_correction</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/autosummary/endstate_correction.tests.test_endstate_correction.test_NEQ_protocol.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/autosummary/endstate_correction.tests.test_perform_endstate_correction.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -101,22 +100,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="endstate-correction-tests-test-endstate-correction-test-neq-protocol">
-<h1>endstate_correction.tests.test_endstate_correction.test_NEQ_protocol<a class="headerlink" href="#endstate-correction-tests-test-endstate-correction-test-neq-protocol" title="Permalink to this heading"></a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="endstate_correction.tests.test_endstate_correction.test_NEQ_protocol">
-<span class="sig-prename descclassname"><span class="pre">endstate_correction.tests.test_endstate_correction.</span></span><span class="sig-name descname"><span class="pre">test_NEQ_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endstate_correction/tests/test_endstate_correction.html#test_NEQ_protocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.tests.test_endstate_correction.test_NEQ_protocol" title="Permalink to this definition"></a></dt>
-<dd><p>Perform NEQ uni- and bidirectional protocol</p>
-</dd></dl>
-
+  <section id="module-endstate_correction.tests.test_perform_endstate_correction">
+<span id="endstate-correction-tests-test-perform-endstate-correction"></span><h1>endstate_correction.tests.test_perform_endstate_correction<a class="headerlink" href="#module-endstate_correction.tests.test_perform_endstate_correction" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection.html#endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection" title="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TestPerformCorrection</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="endstate_correction.tests.test_endstate_correction.test_FEP_protocol.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_endstate_correction.test_FEP_protocol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.tests.test_endstate_correction.test_each_protocol.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_endstate_correction.test_each_protocol" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.tests.test_neq.test_switching.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_neq.test_switching" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_perform_endstate_correction.TestPerformCorrection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

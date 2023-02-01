@@ -19,6 +19,9 @@ endstate\_correction.simulation.base.EndstateCorrectionBase
       ~EndstateCorrectionBase.get_initial_coordinates
       ~EndstateCorrectionBase.get_integrator
       ~EndstateCorrectionBase.get_mm_topology
+      ~EndstateCorrectionBase.get_simulation
+      ~EndstateCorrectionBase.get_trajectory
+      ~EndstateCorrectionBase.get_xyz
       ~EndstateCorrectionBase.start
    
    

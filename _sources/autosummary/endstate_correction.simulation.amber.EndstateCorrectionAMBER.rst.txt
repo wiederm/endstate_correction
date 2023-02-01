@@ -19,6 +19,9 @@ endstate\_correction.simulation.amber.EndstateCorrectionAMBER
       ~EndstateCorrectionAMBER.get_initial_coordinates
       ~EndstateCorrectionAMBER.get_integrator
       ~EndstateCorrectionAMBER.get_mm_topology
+      ~EndstateCorrectionAMBER.get_simulation
+      ~EndstateCorrectionAMBER.get_trajectory
+      ~EndstateCorrectionAMBER.get_xyz
       ~EndstateCorrectionAMBER.start
    
    

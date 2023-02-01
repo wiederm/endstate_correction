@@ -18,8 +18,10 @@ endstate\_correction.tests.test\_simulation.TestEndstateCorrectionAmber
    
       ~TestEndstateCorrectionAmber.bss_protocol
       ~TestEndstateCorrectionAmber.setup
-      ~TestEndstateCorrectionAmber.test_dcd
+      ~TestEndstateCorrectionAmber.test_get_xyz
       ~TestEndstateCorrectionAmber.test_sanity
+      ~TestEndstateCorrectionAmber.test_traj
+      ~TestEndstateCorrectionAmber.test_trajfile_exist
    
    
 
