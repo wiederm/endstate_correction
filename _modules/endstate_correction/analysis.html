@@ -26,11 +26,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> endstate_correction
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            endstate_correction
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -56,7 +60,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">endstate_correction.analysis</li>
       <li class="wy-breadcrumbs-aside">
@@ -202,8 +206,18 @@
     <span class="c1">##############################################</span>
     <span class="c1"># ---------------------- EQU ------------------</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
-        <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">dddG_equ</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">dddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equilibrium free energy: </span><span class="si">{</span><span class="n">ddG_equ</span><span class="si">}</span><span class="s2">+/-</span><span class="si">{</span><span class="n">dddG_equ</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#--------------------------------------#&quot;</span><span class="p">)</span>
