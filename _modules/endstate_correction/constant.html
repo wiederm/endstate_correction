@@ -26,11 +26,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> endstate_correction
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            endstate_correction
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -56,7 +60,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">endstate_correction.constant</li>
       <li class="wy-breadcrumbs-aside">
@@ -105,40 +109,78 @@
     <span class="s2">&quot;triacetylglycerol&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
+<span class="n">blacklist</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ZINC00061095&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ZINC00095858&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ZINC00138607&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ZINC01036618&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ZINC33381936&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
 <span class="n">zinc_systems</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span>
         <span class="s2">&quot;ZINC00061095&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CCOc1ccc2nc(/N=C\c3ccccc3O)sc2c1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hp1&quot;</span><span class="p">,</span>
     <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00077329&quot;</span><span class="p">,</span> <span class="s2">&quot;Cn1cc(Cl)c(/C=N/O)n1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 2</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00079729&quot;</span><span class="p">,</span> <span class="s2">&quot;S=c1cc(-c2ccc(Cl)cc2)ss1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 3</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00086442&quot;</span><span class="p">,</span> <span class="s2">&quot;CN1C(=O)C/C(=N\O)N(C)C1=O&quot;</span><span class="p">),</span>  <span class="c1"># hipen 4</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00087557&quot;</span><span class="p">,</span> <span class="s2">&quot;NNC(=O)[C@H]1C(c2ccccc2)[C@@H]1C(=O)NN&quot;</span><span class="p">),</span>  <span class="c1"># hipen 5</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00077329&quot;</span><span class="p">,</span> <span class="s2">&quot;Cn1cc(Cl)c(/C=N/O)n1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp2&quot;</span><span class="p">),</span>  <span class="c1"># hipen 2</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00079729&quot;</span><span class="p">,</span> <span class="s2">&quot;S=c1cc(-c2ccc(Cl)cc2)ss1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp3&quot;</span><span class="p">),</span>  <span class="c1"># hipen 3</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00086442&quot;</span><span class="p">,</span> <span class="s2">&quot;CN1C(=O)C/C(=N\O)N(C)C1=O&quot;</span><span class="p">,</span> <span class="s2">&quot;hp4&quot;</span><span class="p">),</span>  <span class="c1"># hipen 4</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00087557&quot;</span><span class="p">,</span> <span class="s2">&quot;NNC(=O)[C@H]1C(c2ccccc2)[C@@H]1C(=O)NN&quot;</span><span class="p">,</span> <span class="s2">&quot;hp5&quot;</span><span class="p">),</span>  <span class="c1"># hipen 5</span>
     <span class="p">(</span>
         <span class="s2">&quot;ZINC00095858&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CCO/C(O)=N/S(=O)(=O)c1ccccc1Cl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hp6&quot;</span><span class="p">,</span>
     <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00107550&quot;</span><span class="p">,</span> <span class="s2">&quot;C/C(=N\O)c1oc(C)nc1C&quot;</span><span class="p">),</span>  <span class="c1"># hipen 7</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00107778&quot;</span><span class="p">,</span> <span class="s2">&quot;O/N=C/C1=C(Cl)c2cc(Cl)ccc2OC1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 8</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00123162&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(=O)/C(=N/Nc1ccc(Cl)cc1)C(=O)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 9</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00133435&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2nc3ccccc3nc2-c2ccccn2)nc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 10</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00107550&quot;</span><span class="p">,</span> <span class="s2">&quot;C/C(=N\O)c1oc(C)nc1C&quot;</span><span class="p">,</span> <span class="s2">&quot;hp7&quot;</span><span class="p">),</span>  <span class="c1"># hipen 7</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00107778&quot;</span><span class="p">,</span> <span class="s2">&quot;O/N=C/C1=C(Cl)c2cc(Cl)ccc2OC1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp8&quot;</span><span class="p">),</span>  <span class="c1"># hipen 8</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00123162&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(=O)/C(=N/Nc1ccc(Cl)cc1)C(=O)c1ccccc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp9&quot;</span><span class="p">),</span>  <span class="c1"># hipen 9</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00133435&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2nc3ccccc3nc2-c2ccccn2)nc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp10&quot;</span><span class="p">),</span>  <span class="c1"># hipen 10</span>
     <span class="p">(</span>
         <span class="s2">&quot;ZINC00138607&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O=C(CC1=NO[C@H](c2ccccc2O)N1)N1CCCC1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hp11&quot;</span><span class="p">,</span>
     <span class="p">),</span>  <span class="c1"># NOTE: this system has a wrong topology in the psf file</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00140610&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1cc(C)c2c(=O)[nH]sc2n1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 12</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00164361&quot;</span><span class="p">,</span> <span class="s2">&quot;CCON1C(=O)c2ccccc2C1=O&quot;</span><span class="p">),</span>  <span class="c1"># hipen 13</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00167648&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1ccc(COn2c(-c3ccccc3)nc3ccccc3c2=O)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 14</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC00169358&quot;</span><span class="p">,</span> <span class="s2">&quot;CC1=Cn2c(=O)c3ccccc3c(=O)n2C1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 15</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC01036618&quot;</span><span class="p">,</span> <span class="s2">&quot;COc1ccc(/C=C2/N=C(c3ccccc3)NNC2=O)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen n/a</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC01755198&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(C)C(=O)NNC(=O)C(C)C&quot;</span><span class="p">),</span>  <span class="c1"># hipen 16</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC01867000&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2ccccc2-c2ccccc2)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 17</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC03127671&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(CSCC(=O)Nc1ccccc1)NNC(=O)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 18</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC04344392&quot;</span><span class="p">,</span> <span class="s2">&quot;CCOC(=O)NNC(=O)NCCCc1ccc2ccc3cccc4ccc1c2c34&quot;</span><span class="p">),</span>  <span class="c1"># hipen 19</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC04363792&quot;</span><span class="p">,</span> <span class="s2">&quot;Clc1cc(Cl)cc(/N=c2\ssnc2-c2ccccc2Cl)c1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 20</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC06568023&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(NNC(=O)c1ccccc1)c1ccccc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 21</span>
-    <span class="p">(</span><span class="s2">&quot;ZINC33381936&quot;</span><span class="p">,</span> <span class="s2">&quot;O=S(=O)(O/N=C1/CCc2ccccc21)c1ccc(Cl)cc1&quot;</span><span class="p">),</span>  <span class="c1"># hipen 22</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00140610&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1cc(C)c2c(=O)[nH]sc2n1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp12&quot;</span><span class="p">),</span>  <span class="c1"># hipen 12</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00164361&quot;</span><span class="p">,</span> <span class="s2">&quot;CCON1C(=O)c2ccccc2C1=O&quot;</span><span class="p">,</span> <span class="s2">&quot;hp13&quot;</span><span class="p">),</span>  <span class="c1"># hipen 13</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00167648&quot;</span><span class="p">,</span> <span class="s2">&quot;Cc1ccc(COn2c(-c3ccccc3)nc3ccccc3c2=O)cc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp14&quot;</span><span class="p">),</span>  <span class="c1"># hipen 14</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC00169358&quot;</span><span class="p">,</span> <span class="s2">&quot;CC1=Cn2c(=O)c3ccccc3c(=O)n2C1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp15&quot;</span><span class="p">),</span>  <span class="c1"># hipen 15</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01036618&quot;</span><span class="p">,</span> <span class="s2">&quot;COc1ccc(/C=C2/N=C(c3ccccc3)NNC2=O)cc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hpna&quot;</span><span class="p">),</span>  <span class="c1"># hipen n/a</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01755198&quot;</span><span class="p">,</span> <span class="s2">&quot;CC(C)C(=O)NNC(=O)C(C)C&quot;</span><span class="p">,</span> <span class="s2">&quot;hp16&quot;</span><span class="p">),</span>  <span class="c1"># hipen 16</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC01867000&quot;</span><span class="p">,</span> <span class="s2">&quot;c1ccc(-c2ccccc2-c2ccccc2)cc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp17&quot;</span><span class="p">),</span>  <span class="c1"># hipen 17</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC03127671&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(CSCC(=O)Nc1ccccc1)NNC(=O)c1ccccc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp18&quot;</span><span class="p">),</span>  <span class="c1"># hipen 18</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC04344392&quot;</span><span class="p">,</span> <span class="s2">&quot;CCOC(=O)NNC(=O)NCCCc1ccc2ccc3cccc4ccc1c2c34&quot;</span><span class="p">,</span> <span class="s2">&quot;hp19&quot;</span><span class="p">),</span>  <span class="c1"># hipen 19</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC04363792&quot;</span><span class="p">,</span> <span class="s2">&quot;Clc1cc(Cl)cc(/N=c2\ssnc2-c2ccccc2Cl)c1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp20&quot;</span><span class="p">),</span>  <span class="c1"># hipen 20</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC06568023&quot;</span><span class="p">,</span> <span class="s2">&quot;O=C(NNC(=O)c1ccccc1)c1ccccc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp21&quot;</span><span class="p">),</span>  <span class="c1"># hipen 21</span>
+    <span class="p">(</span><span class="s2">&quot;ZINC33381936&quot;</span><span class="p">,</span> <span class="s2">&quot;O=S(=O)(O/N=C1/CCc2ccccc21)c1ccc(Cl)cc1&quot;</span><span class="p">,</span> <span class="s2">&quot;hp22&quot;</span><span class="p">),</span>  <span class="c1"># hipen 22</span>
 <span class="p">]</span>
+
+
+<span class="n">map_hp_to_zinc</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;hp1&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00061095&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp2&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00077329&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp3&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00079729&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp4&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00086442&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp5&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00087557&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp6&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00095858&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp7&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00107550&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp8&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00107778&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp9&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00123162&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp10&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00133435&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp11&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00138607&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp12&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00140610&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp13&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00164361&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp14&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00167648&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp15&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC00169358&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp16&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC01755198&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp17&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC01867000&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp18&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC03127671&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp19&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC04344392&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp20&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC04363792&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp21&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC06568023&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hp22&quot;</span><span class="p">:</span> <span class="s2">&quot;ZINC33381936&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
