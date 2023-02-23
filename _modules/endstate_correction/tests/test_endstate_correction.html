@@ -351,8 +351,32 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 
-    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+        <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional_reverse&quot;</span><span class="p">,</span>
+        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+        <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
+        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">neq_protocol</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    
+
+    <span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
@@ -361,11 +385,39 @@
         <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">neq_protocol</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span></div>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        
+    <span class="c1"># test saving endstates and saving trajectory option</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+        <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
+        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+        <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
+        <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">save_endstates</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">save_trajs</span><span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>   
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span></div>
 </pre></div>
 
            </div>
