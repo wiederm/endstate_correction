@@ -29,10 +29,6 @@ endstate\_correction.protocol.Results
       ~Results.W_qml_to_mm
       ~Results.dE_mm_to_qml
       ~Results.dE_qml_to_mm
-      ~Results.endstate_samples_mm_to_qml
-      ~Results.endstate_samples_qml_to_mm
-      ~Results.switching_traj_mm_to_qml
-      ~Results.switching_traj_qml_to_mm
       ~Results.equ_mbar
    
    

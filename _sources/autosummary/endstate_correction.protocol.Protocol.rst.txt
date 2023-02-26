@@ -28,8 +28,6 @@ endstate\_correction.protocol.Protocol
       ~Protocol.direction
       ~Protocol.neq_switching_length
       ~Protocol.nr_of_switches
-      ~Protocol.save_endstates
-      ~Protocol.save_trajs
       ~Protocol.method
       ~Protocol.sim
       ~Protocol.trajectories
