@@ -100,7 +100,7 @@ class EndstateCorrectionBase(abc.ABC):
 
     def start(self):
         # define lambda states
-        lamb = self.protocol.lam["ml-lambda"]
+        lamb = self.protocol.lam
         self.logger.info(f"{lamb=}")
         # define where to store samples
         trajectory_dir = f"{self.work_dir}/lambda_{lamb:.4f}"
