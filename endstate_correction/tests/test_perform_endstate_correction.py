@@ -26,7 +26,7 @@ class TestPerformCorrection():
             collision_rate=1,
             switchDistance=0,
             restart=False,
-            lam=pd.Series(data={"ml-lambda": 0}),
+            lam=0,
         )
         return protocol
     @staticmethod
