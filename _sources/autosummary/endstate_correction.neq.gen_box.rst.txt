@@ -1,0 +1,6 @@
+endstate\_correction.neq.gen\_box
+=================================
+
+.. currentmodule:: endstate_correction.neq
+
+.. autofunction:: gen_box
