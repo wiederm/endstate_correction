@@ -2,7 +2,7 @@
 import json
 
 import openmm as mm
-from openmm import unit
+from openmm import unit, MonteCarloBarostat
 from openmm.app import (
     PME,
     CharmmParameterSet,
@@ -10,6 +10,7 @@ from openmm.app import (
     CharmmCrdFile,
     NoCutoff,
     Simulation,
+    PDBFile,
 )
 from openmmml import MLPotential
 from tqdm import tqdm
@@ -82,6 +83,8 @@ def create_charmm_system(
     ml_atoms: list,
     r_off: int = 1.0,
     r_on: int = 0,
+    implementation: str = check_implementation()[0],
+    npt: bool = False,
 ) -> Simulation:
     """Generate an openMM simulation object using CHARMM topology and parameter files
 
@@ -115,6 +118,7 @@ def create_charmm_system(
             nonbondedMethod=PME,
             nonbondedCutoff=r_off * unit.nanometers,
             switchDistance=r_on * unit.nanometers,
+            temperature=temperature
         )
 
     print(f"{ml_atoms=}")
@@ -122,9 +126,17 @@ def create_charmm_system(
     #####################
     potential = MLPotential("ani2x")
     ml_system = potential.createMixedSystem(
-        psf.topology, mm_system, ml_atoms, interpolate=True
+        psf.topology,
+        mm_system,
+        ml_atoms,
+        interpolate=True,
+        implementation=implementation,
     )
     #####################
+
+    if npt:
+        barostat = MonteCarloBarostat(1.0 * unit.bar, temperature)
+        ml_system.addForce(barostat)
 
     integrator = mm.LangevinIntegrator(temperature, collision_rate, stepsize)
     platform = mm.Platform.getPlatformByName(platform)
