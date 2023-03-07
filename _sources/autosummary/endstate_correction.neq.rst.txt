@@ -15,7 +15,6 @@ endstate\_correction.neq
       :toctree:
       :nosignatures:
    
-      gen_box
       perform_switching
    
    
