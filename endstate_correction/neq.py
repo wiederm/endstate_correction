@@ -11,7 +11,6 @@ from tqdm import tqdm
 
 from endstate_correction.constant import distance_unit, temperature
 from endstate_correction.system import get_positions
-import openmm
 
 
 def perform_switching(
@@ -44,12 +43,7 @@ def perform_switching(
         sim.context.setPositions(x)
 
         # reseed velocities
-        try:
-            sim.context.setVelocitiesToTemperature(temperature)
-        except openmm.OpenMMException:
-            from endstate_correction.equ import _seed_velocities, _get_masses
-
-            sim.context.setVelocities(_seed_velocities(_get_masses(sim.system)))
+        sim.context.setVelocitiesToTemperature(temperature)
         # initialize work
         w = 0.0
         # perform NEQ switching
@@ -69,6 +63,7 @@ def perform_switching(
             u_before = sim.context.getState(getEnergy=True).getPotentialEnergy()
             # add to accumulated work
             w += (u_now - u_before).value_in_unit(unit.kilojoule_per_mole)
+            # TODO: expand to reduced potential
         if save_traj:
             endstate_samples.append(get_positions(sim))
         ws.append(w)

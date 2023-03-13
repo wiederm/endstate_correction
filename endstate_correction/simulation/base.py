@@ -17,9 +17,9 @@ from openmm.app import (
 from openmmml import MLPotential
 from typing import List, Literal, Union
 
-from ..constant import check_implementation
 from ..protocol import BSSProtocol
 from ..topology import AMBERTopology, CHARMMTopology
+from openmmtools.utils import get_fastest_platform
 
 
 class EndstateCorrectionBase(abc.ABC):
@@ -32,7 +32,7 @@ class EndstateCorrectionBase(abc.ABC):
         name: str = "endstate_correction",
         work_dir: str = "./",
         potential: str = "ani2x",
-        implementation:str = "nnpops",
+        implementation: str = "nnpops",
         interpolate: bool = True,
     ):
         self.logger = logging.getLogger("EndstateCorrectionBase")
@@ -54,8 +54,7 @@ class EndstateCorrectionBase(abc.ABC):
             implementation="nnpops",
         )
         integrator = self.get_integrator()
-        _, platform = check_implementation()
-        platform = Platform.getPlatformByName(platform)
+        platform = get_fastest_platform(minimum_precision="mixed")
         self.simulation = Simulation(
             self.get_mm_topology().topology, ml_system, integrator, platform=platform
         )

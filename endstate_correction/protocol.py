@@ -11,7 +11,7 @@ import pandas as pd
 from openmm import unit
 from openmm.app import Simulation
 from pymbar import MBAR
-
+from openmmtools.utils import get_fastest_platform
 
 class BSSProtocol:
     """This is a dataclass mimicking the BioSimSpace.Protocol."""

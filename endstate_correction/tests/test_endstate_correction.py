@@ -6,17 +6,52 @@ Unit and regression test for the endstate_correction package.
 import sys, pickle, os
 import pytest
 import numpy as np
+from endstate_correction.protocol import perform_endstate_correction, Protocol
+from .test_neq import load_endstate_system_and_samples
 
 
 def test_endstate_correction_imported():
     """Sample test, will always pass so long as import statement worked."""
     assert "endstate_correction" in sys.modules
 
+def save_pickle_results(sim, mm_samples, qml_samples, system_name):
+    
+    # generate data for plotting tests
+    protocol = Protocol(
+        method="NEQ",
+        direction="bidirectional",
+        sim=sim,
+        trajectories=[mm_samples, qml_samples],
+        nr_of_switches=100,
+    )
+
+    r = perform_endstate_correction(protocol)
+    pickle.dump(
+        r,
+        open(
+            f"data/{system_name}/switching_charmmff/{system_name}_neq_bid.pickle", "wb"
+        ),
+    )
+
+    protocol = Protocol(
+        method="NEQ",
+        direction="unidirectional",
+        sim=sim,
+        trajectories=[mm_samples, qml_samples],
+        nr_of_switches=100,
+    )
+
+    r = perform_endstate_correction(protocol)
+    pickle.dump(
+        r,
+        open(
+            f"data/{system_name}/switching_charmmff/{system_name}_neq_unid.pickle", "wb"
+        ),
+    )
+
 
 def test_FEP_protocol():
     """Perform FEP uni- and bidirectional protocol"""
-    from endstate_correction.protocol import perform_endstate_correction, Protocol
-    from .test_neq import load_endstate_system_and_samples
 
     # start with FEP
     sim, mm_samples, qml_samples = load_endstate_system_and_samples(
@@ -105,38 +140,8 @@ def test_NEQ_protocol():
     assert len(r.W_mm_to_qml) == protocol.nr_of_switches
     assert len(r.W_qml_to_mm) == protocol.nr_of_switches
 
-    # # generate data for plotting tests
-    # protocol = Protocol(
-    #     method="NEQ",
-    #     direction="bidirectional",
-    #     sim=sim,
-    #     trajectories=[mm_samples, qml_samples],
-    #     nr_of_switches=100,
-    # )
-
-    # r = perform_endstate_correction(protocol)
-    # pickle.dump(
-    #     r,
-    #     open(
-    #         f"data/{system_name}/switching_charmmff/{system_name}_neq_bid.pickle", "wb"
-    #     ),
-    # )
-
-    # protocol = Protocol(
-    #     method="NEQ",
-    #     direction="unidirectional",
-    #     sim=sim,
-    #     trajectories=[mm_samples, qml_samples],
-    #     nr_of_switches=100,
-    # )
-
-    # r = perform_endstate_correction(protocol)
-    # pickle.dump(
-    #     r,
-    #     open(
-    #         f"data/{system_name}/switching_charmmff/{system_name}_neq_unid.pickle", "wb"
-    #     ),
-    # )
+    # longer NEQ switching
+    #save_pickle_results(sim, mm_samples, qml_samples, system_name)
 
 
 @pytest.mark.skipif(

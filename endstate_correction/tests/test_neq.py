@@ -7,6 +7,7 @@ import numpy as np
 from endstate_correction.neq import perform_switching
 from openmm import unit
 from openmm.app import Simulation
+from .test_system import setup_vacuum_simulation
 
 
 def test_collect_work_values():
@@ -25,7 +26,6 @@ def load_endstate_system_and_samples(
 
     # initialize simulation and load pre-generated samples
 
-    from endstate_correction.system import create_charmm_system
     from openmm.app import CharmmCrdFile, CharmmParameterSet, CharmmPsfFile
 
     ########################################################
@@ -43,9 +43,7 @@ def load_endstate_system_and_samples(
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
     # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-    sim = create_charmm_system(psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms)
+    sim = setup_vacuum_simulation(psf=psf, params=params)
     sim.context.setPositions(crd.positions)
     n_samples = 5_000
     n_steps_per_sample = 1_000
