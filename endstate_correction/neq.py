@@ -14,14 +14,15 @@ from endstate_correction.system import get_positions
 
 
 def perform_switching(
-    sim, lambdas: list, 
-    samples: list, 
-    nr_of_switches: int = 50, 
+    sim,
+    lambdas: list,
+    samples: list,
+    nr_of_switches: int = 50,
     save_trajs: bool = False,
-    save_endstates:bool = False,
+    save_endstates: bool = False,
 ) -> Tuple[list, list, list]:
     """performs NEQ switching using the lambda sheme passed from randomly dranw samples"""
-   
+
     if save_endstates:
         print("Endstate of each switch will be saved.")
     if save_trajs:
@@ -48,13 +49,10 @@ def perform_switching(
         if save_trajs:
             # if switching trajectories need to be saved, create an empty list at the beginning
             # of each switch for saving conformations
-            switching_trajectory = [] 
+            switching_trajectory = []
 
         # select a random sample
-        x = (
-            np.array(random.choice(samples).value_in_unit(distance_unit))
-            * distance_unit
-        )
+        x = random.choice(samples.xyz)
         # set position
         sim.context.setPositions(x)
 
@@ -94,11 +92,14 @@ def perform_switching(
             endstate_samples.append(get_positions(sim))
         # get all work values
         ws.append(w)
-    return np.array(ws) * unit.kilojoule_per_mole, endstate_samples, all_switching_trajectories
+    return (
+        np.array(ws) * unit.kilojoule_per_mole,
+        endstate_samples,
+        all_switching_trajectories,
+    )
 
 
 def _collect_work_values(file: str) -> list:
-
     ws = pickle.load(open(file, "rb")).value_in_unit(unit.kilojoule_per_mole)
     number_of_samples = len(ws)
     print(f"Number of samples used: {number_of_samples}")
