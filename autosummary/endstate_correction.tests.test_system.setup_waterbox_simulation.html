@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endstate_correction.tests.test_endstate_correction.test_ALL_protocol &mdash; endstate_correction  documentation</title>
+  <title>endstate_correction.tests.test_system.setup_waterbox_simulation &mdash; endstate_correction  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,8 +17,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.tests.test_endstate_correction.test_FEP_protocol" href="endstate_correction.tests.test_endstate_correction.test_FEP_protocol.html" />
-    <link rel="prev" title="endstate_correction.tests.test_endstate_correction.save_pickle_results" href="endstate_correction.tests.test_endstate_correction.save_pickle_results.html" /> 
+    <link rel="next" title="endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff" href="endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff.html" />
+    <link rel="prev" title="endstate_correction.tests.test_system.setup_vacuum_simulation" href="endstate_correction.tests.test_system.setup_vacuum_simulation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,14 +56,14 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.tests.html">endstate_correction.tests</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_analysis.html">endstate_correction.tests.test_analysis</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_equ.html">endstate_correction.tests.test_equ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_misc.html">endstate_correction.tests.test_misc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_neq.html">endstate_correction.tests.test_neq</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_perform_endstate_correction.html">endstate_correction.tests.test_perform_endstate_correction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_sampling.html">endstate_correction.tests.test_sampling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_simulation.html">endstate_correction.tests.test_simulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_system.html">endstate_correction.tests.test_system</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="endstate_correction.tests.test_system.html">endstate_correction.tests.test_system</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.topology.html">endstate_correction.topology</a></li>
@@ -91,10 +91,10 @@
           <li class="breadcrumb-item"><a href="../api.html">API Documentation</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.html">endstate_correction</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.tests.html">endstate_correction.tests</a></li>
-          <li class="breadcrumb-item"><a href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
-      <li class="breadcrumb-item active">endstate_correction.tests.test_endstate_correction.test_ALL_protocol</li>
+          <li class="breadcrumb-item"><a href="endstate_correction.tests.test_system.html">endstate_correction.tests.test_system</a></li>
+      <li class="breadcrumb-item active">endstate_correction.tests.test_system.setup_waterbox_simulation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/autosummary/endstate_correction.tests.test_endstate_correction.test_ALL_protocol.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/autosummary/endstate_correction.tests.test_system.setup_waterbox_simulation.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -102,13 +102,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="endstate-correction-tests-test-endstate-correction-test-all-protocol">
-<h1>endstate_correction.tests.test_endstate_correction.test_ALL_protocol<a class="headerlink" href="#endstate-correction-tests-test-endstate-correction-test-all-protocol" title="Permalink to this heading"></a></h1>
+  <section id="endstate-correction-tests-test-system-setup-waterbox-simulation">
+<h1>endstate_correction.tests.test_system.setup_waterbox_simulation<a class="headerlink" href="#endstate-correction-tests-test-system-setup-waterbox-simulation" title="Permalink to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="endstate_correction.tests.test_endstate_correction.test_ALL_protocol">
-<span class="sig-prename descclassname"><span class="pre">endstate_correction.tests.test_endstate_correction.</span></span><span class="sig-name descname"><span class="pre">test_ALL_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endstate_correction/tests/test_endstate_correction.html#test_ALL_protocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.tests.test_endstate_correction.test_ALL_protocol" title="Permalink to this definition"></a></dt>
-<dd><p>Perform FEP uni- and bidirectional protocol</p>
-</dd></dl>
+<dt class="sig sig-object py" id="endstate_correction.tests.test_system.setup_waterbox_simulation">
+<span class="sig-prename descclassname"><span class="pre">endstate_correction.tests.test_system.</span></span><span class="sig-name descname"><span class="pre">setup_waterbox_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmPsfFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmParameterSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_off</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Simulation</span></span></span><a class="reference internal" href="../_modules/endstate_correction/tests/test_system.html#setup_waterbox_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.tests.test_system.setup_waterbox_simulation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 
@@ -116,8 +115,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="endstate_correction.tests.test_endstate_correction.save_pickle_results.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_endstate_correction.save_pickle_results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.tests.test_endstate_correction.test_FEP_protocol.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_endstate_correction.test_FEP_protocol" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.tests.test_system.setup_vacuum_simulation.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_system.setup_vacuum_simulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

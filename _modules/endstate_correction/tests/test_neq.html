@@ -78,6 +78,7 @@
 <span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span>
 
 
 <div class="viewcode-block" id="test_collect_work_values"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_neq.test_collect_work_values.html#endstate_correction.tests.test_neq.test_collect_work_values">[docs]</a><span class="k">def</span> <span class="nf">test_collect_work_values</span><span class="p">():</span>
@@ -96,7 +97,6 @@
 
     <span class="c1"># initialize simulation and load pre-generated samples</span>
 
-    <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">create_charmm_system</span>
     <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">CharmmCrdFile</span><span class="p">,</span> <span class="n">CharmmParameterSet</span><span class="p">,</span> <span class="n">CharmmPsfFile</span>
 
     <span class="c1">########################################################</span>
@@ -114,9 +114,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span><span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
     <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5_000</span>
     <span class="n">n_steps_per_sample</span> <span class="o">=</span> <span class="mi">1_000</span>

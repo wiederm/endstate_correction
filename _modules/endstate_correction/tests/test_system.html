@@ -78,18 +78,61 @@
     <span class="n">CharmmPsfFile</span><span class="p">,</span>
     <span class="n">PDBFile</span><span class="p">,</span>
     <span class="n">CharmmCrdFile</span><span class="p">,</span>
+    <span class="n">NoCutoff</span><span class="p">,</span>
+    <span class="n">Simulation</span><span class="p">,</span>
+    <span class="n">PME</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">LangevinIntegrator</span>
+<span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
 
 <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">endstate_correction</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">hipen_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/hipen_data&quot;</span>
-
-<span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">endstate_correction</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">jctc_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/jctc_data&quot;</span>
+
+
+<div class="viewcode-block" id="setup_vacuum_simulation"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.setup_vacuum_simulation.html#endstate_correction.tests.test_system.setup_vacuum_simulation">[docs]</a><span class="k">def</span> <span class="nf">setup_vacuum_simulation</span><span class="p">(</span>
+    <span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">CharmmParameterSet</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
+    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># set up system</span>
+    <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">NoCutoff</span><span class="p">)</span>
+    <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
+    <span class="n">ml_system</span> <span class="o">=</span> <span class="n">potential</span><span class="o">.</span><span class="n">createMixedSystem</span><span class="p">(</span>
+        <span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">mm_system</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">LangevinIntegrator</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="setup_waterbox_simulation"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.setup_waterbox_simulation.html#endstate_correction.tests.test_system.setup_waterbox_simulation">[docs]</a><span class="k">def</span> <span class="nf">setup_waterbox_simulation</span><span class="p">(</span>
+    <span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">CharmmParameterSet</span><span class="p">,</span>
+    <span class="n">r_off</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">r_on</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
+    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span>
+        <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">,</span>
+        <span class="c1">#nonbondedCutoff=r_off * unit.nanometers,</span>
+        <span class="c1">#switchDistance=r_on * unit.nanometers,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># set up system</span>
+    <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">NoCutoff</span><span class="p">)</span>
+    <span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
+    <span class="n">ml_system</span> <span class="o">=</span> <span class="n">potential</span><span class="o">.</span><span class="n">createMixedSystem</span><span class="p">(</span>
+        <span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">mm_system</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">LangevinIntegrator</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="test_generate_simulation_instances_with_charmmff"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff.html#endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff">[docs]</a><span class="k">def</span> <span class="nf">test_generate_simulation_instances_with_charmmff</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if we can generate a simulation instance with charmmff&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">create_charmm_system</span><span class="p">,</span> <span class="n">get_energy</span><span class="p">,</span> <span class="n">read_box</span>
+    <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">get_energy</span><span class="p">,</span> <span class="n">read_box</span>
 
     <span class="c1">########################################################</span>
     <span class="c1">########################################################</span>
@@ -105,12 +148,8 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="c1"># set up system</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span>
-        <span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span>
-    <span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
 
     <span class="c1">############################</span>
@@ -147,12 +186,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
-    <span class="c1"># define system</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span>
-        <span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span>
-    <span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
 
     <span class="c1">############################</span>
@@ -191,13 +225,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">psf</span> <span class="o">=</span> <span class="n">read_box</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/input.config.dat&quot;</span><span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
-    <span class="c1"># define system</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span>
-        <span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;waterbox&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span>
-    <span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_waterbox_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
 
     <span class="c1">############################</span>
@@ -209,7 +237,7 @@
         <span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_mm_interpolate_endstate</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_mm_interpolate_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">41853.389923448354</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_mm_interpolate_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">36663.29543876648</span><span class="p">)</span>
 
     <span class="c1">############################</span>
     <span class="c1">############################</span>
@@ -217,13 +245,11 @@
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">e_sim_qml_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1067965.9293421314</span><span class="p">)</span></div>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1062775.8348574494</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_simulating"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.test_simulating.html#endstate_correction.tests.test_system.test_simulating">[docs]</a><span class="k">def</span> <span class="nf">test_simulating</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if we can generate a simulation instance with charmmff&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">create_charmm_system</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.equ</span> <span class="kn">import</span> <span class="n">generate_samples</span>
 
     <span class="c1">########################################################</span>
     <span class="c1">########################################################</span>
@@ -238,16 +264,9 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
-    <span class="c1"># set up system</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span>
-        <span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span>
-    <span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="n">generate_samples</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span></div>
+    <span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

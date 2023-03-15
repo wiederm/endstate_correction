@@ -72,10 +72,10 @@
 <span></span><span class="kn">import</span> <span class="nn">pathlib</span>
 
 <span class="kn">import</span> <span class="nn">endstate_correction</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">create_charmm_system</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">CharmmParameterSet</span><span class="p">,</span> <span class="n">CharmmPsfFile</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span><span class="p">,</span> <span class="n">setup_waterbox_simulation</span>
 
 <div class="viewcode-block" id="test_plotting_equilibrium_free_energy"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_analysis.test_plotting_equilibrium_free_energy.html#endstate_correction.tests.test_analysis.test_plotting_equilibrium_free_energy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
     <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
@@ -106,15 +106,10 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
-    <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
 
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span>
-        <span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span>
-    <span class="p">)</span>
+
     <span class="n">trajs</span> <span class="o">=</span> <span class="n">load_equ_samples</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
-
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">N_k</span><span class="p">,</span> <span class="n">u_kn</span> <span class="o">=</span> <span class="n">calculate_u_kn</span><span class="p">(</span>
         <span class="n">trajs</span><span class="o">=</span><span class="n">trajs</span><span class="p">,</span>
         <span class="n">every_nth_frame</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>

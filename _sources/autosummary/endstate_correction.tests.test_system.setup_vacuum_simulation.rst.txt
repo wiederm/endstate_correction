@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_system.setup\_vacuum\_simulation
+=================================================================
+
+.. currentmodule:: endstate_correction.tests.test_system
+
+.. autofunction:: setup_vacuum_simulation

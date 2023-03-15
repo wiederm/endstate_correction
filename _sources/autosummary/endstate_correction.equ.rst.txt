@@ -16,7 +16,6 @@ endstate\_correction.equ
       :nosignatures:
    
       calculate_u_kn
-      generate_samples
    
    
 
