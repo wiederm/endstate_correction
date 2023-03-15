@@ -52,10 +52,16 @@ def perform_switching(
             switching_trajectory = []
 
         # select a random sample
-        x = random.choice(samples.xyz)
+        random_frame = random.randint(0, len(samples.xyz)-1)
+        x = samples.xyz[random_frame]
+        if samples.unitcell_lengths is not None:
+            box_length = samples.unitcell_lengths[x]
+        else:
+            box_length = None
         # set position
         sim.context.setPositions(x)
-
+        if box_length:
+            sim.context.setPeriodicBoxVectors(*box_length)
         # reseed velocities
         sim.context.setVelocitiesToTemperature(temperature)
         # initialize work
