@@ -1,0 +1,45 @@
+REMARK   1 CREATED WITH OPENMM 8.0, 2023-01-22
+HETATM    1  C1  MOL A   1       0.308   1.556   0.361  1.00  0.00           C  
+HETATM    2  C2  MOL A   1       0.162   0.092   0.031  1.00  0.00           C  
+HETATM    3  C3  MOL A   1       0.004  -0.623  -1.135  1.00  0.00           C  
+HETATM    4  O1  MOL A   1      -0.104  -1.954  -0.815  1.00  0.00           O  
+HETATM    5  C4  MOL A   1       0.035  -1.960   0.546  1.00  0.00           C  
+HETATM    6  N1  MOL A   1       0.186  -0.778   1.104  1.00  0.00           N  
+HETATM    7  C5  MOL A   1      -0.047  -3.175   1.406  1.00  0.00           C  
+HETATM    8  C6  MOL A   1      -0.135  -0.198  -2.541  1.00  0.00           C  
+HETATM    9  N2  MOL A   1      -0.296   1.048  -2.813  1.00  0.00           N  
+HETATM   10  O2  MOL A   1      -0.412   1.403  -4.211  1.00  0.00           O  
+HETATM   11  C7  MOL A   1      -0.018  -1.287  -3.593  1.00  0.00           C  
+HETATM   12  H1  MOL A   1       1.246   1.719   0.933  1.00  0.00           H  
+HETATM   13  H2  MOL A   1       0.339   2.178  -0.558  1.00  0.00           H  
+HETATM   14  H3  MOL A   1      -0.549   1.884   0.987  1.00  0.00           H  
+HETATM   15  H4  MOL A   1       0.756  -3.149   2.172  1.00  0.00           H  
+HETATM   16  H5  MOL A   1      -1.032  -3.202   1.916  1.00  0.00           H  
+HETATM   17  H6  MOL A   1       0.071  -4.086   0.785  1.00  0.00           H  
+HETATM   18  H7  MOL A   1      -0.415   0.621  -4.768  1.00  0.00           H  
+HETATM   19  H8  MOL A   1      -1.007  -1.487  -4.059  1.00  0.00           H  
+HETATM   20  H9  MOL A   1       0.684  -0.985  -4.401  1.00  0.00           H  
+HETATM   21  H10 MOL A   1       0.363  -2.254  -3.197  1.00  0.00           H  
+TER      22      MOL A   1
+CONECT    1    2   12   13   14
+CONECT    2    1    6    3
+CONECT    3    2    4    8
+CONECT    4    3    5
+CONECT    5    4    6    7
+CONECT    6    2    5
+CONECT    7    5   15   16   17
+CONECT    8    3    9   11
+CONECT    9    8   10
+CONECT   10    9   18
+CONECT   11    8   19   20   21
+CONECT   12    1
+CONECT   13    1
+CONECT   14    1
+CONECT   15    7
+CONECT   16    7
+CONECT   17    7
+CONECT   18   10
+CONECT   19   11
+CONECT   20   11
+CONECT   21   11
+END

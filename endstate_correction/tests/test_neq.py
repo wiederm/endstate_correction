@@ -68,7 +68,7 @@ def test_switching():
     system_name = "ZINC00077329"
     print(f"{system_name=}")
 
-    # load simulation and samples for 2cle
+    # load simulation and samples for ZINC00077329
     sim, samples_mm, samples_qml = load_endstate_system_and_samples(
         system_name=system_name,
     )
@@ -77,7 +77,7 @@ def test_switching():
     # dU_rev = dU(x)_mm - dU(x)_qml
     lambs = np.linspace(0, 1, 2)
     print(lambs)
-    dE_list, _ = perform_switching(
+    dE_list, _, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     assert np.isclose(
@@ -85,7 +85,7 @@ def test_switching():
     )
     lambs = np.linspace(1, 0, 2)
 
-    dE_list, _ = perform_switching(
+    dE_list, _, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     print(dE_list)
@@ -96,26 +96,37 @@ def test_switching():
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 21)
-    dW_forw, _ = perform_switching(
+    dW_forw, _, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     print(dW_forw)
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 101)
-    dW_forw, _ = perform_switching(
+    dW_forw, _, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     print(dW_forw)
 
     # check return values
-    lambs = np.linspace(0, 1, 2)
-    list_1, list_2 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_traj=False
+    lambs = np.linspace(0, 1, 3)
+    list_1, list_2, list_3 = perform_switching(
+        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=False, save_trajs=False
     )
-    assert len(list_1) != 0 and len(list_2) == 0
+    assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 0
 
-    list_1, list_2 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_traj=True
+    list_1, list_2, list_3 = perform_switching(
+        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=False, save_trajs=True
     )
-    assert len(list_1) != 0 and len(list_2) != 0
+
+    assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 1 and len(list_3[0]) == 3
+
+    list_1, list_2, list_3 = perform_switching(
+        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=True, save_trajs=False
+    )
+    assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 0
+
+    list_1, list_2, list_3 = perform_switching(
+        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=True, save_trajs=True
+    )
+    assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 1 and len(list_3[0]) == 3

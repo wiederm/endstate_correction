@@ -282,8 +282,32 @@ def test_each_protocol():
     assert len(r.dE_qml_to_mm) == 0
     assert len(r.W_mm_to_qml) == neq_protocol.nr_of_switches
     assert len(r.W_qml_to_mm) == 0
+    assert len(r.endstate_samples_mm_to_qml) == 0
+    assert len(r.endstate_samples_qml_to_mm) == 0
+    assert len(r.switching_traj_mm_to_qml) == 0
+    assert len(r.switching_traj_qml_to_mm) == 0
 
-    fep_protocol = Protocol(
+    neq_protocol = Protocol(
+        method="NEQ",
+        direction="unidirectional_reverse",
+        sim=sim,
+        trajectories=[mm_samples, qml_samples],
+        nr_of_switches=10,
+        neq_switching_length=50,
+    )
+
+    r = perform_endstate_correction(neq_protocol)
+    assert len(r.dE_mm_to_qml) == 0
+    assert len(r.dE_qml_to_mm) == 0
+    assert len(r.W_mm_to_qml) == 0
+    assert len(r.W_qml_to_mm) == neq_protocol.nr_of_switches
+    assert len(r.endstate_samples_mm_to_qml) == 0
+    assert len(r.endstate_samples_qml_to_mm) == 0
+    assert len(r.switching_traj_mm_to_qml) == 0
+    assert len(r.switching_traj_qml_to_mm) == 0
+    
+
+    neq_protocol = Protocol(
         sim=sim,
         method="NEQ",
         direction="bidirectional",
@@ -292,8 +316,36 @@ def test_each_protocol():
         neq_switching_length=50,
     )
 
-    r = perform_endstate_correction(fep_protocol)
+    r = perform_endstate_correction(neq_protocol)
     assert len(r.dE_mm_to_qml) == 0
     assert len(r.dE_qml_to_mm) == 0
     assert len(r.W_mm_to_qml) == neq_protocol.nr_of_switches
     assert len(r.W_qml_to_mm) == neq_protocol.nr_of_switches
+    assert len(r.endstate_samples_mm_to_qml) == 0
+    assert len(r.endstate_samples_qml_to_mm) == 0
+    assert len(r.switching_traj_mm_to_qml) == 0
+    assert len(r.switching_traj_qml_to_mm) == 0
+        
+    # test saving endstates and saving trajectory option
+    protocol = Protocol(
+        method="NEQ",
+        direction="bidirectional",
+        sim=sim,
+        trajectories=[mm_samples, qml_samples],
+        nr_of_switches=10,
+        neq_switching_length=50,
+        save_endstates = True,
+        save_trajs= True
+    )
+
+    r = perform_endstate_correction(protocol)
+    assert len(r.dE_mm_to_qml) == 0
+    assert len(r.dE_qml_to_mm) == 0
+    assert len(r.W_mm_to_qml) == protocol.nr_of_switches
+    assert len(r.W_qml_to_mm) == protocol.nr_of_switches   
+    assert len(r.endstate_samples_mm_to_qml) == protocol.nr_of_switches
+    assert len(r.endstate_samples_qml_to_mm) == protocol.nr_of_switches
+    assert len(r.switching_traj_mm_to_qml) == protocol.nr_of_switches
+    assert len(r.switching_traj_qml_to_mm) == protocol.nr_of_switches
+    assert len(r.switching_traj_mm_to_qml[0]) == protocol.neq_switching_length
+    assert len(r.switching_traj_qml_to_mm[0]) == protocol.neq_switching_length
