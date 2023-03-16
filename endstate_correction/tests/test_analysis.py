@@ -4,7 +4,7 @@ import endstate_correction
 from openmm.app import CharmmParameterSet, CharmmPsfFile
 import pytest
 import os
-from .test_system import setup_vacuum_simulation, setup_waterbox_simulation
+from .test_system import setup_vacuum_simulation
 
 @pytest.mark.skipif(
     os.getenv("CI") == "true",
