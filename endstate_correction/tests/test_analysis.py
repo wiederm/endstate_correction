@@ -67,9 +67,9 @@ def test_plot_results_for_FEP_protocol():
 
     fep_protocol = Protocol(
         method="FEP",
-        direction="unidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=50,
     )
 
@@ -81,9 +81,9 @@ def test_plot_results_for_FEP_protocol():
 
     fep_protocol = Protocol(
         method="FEP",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples = qml_samples,
         nr_of_switches=100,
     )
 
@@ -114,9 +114,9 @@ def test_plot_results_for_NEQ_protocol():
 
     fep_protocol = Protocol(
         method="NEQ",
-        direction="unidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples = qml_samples,
         nr_of_switches=100,
     )
 
@@ -131,9 +131,9 @@ def test_plot_results_for_NEQ_protocol():
 
     fep_protocol = Protocol(
         method="NEQ",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
     # load pregenerated data
@@ -168,9 +168,9 @@ def test_plot_results_for_all_protocol():
 
     fep_protocol = Protocol(
         method="All",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
 

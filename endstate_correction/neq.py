@@ -67,15 +67,16 @@ def perform_switching(
             # of each switch for saving conformations
             switching_trajectory = []
 
-        # select a random sample
-        random_frame = random.randint(0, len(samples.xyz) - 1)
-        x = samples.xyz[random_frame]
+        # select a random frame
+        random_frame_idx = random.randint(0, len(samples.xyz) - 1)
+        # select the coordinates of the random frame
+        coord = samples.xyz[random_frame_idx]
         if samples.unitcell_lengths is not None:
-            box_length = samples.unitcell_lengths[x]
+            box_length = samples.unitcell_lengths[random_frame_idx]
         else:
             box_length = None
         # set position
-        sim.context.setPositions(x)
+        sim.context.setPositions(coord)
         if box_length:
             sim.context.setPeriodicBoxVectors(*box_length)
         # reseed velocities
