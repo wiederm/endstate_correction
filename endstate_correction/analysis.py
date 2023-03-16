@@ -89,7 +89,6 @@ def plot_results_for_equilibrium_free_energy(
 def plot_endstate_correction_results(
     name: str, results: Results, filename: str = "plot.png"
 ):
-
     assert type(results) == Results
 
     multiple_results = 1
@@ -97,36 +96,36 @@ def plot_endstate_correction_results(
     print("#--------------- SUMMARY ---------------#")
     ##############################################
     # ---------------------- FEP ------------------
-    if results.dE_mm_to_qml.size:
+    if results.dE_reference_to_target.size:
         print(
-            f"Zwanzig's equation (from mm to qml): {exp(results.dE_mm_to_qml)['Delta_f']}"
+            f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
         )
         multiple_results += 1
-    if results.dE_qml_to_mm.size:
+    if results.dE_target_to_reference.size:
         print(
-            f"Zwanzig's equation (from qml to mm): {exp(results.dE_qml_to_mm)['Delta_f']}"
+            f"Zwanzig's equation (from qml to mm): {exp(results.dE_target_to_reference)['Delta_f']}"
         )
         multiple_results += 1
-    if results.dE_mm_to_qml.size and results.dE_qml_to_mm.size:
+    if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
         print(
-            f"Zwanzig's equation bidirectional: {bar(results.dE_mm_to_qml, results.dE_qml_to_mm)['Delta_f']}"
+            f"Zwanzig's equation bidirectional: {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
         )
         multiple_results += 1
     ##############################################
     # ---------------------- NEQ ------------------
-    if results.W_mm_to_qml.size:
+    if results.W_reference_to_target.size:
         print(
-            f"Jarzynski's equation (from mm to qml): {exp(results.W_mm_to_qml)['Delta_f']}"
+            f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
         )
         multiple_results += 1
-    if results.W_qml_to_mm.size:
+    if results.W_target_to_reference.size:
         print(
-            f"Jarzynski's equation (from qml to mm): {exp(results.W_qml_to_mm)['Delta_f']}"
+            f"Jarzynski's equation (from qml to mm): {exp(results.W_target_to_reference)['Delta_f']}"
         )
         multiple_results += 1
-    if results.W_mm_to_qml.size and results.W_qml_to_mm.size:
+    if results.W_reference_to_target.size and results.W_target_to_reference.size:
         print(
-            f"Crooks' equation: {bar(results.W_mm_to_qml, results.W_qml_to_mm)['Delta_f']}"
+            f"Crooks' equation: {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
         )
         multiple_results += 1
     ##############################################
@@ -175,44 +174,44 @@ def plot_endstate_correction_results(
         axis="x", style="sci", useOffset=True, scilimits=(0, 0)
     )
 
-    if results.W_mm_to_qml.size:
+    if results.W_reference_to_target.size:
         sns.histplot(
             ax=axs[ax_index],
             alpha=0.5,
-            data=results.W_mm_to_qml,
+            data=results.W_reference_to_target,
             kde=True,
             stat="density",
             label=r"W(MM$\rightarrow$QML)",
             color=c1,
         )
 
-    if results.dE_mm_to_qml.size:
+    if results.dE_reference_to_target.size:
         sns.histplot(
             ax=axs[ax_index],
             alpha=0.5,
-            data=results.dE_mm_to_qml,
+            data=results.dE_reference_to_target,
             kde=True,
             stat="density",
             label=r"$\Delta$E(MM$\rightarrow$QML)",
             color=c2,
         )
 
-    if results.W_qml_to_mm.size:
+    if results.W_target_to_reference.size:
         sns.histplot(
             ax=axs[ax_index],
             alpha=0.5,
-            data=results.W_qml_to_mm * -1,
+            data=results.W_target_to_reference * -1,
             kde=True,
             stat="density",
             label=r"W(QML$\rightarrow$MM)",
             color=c3,
         )
 
-    if results.dE_qml_to_mm.size:
+    if results.dE_target_to_reference.size:
         sns.histplot(
             ax=axs[ax_index],
             alpha=0.5,
-            data=results.dE_qml_to_mm * -1,
+            data=results.dE_target_to_reference * -1,
             kde=True,
             stat="density",
             label=r"$\Delta$E(QML$\rightarrow$MM)",
@@ -232,34 +231,34 @@ def plot_endstate_correction_results(
             ddG_list.append(ddG_equ)
             dddG_list.append(dddG_equ)
             names.append("Equilibrium")
-        if results.W_mm_to_qml.size and results.W_qml_to_mm.size:
+        if results.W_reference_to_target.size and results.W_target_to_reference.size:
             # Crooks' equation
             ddG, dddG = -1, -1
-            r = bar(results.W_mm_to_qml, results.W_qml_to_mm)
+            r = bar(results.W_reference_to_target, results.W_target_to_reference)
             ddG, dddG = r["Delta_f"], r["dDelta_f"]
             ddG_list.append(ddG)
             dddG_list.append(dddG)
             names.append("NEQ+Crooks")
-        if results.W_mm_to_qml.size:
+        if results.W_reference_to_target.size:
             # Jarzynski's equation
             ddG, dddG = -1, -1
-            r = exp(results.W_mm_to_qml)
+            r = exp(results.W_reference_to_target)
             ddG, dddG = r["Delta_f"], r["dDelta_f"]
             ddG_list.append(ddG)
             dddG_list.append(dddG)
             names.append("NEQ+Jazynski")
-        if results.dE_mm_to_qml.size and results.dE_qml_to_mm.size:
+        if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
             # FEP + bar
             ddG, dddG = -1, -1
-            r = bar(results.dE_mm_to_qml, results.dE_qml_to_mm)
+            r = bar(results.dE_reference_to_target, results.dE_target_to_reference)
             ddG, dddG = r["Delta_f"], r["dDelta_f"]
             ddG_list.append(ddG)
             dddG_list.append(dddG)
             names.append("FEP+BAR")
-        if results.dE_mm_to_qml.size:
+        if results.dE_reference_to_target.size:
             # FEP + EXP
             ddG, dddG = -1, -1
-            r = exp(results.dE_mm_to_qml)
+            r = exp(results.dE_reference_to_target)
             ddG, dddG = r["Delta_f"], r["dDelta_f"]
             ddG_list.append(ddG)
             dddG_list.append(dddG)
@@ -287,10 +286,10 @@ def plot_endstate_correction_results(
     ax_index += 1
     axs[ax_index].set_title(rf"{name} - cumulative stddev of W and $\Delta$E")
 
-    if results.W_mm_to_qml.size:
+    if results.W_reference_to_target.size:
         cum_stddev_ws_from_mm_to_qml = [
-            results.W_mm_to_qml[:x].std()
-            for x in range(1, len(results.W_mm_to_qml) + 1)
+            results.W_reference_to_target[:x].std()
+            for x in range(1, len(results.W_reference_to_target) + 1)
         ]
         axs[ax_index].plot(
             cum_stddev_ws_from_mm_to_qml,
@@ -298,10 +297,10 @@ def plot_endstate_correction_results(
             color=c1,
         )
 
-    if results.W_qml_to_mm.size:
+    if results.W_target_to_reference.size:
         cum_stddev_ws_from_qml_to_mm = [
-            results.W_qml_to_mm[:x].std()
-            for x in range(1, len(results.W_qml_to_mm) + 1)
+            results.W_target_to_reference[:x].std()
+            for x in range(1, len(results.W_target_to_reference) + 1)
         ]
         axs[ax_index].plot(
             cum_stddev_ws_from_qml_to_mm,
@@ -309,13 +308,15 @@ def plot_endstate_correction_results(
             color=c3,
         )
 
-    if results.dE_mm_to_qml.size:
-        if results.W_mm_to_qml.size or results.W_qml_to_mm.size:
-            size = max(results.W_mm_to_qml.size, results.W_qml_to_mm.size)
+    if results.dE_reference_to_target.size:
+        if results.W_reference_to_target.size or results.W_target_to_reference.size:
+            size = max(
+                results.W_reference_to_target.size, results.W_target_to_reference.size
+            )
         else:
-            size = results.dE_mm_to_qml.size
+            size = results.dE_reference_to_target.size
         cum_stddev_dEs_from_mm_to_qml = [
-            results.dE_mm_to_qml[:x].std() for x in range(1, size + 1)
+            results.dE_reference_to_target[:x].std() for x in range(1, size + 1)
         ]
         axs[ax_index].plot(
             cum_stddev_dEs_from_mm_to_qml,
@@ -323,13 +324,15 @@ def plot_endstate_correction_results(
             color=c2,
         )
 
-    if results.dE_qml_to_mm.size:
-        if results.W_mm_to_qml.size or results.W_qml_to_mm.size:
-            size = max(results.W_mm_to_qml.size, results.W_qml_to_mm.size)
+    if results.dE_target_to_reference.size:
+        if results.W_reference_to_target.size or results.W_target_to_reference.size:
+            size = max(
+                results.W_reference_to_target.size, results.W_target_to_reference.size
+            )
         else:
-            size = results.dE_mm_to_qml.size
+            size = results.dE_reference_to_target.size
         cum_stddev_dEs_from_qml_to_mm = [
-            results.dE_qml_to_mm[:x].std() for x in range(1, size + 1)
+            results.dE_target_to_reference[:x].std() for x in range(1, size + 1)
         ]
         axs[ax_index].plot(
             cum_stddev_dEs_from_qml_to_mm,
@@ -351,6 +354,7 @@ def plot_endstate_correction_results(
 
 # plotting torsion profiles
 ###########################################################################################################################################################################
+
 
 # generate molecule picture with atom indices
 def save_mol_pic(zinc_id: str, ff: str):
@@ -399,7 +403,6 @@ def save_mol_pic(zinc_id: str, ff: str):
 
 # get indices of dihedral bonds
 def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
-
     print(f"---------- Investigating bond nr {rot_bond} ----------")
 
     # get indices of both atoms forming an rotatable bond
@@ -412,11 +415,9 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
 
     # find neighbors of atoms forming the rotatable bond and add to index list (if heavy atom torsion)
     for bond in bonds:
-
         # get neighbors of atom_1 (of rotatable bond)
         # check, if atom_1 (of rotatable bond) is the first atom in the current bond
         if bond.atom1_index == atom_1_idx:
-
             # make sure, that neighboring atom is not an hydrogen, nor atom_2
             if (
                 not bond.atom2.element.name == "hydrogen"
@@ -426,7 +427,6 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
 
         # check, if atom_1 (of rotatable bond) is the second atom in the current bond
         elif bond.atom2_index == atom_1_idx:
-
             # make sure, that neighboring atom is not an hydrogen, nor atom_2
             if (
                 not bond.atom1.element.name == "hydrogen"
@@ -437,7 +437,6 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
         # get neighbors of atom_2 (of rotatable bond)
         # check, if atom_2 (of rotatable bond) is the first atom in the current bond
         if bond.atom1_index == atom_2_idx:
-
             # make sure, that neighboring atom is not an hydrogen, nor atom_1
             if (
                 not bond.atom2.element.name == "hydrogen"
@@ -447,7 +446,6 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
 
         # check, if atom_2 (of rotatable bond) is the second atom in the current bond
         elif bond.atom2_index == atom_2_idx:
-
             # make sure, that neighboring atom is not an hydrogen, nor atom_1
             if (
                 not bond.atom1.element.name == "hydrogen"
@@ -457,13 +455,11 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
 
     # check, if both atoms forming the rotatable bond have neighbors
     if len(neighbors1) > 0 and len(neighbors2) > 0:
-
         # list for final atom indices defining torsion
         indices = [[neighbors1[0], atom_1_idx, atom_2_idx, neighbors2[0]]]
         return indices
 
     else:
-
         print(f"No heavy atom torsions found for bond {rot_bond}")
         indices = []
         return indices
@@ -471,7 +467,6 @@ def get_indices(rot_bond: int, rot_bond_list: list, bonds: list):
 
 # plot torsion profiles
 def visualize_torsion_profile(mol, trajectories: dataclass):
-
     # get all bonds
     bonds = mol.bonds
     # get all rotatable bonds
@@ -494,7 +489,6 @@ def visualize_torsion_profile(mol, trajectories: dataclass):
     plotting = False
 
     for rot_bond in range(len(rot_bond_list)):
-
         # get atom indices of current rotatable bond forming a torsion
         indices = get_indices(
             rot_bond=rot_bond, rot_bond_list=rot_bond_list, bonds=bonds

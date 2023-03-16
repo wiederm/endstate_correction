@@ -4,7 +4,7 @@
 from openmm.app import Simulation
 import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Union, Tuple
+from typing import List, Union
 
 import numpy as np
 import mdtraj as md
@@ -110,8 +110,8 @@ class Protocol:
 
     method: str
     sim: Simulation
-    trajectories: Tuple[md.Trajectory, md.Trajectory]
-    direction: str = "None"
+    reference_samples: md.Trajectory
+    target_samples: Union[md.Trajectory, None] = None
     nr_of_switches: int = -1
     neq_switching_length: int = 5_000
     save_endstates: bool = False  # True makes only sense for NEQ
@@ -123,14 +123,14 @@ class Results:
     """Provides a dataclass containing the results of a protocol"""
 
     equ_mbar: List[MBAR] = field(default_factory=list)
-    dE_mm_to_qml: np.array = np.array([])
-    dE_qml_to_mm: np.array = np.array([])
-    W_mm_to_qml: np.array = np.array([])
-    W_qml_to_mm: np.array = np.array([])
-    endstate_samples_mm_to_qml: np.array = np.array([])
-    endstate_samples_qml_to_mm: np.array = np.array([])
-    switching_traj_mm_to_qml: np.array = np.array([])
-    switching_traj_qml_to_mm: np.array = np.array([])
+    dE_reference_to_target: np.array = np.array([])
+    dE_target_to_reference: np.array = np.array([])
+    W_reference_to_target: np.array = np.array([])
+    W_target_to_reference: np.array = np.array([])
+    endstate_samples_reference_to_target: np.array = np.array([])
+    endstate_samples_reference_to_target: np.array = np.array([])
+    switching_traj_reference_to_target: np.array = np.array([])
+    switching_traj_target_to_reference: np.array = np.array([])
 
 
 def perform_endstate_correction(protocol: Protocol) -> Results:
@@ -140,10 +140,10 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
         protocol (Protocol): defines the endstatte correction
 
     Raises:
-        AttributeError: _description_
-        AttributeError: _description_
-        RuntimeError: _description_
-        RuntimeError: _description_
+        NotImplementedError: raised if the reweighting method is not supported
+        AttributeError: raised if the direction is not supported
+        RuntimeError: raised if the direction is not supported
+        RuntimeError: raised if the direction is not supported
 
     Returns:
         Results: results generated using the passed protocol
@@ -155,190 +155,85 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
     print(protocol.method)
     # check that all necessary keywords are present
     if protocol.method.upper() not in ["FEP", "NEQ", "ALL"]:
-        raise AttributeError(
+        raise NotImplementedError(
             "Only `FEP`, 'NEQ` or 'ALL'  are supported methods for endstate corrections"
-        )
-    if protocol.method.upper() in [
-        "FEP",
-        "NEQ",
-    ] and protocol.direction.lower() not in [
-        "bidirectional",
-        "unidirectional",
-        "unidirectional_forward",
-        "unidirectional_reverse",
-    ]:
-        raise AttributeError(
-            "Only `bidirectional`, `unidirectional_forward` or `unidirectional_reverse` protocols are supported"
         )
 
     sim = protocol.sim
     # initialize Results with default values
     r = Results()
     if protocol.method.upper() == "FEP" or protocol.method.upper() == "ALL":
-        ####################################################
-        # ------------------- FEP ---------------------------
-        ####################################################
         print("#####################################################")
         print("# ------------------- FEP ---------------------------")
         print("#####################################################")
-        # from MM to QML
-        if (
-            protocol.direction.lower() == "bidirectional"
-            or protocol.method.upper() == "ALL"
-        ):
-            ####################################################
-            # ------------------- bidirectional-----------------
-            # perform switching from mm to qml
+        # from reference to target potential
+        print("Performing bidirectional protocol ...")
+        lambs = np.linspace(0, 1, 2)
+        dEs, _, _ = perform_switching(
+            sim,
+            lambs,
+            samples=protocol.reference_samples,
+            nr_of_switches=protocol.nr_of_switches,
+        )
+        dE_reference_to_target = np.array(dEs / kBT)
+        # set results
+        r.dE_reference_to_target = dE_reference_to_target
 
-            assert len(protocol.trajectories) == 2
-
-            print("Performing bidirectional protocol ...")
-            lambs = np.linspace(0, 1, 2)
-            dEs, _, _ = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[0],
-                nr_of_switches=protocol.nr_of_switches,
-            )
-            dEs_from_mm_to_qml = np.array(dEs / kBT)
-
-            # perform switching from qml to mm
+        if protocol.target_samples is not None:
+            # bidirectional protocol
+            # perform switching from reference to target potential
             lambs = np.linspace(1, 0, 2)
             dEs, _, _ = perform_switching(
                 sim,
                 lambs,
-                samples=protocol.trajectories[1],
+                samples=protocol.reference_samples,
                 nr_of_switches=protocol.nr_of_switches,
             )
-            dEs_from_qml_to_mm = np.array(dEs / kBT)
+            dE_target_to_reference = np.array(dEs / kBT)
 
             # set results
-            r.dE_mm_to_qml = dEs_from_mm_to_qml
-            r.dE_qml_to_mm = dEs_from_qml_to_mm
-
-            ####################################################
-            # ------------------- unidirectional---------------
-        elif (
-            protocol.direction.lower() == "unidirectional_forward"
-            or protocol.direction == "unidirectional"
-        ):
-            # perform switching from mm to qml
-            print("Performing unidirectional protocol from MM to QML...")
-            lambs = np.linspace(0, 1, 2)
-            dEs, _, _ = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[0],
-                nr_of_switches=protocol.nr_of_switches,
-            )
-            dEs_from_mm_to_qml = np.array(dEs / kBT)
-
-            r.dE_mm_to_qml = dEs_from_mm_to_qml
-
-        elif protocol.direction.lower() == "unidirectional_reverse":
-            # perform switching qml to mm
-            print("Performing unidirectional protocol from QML to MM...")
-            lambs = np.linspace(1, 0, 2)
-            dEs, _, _ = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[1],
-                nr_of_switches=protocol.nr_of_switches,
-            )
-            dEs_from_qml_to_mm = np.array(dEs / kBT)
-
-            r.dE_qml_to_mm = dEs_from_qml_to_mm
-        else:
-            raise RuntimeError()
+            r.dE_target_to_reference = dE_target_to_reference
 
     if protocol.method.upper() == "NEQ" or protocol.method.upper() == "ALL":
-        ####################################################
-        # ------------------- NEQ ---------------------------
-        ####################################################
         print("#####################################################")
         print("# ------------------- NEQ ---------------------------")
         print("#####################################################")
-        if protocol.direction == "bidirectional" or protocol.method.upper() == "ALL":
-            ####################################################
-            # ------------------- bidirectional-----------------
-            # perform switching from mm to qml
+        lambs = np.linspace(0, 1, protocol.neq_switching_length)
 
-            assert len(protocol.trajectories) == 2
+        (
+            Ws,
+            endstates_reference_to_target,
+            trajs_reference_to_target,
+        ) = perform_switching(
+            sim,
+            lambs,
+            samples=protocol.reference_samples,
+            nr_of_switches=protocol.nr_of_switches,
+            save_endstates=protocol.save_endstates,
+            save_trajs=protocol.save_trajs,
+        )
+        Ws_reference_to_target = np.array(Ws / kBT)
+        r.W_reference_to_target = Ws_reference_to_target
+        r.endstate_samples_reference_to_target = endstates_reference_to_target
+        r.switching_traj_reference_to_target = trajs_reference_to_target
 
-            print("Performing bidirectional protocol...")
-            lambs = np.linspace(0, 1, protocol.neq_switching_length)
-            Ws, endstates_mm_to_qml, trajs_mm_to_qml = perform_switching(
+        if protocol.target_samples is not None:
+            # perform switching from target to reference
+            (
+                Ws,
+                endstates_target_to_reference,
+                trajs_target_to_reference,
+            ) = perform_switching(
                 sim,
                 lambs,
-                samples=protocol.trajectories[0],
+                samples=protocol.target_samples,
                 nr_of_switches=protocol.nr_of_switches,
                 save_endstates=protocol.save_endstates,
                 save_trajs=protocol.save_trajs,
             )
-            Ws_from_mm_to_qml = np.array(Ws / kBT)
-
-            # perform switching from qml to mm
-            lambs = np.linspace(1, 0, protocol.neq_switching_length)
-            Ws, endstates_qml_to_mm, trajs_qml_to_mm = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[1],
-                nr_of_switches=protocol.nr_of_switches,
-                save_endstates=protocol.save_endstates,
-                save_trajs=protocol.save_trajs,
-            )
-            Ws_from_qml_to_mm = np.array(Ws / kBT)
-
-            r.W_mm_to_qml = Ws_from_mm_to_qml
-            r.W_qml_to_mm = Ws_from_qml_to_mm
-
-            r.endstate_samples_mm_to_qml = endstates_mm_to_qml
-            r.endstate_samples_qml_to_mm = endstates_qml_to_mm
-
-            r.switching_traj_mm_to_qml = trajs_mm_to_qml
-            r.switching_traj_qml_to_mm = trajs_qml_to_mm
-
-            ####################################################
-            # ------------------- unidirectional----------------
-        elif (
-            protocol.direction == "unidirectional_forward"
-            or protocol.direction == "unidirectional"
-        ):
-            # perform switching from mm to qml
-            print("Performing unidirectional protocol from MM to QML...")
-            lambs = np.linspace(0, 1, protocol.neq_switching_length)
-            Ws, endstates_mm_to_qml, trajs_mm_to_qml = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[0],
-                nr_of_switches=protocol.nr_of_switches,
-                save_endstates=protocol.save_endstates,
-                save_trajs=protocol.save_trajs,
-            )
-            Ws_from_mm_to_qml = np.array(Ws / kBT)
-
-            r.W_mm_to_qml = Ws_from_mm_to_qml
-            r.endstate_samples_mm_to_qml = endstates_mm_to_qml
-            r.switching_traj_mm_to_qml = trajs_mm_to_qml
-
-        elif protocol.direction == "unidirectional_reverse":
-            # perform switching from qml to mm
-            lambs = np.linspace(1, 0, protocol.neq_switching_length)
-            Ws, endstates_qml_to_mm, trajs_qml_to_mm = perform_switching(
-                sim,
-                lambs,
-                samples=protocol.trajectories[1],
-                nr_of_switches=protocol.nr_of_switches,
-                save_endstates=protocol.save_endstates,
-                save_trajs=protocol.save_trajs,
-            )
-            Ws_from_qml_to_mm = np.array(Ws / kBT)
-
-            r.W_qml_to_mm = Ws_from_qml_to_mm
-            r.endstate_samples_qml_to_mm = endstates_qml_to_mm
-            r.switching_traj_qml_to_mm = trajs_qml_to_mm
-
-        else:
-            raise RuntimeError()
+            Ws_target_to_reference = np.array(Ws / kBT)
+            r.W_target_to_reference = Ws_target_to_reference
+            r.endstate_samples_reference_to_target = endstates_target_to_reference
+            r.switching_traj_target_to_reference = trajs_target_to_reference
 
     return r
