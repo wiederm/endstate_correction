@@ -7,21 +7,37 @@ from typing import Tuple
 
 import numpy as np
 from openmm import unit
+from openmm.app import Simulation
 from tqdm import tqdm
-
-from endstate_correction.constant import distance_unit, temperature
+from mdtraj import Trajectory
+from endstate_correction.constant import temperature
 from endstate_correction.system import get_positions
 
 
 def perform_switching(
-    sim,
+    sim: Simulation,
     lambdas: list,
-    samples: list,
+    samples: Trajectory,
     nr_of_switches: int = 50,
     save_trajs: bool = False,
     save_endstates: bool = False,
 ) -> Tuple[list, list, list]:
-    """performs NEQ switching using the lambda sheme passed from randomly dranw samples"""
+    """Perform NEQ switching using the provided lambda schema on the passed simulation instance.
+
+    Args:
+        sim (Simulation): simulation instance
+        lambdas (list): list of lambda values
+        samples (Trajectory): samples from which the starting points fo the NEQ switching simulation are drawn
+        nr_of_switches (int, optional): number of switches. Defaults to 50.
+        save_trajs (bool, optional): save switching trajectories. Defaults to False.
+        save_endstates (bool, optional): save endstate of switching trajectory. Defaults to False.
+
+    Raises:
+        RuntimeError: if the number of lambda states is less than 2
+
+    Returns:
+        Tuple[list, list, list]: work values, endstate samples, switching trajectories
+    """
 
     if save_endstates:
         print("Endstate of each switch will be saved.")
@@ -52,7 +68,7 @@ def perform_switching(
             switching_trajectory = []
 
         # select a random sample
-        random_frame = random.randint(0, len(samples.xyz)-1)
+        random_frame = random.randint(0, len(samples.xyz) - 1)
         x = samples.xyz[random_frame]
         if samples.unitcell_lengths is not None:
             box_length = samples.unitcell_lengths[x]
