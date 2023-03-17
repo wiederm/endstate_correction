@@ -13,6 +13,7 @@ from openmm.app import (
 )
 from openmm import LangevinIntegrator
 from openmmml import MLPotential
+from openmmtools.utils import get_fastest_platform
 
 path = pathlib.Path(endstate_correction.__file__).resolve().parent
 hipen_testsystem = f"{path}/data/hipen_data"
@@ -31,7 +32,8 @@ def setup_vacuum_simulation(
     ml_system = potential.createMixedSystem(
         psf.topology, mm_system, ml_atoms, interpolate=True
     )
-    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
+    platform = get_fastest_platform(minimum_precision="mixed")
+    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001), platform=platform)
 
 
 def setup_waterbox_simulation(
@@ -56,7 +58,8 @@ def setup_waterbox_simulation(
     ml_system = potential.createMixedSystem(
         psf.topology, mm_system, ml_atoms, interpolate=True
     )
-    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
+    platform = get_fastest_platform(minimum_precision="mixed")
+    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001), platform=platform)
 
 
 def test_generate_simulation_instances_with_charmmff():
