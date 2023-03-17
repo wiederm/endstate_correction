@@ -8,16 +8,16 @@ dependencies:
   - pip
 
   - openmm>=8.0
-  - openmm-torch==0.8
+  - openmm-torch
   - openff-toolkit
   - openmmtools
-  - nnpops>=0.4
-  - cudatoolkit==11.4.2
+  - nnpops
+  - cudatoolkit=11.3
   - tqdm
   - pymbar>=4.0
   - torchani
   - seaborn
-  - pytorch
+  - pytorch=1.11.0
   - mdtraj
   # Testing
   - pytest
