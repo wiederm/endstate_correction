@@ -8,7 +8,7 @@ dependencies:
   - pip
 
   - openmm>=8.0
-  - openmm-torch==0.8
+  - openmm-torch
   - openff-toolkit
   - openmmtools
   - nnpops>=0.4
