@@ -12,12 +12,12 @@ dependencies:
   - openff-toolkit
   - openmmtools
   - nnpops>=0.4
-  - cudatoolkit>=11.4
+  - cudatoolkit==11.4
   - tqdm
   - pymbar>=4.0
   - torchani
   - seaborn
-  - pytorch==1.12
+  - pytorch
   - mdtraj
   # Testing
   - pytest
