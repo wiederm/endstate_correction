@@ -12,7 +12,7 @@ dependencies:
   - openff-toolkit
   - openmmtools
   - nnpops>=0.4
-  - cudatoolkit
+  - cudatoolkit==11.4.2
   - tqdm
   - pymbar>=4.0
   - torchani
