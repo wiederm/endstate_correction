@@ -9,6 +9,14 @@ endstate\_correction.constant
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      check_implementation
+   
    
 
    

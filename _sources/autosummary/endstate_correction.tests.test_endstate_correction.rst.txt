@@ -15,7 +15,6 @@ endstate\_correction.tests.test\_endstate\_correction
       :toctree:
       :nosignatures:
    
-      save_pickle_results
       test_ALL_protocol
       test_FEP_protocol
       test_NEQ_protocol

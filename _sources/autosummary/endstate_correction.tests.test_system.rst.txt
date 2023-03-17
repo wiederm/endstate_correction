@@ -15,8 +15,6 @@ endstate\_correction.tests.test\_system
       :toctree:
       :nosignatures:
    
-      setup_vacuum_simulation
-      setup_waterbox_simulation
       test_generate_simulation_instances_with_charmmff
       test_simulating
    
