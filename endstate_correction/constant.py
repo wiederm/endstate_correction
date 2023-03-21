@@ -12,7 +12,7 @@ speed_unit = distance_unit / time_unit
 # constants
 stepsize = 1 * time_unit
 collision_rate = 1 / unit.picosecond
-temperature = 300 * unit.kelvin
+temperature = 303.15 * unit.kelvin
 
 kBT = kB * temperature
 

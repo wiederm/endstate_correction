@@ -14,6 +14,28 @@ from endstate_correction.system import get_positions
 import openmm
 
 
+def gen_box(positions: np.array) -> openmm.unit.quantity.Quantity:
+
+    coords = positions
+
+    min_crds = [coords[0][0], coords[0][1], coords[0][2]]
+    max_crds = [coords[0][0], coords[0][1], coords[0][2]]
+
+    for coord in coords:
+        min_crds[0] = min(min_crds[0], coord[0])
+        min_crds[1] = min(min_crds[1], coord[1])
+        min_crds[2] = min(min_crds[2], coord[2])
+        max_crds[0] = max(max_crds[0], coord[0])
+        max_crds[1] = max(max_crds[1], coord[1])
+        max_crds[2] = max(max_crds[2], coord[2])
+
+    boxlx = max_crds[0] - min_crds[0]
+    boxly = max_crds[1] - min_crds[1]
+    boxlz = max_crds[2] - min_crds[2]
+
+    return boxlx, boxly, boxlz
+
+
 def perform_switching(
     sim, lambdas: list, 
     samples: list, 
@@ -56,6 +78,15 @@ def perform_switching(
             np.array(random.choice(samples).value_in_unit(distance_unit))
             * distance_unit
         )
+
+        a, b, c = gen_box(x)
+
+        vecA = openmm.Vec3(a.value_in_unit(unit.nanometer), 0, 0)
+        vecB = openmm.Vec3(0, b.value_in_unit(unit.nanometer), 0)
+        vecC = openmm.Vec3(0, 0, c.value_in_unit(unit.nanometer))
+
+        sim.context.setPeriodicBoxVectors(vecA, vecB, vecC)
+        print(f"Using this BoxVectors:", sim.context.getState().getPeriodicBoxVectors())
         # set position
         sim.context.setPositions(x)
 
