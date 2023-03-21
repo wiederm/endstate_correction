@@ -30,6 +30,7 @@ endstate\_correction.protocol.Results
       ~Results.dE_reference_to_target
       ~Results.dE_target_to_reference
       ~Results.endstate_samples_reference_to_target
+      ~Results.endstate_samples_target_to_reference
       ~Results.switching_traj_reference_to_target
       ~Results.switching_traj_target_to_reference
       ~Results.equ_mbar

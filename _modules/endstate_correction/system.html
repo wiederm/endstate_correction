@@ -132,60 +132,6 @@
     <span class="k">return</span> <span class="n">psf</span></div>
 
 
-<span class="c1"># def create_charmm_system(</span>
-<span class="c1">#     psf: CharmmPsfFile,</span>
-<span class="c1">#     parameters: CharmmParameterSet,</span>
-<span class="c1">#     env: str,</span>
-<span class="c1">#     ml_atoms: list,</span>
-<span class="c1">#     r_off: int = 1.0,</span>
-<span class="c1">#     r_on: int = 0,</span>
-<span class="c1"># ) -&gt; Simulation:</span>
-<span class="c1">#     &quot;&quot;&quot;Generate an openMM simulation object using CHARMM topology and parameter files</span>
-
-<span class="c1">#     Args:</span>
-<span class="c1">#         psf (CharmmPsfFile): topology instance</span>
-<span class="c1">#         parameters (CharmmParameterSet): parameter instance</span>
-<span class="c1">#         env (str): either complex, waterbox or vacuum</span>
-<span class="c1">#         ml_atoms (list): list of atoms described by the QML potential</span>
-
-
-<span class="c1">#     Returns:</span>
-<span class="c1">#         Simulation: openMM simulation instance</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-
-<span class="c1">#     ###################</span>
-<span class="c1">#     print(f&quot;Generating charmm system in {env}&quot;)</span>
-<span class="c1">#     platform = get_fastest_platform(minimum_precision=&#39;mixed&#39;)</span>
-
-<span class="c1">#     ###################</span>
-<span class="c1">#     print(f&quot;{platform=}&quot;)</span>
-<span class="c1">#     print(f&quot;{env=}&quot;)</span>
-<span class="c1">#     ###################</span>
-<span class="c1">#     # TODO: add additional parameters for complex</span>
-<span class="c1">#     if env == &quot;vacuum&quot;:</span>
-<span class="c1">#         mm_system = psf.createSystem(parameters, nonbondedMethod=NoCutoff)</span>
-<span class="c1">#     else:</span>
-<span class="c1">#         mm_system = psf.createSystem(</span>
-<span class="c1">#             parameters,</span>
-<span class="c1">#             nonbondedMethod=PME,</span>
-<span class="c1">#             nonbondedCutoff=r_off * unit.nanometers,</span>
-<span class="c1">#             switchDistance=r_on * unit.nanometers,</span>
-<span class="c1">#         )</span>
-
-<span class="c1">#     print(f&quot;{ml_atoms=}&quot;)</span>
-
-<span class="c1">#     #####################</span>
-<span class="c1">#     potential = MLPotential(&quot;ani2x&quot;)</span>
-<span class="c1">#     ml_system = potential.createMixedSystem(</span>
-<span class="c1">#         psf.topology, mm_system, ml_atoms, interpolate=True</span>
-<span class="c1">#     )</span>
-<span class="c1">#     #####################</span>
-
-<span class="c1">#     integrator = mm.LangevinIntegrator(temperature, collision_rate, stepsize)</span>
-
-<span class="c1">#     return Simulation(psf.topology, ml_system, integrator, platform=platform)</span>
-
-
 <div class="viewcode-block" id="get_positions"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.get_positions.html#endstate_correction.system.get_positions">[docs]</a><span class="k">def</span> <span class="nf">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get position of system in a state&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getPositions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPositions</span><span class="p">(</span><span class="n">asNumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>

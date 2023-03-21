@@ -82,7 +82,6 @@
 <span class="k">def</span> <span class="nf">_collect_equ_samples</span><span class="p">(</span>
     <span class="n">trajs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">every_nth_frame</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a list of k trajectories with n samples a dictionary with the number of samples per trajektory</span>
 <span class="sd">    and a list with all samples [n_1, n_2, ...] is generated</span>
@@ -96,7 +95,6 @@
 
     <span class="c1"># loop over lambda scheme and collect samples in nanometer</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">xyz</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trajs</span><span class="p">):</span>
-
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="mi">1_000</span><span class="p">:]</span>  <span class="c1"># remove the first 1k samples</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[::</span><span class="n">every_nth_frame</span><span class="p">]</span>  <span class="c1"># take only every nth sample</span>
         <span class="n">N_k</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
@@ -108,24 +106,23 @@
 
 
 <div class="viewcode-block" id="calculate_u_kn"><a class="viewcode-back" href="../../autosummary/endstate_correction.equ.calculate_u_kn.html#endstate_correction.equ.calculate_u_kn">[docs]</a><span class="k">def</span> <span class="nf">calculate_u_kn</span><span class="p">(</span>
-    <span class="n">trajs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">trajs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>  <span class="c1"># list of trajectories</span>
     <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span>
-    <span class="n">every_nth_frame</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">every_nth_frame</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1"># prune the samples further by taking only every nth sample</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the u_kn matrix to be used by the mbar estimator</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        trajs (list): list of trajectories</span>
+<span class="sd">        sim (Simulation): simulation object</span>
 <span class="sd">        every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.</span>
-<span class="sd">        reload (bool, optional): do you want to reload a previously saved mbar pickle file if present (every time the free energy is calculated the mbar pickle file is saved --- only loading is optional)</span>
-<span class="sd">        override (bool, optional) : override</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        Tuple(np.array, np.ndarray): (N_k, u_kn)</span>
+<span class="sd">        np.ndarray: u_kn matrix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">lambda_scheme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
-    <span class="n">samples</span><span class="p">,</span> <span class="n">N_k</span> <span class="o">=</span> <span class="n">_collect_equ_samples</span><span class="p">(</span><span class="n">trajs</span><span class="p">,</span> <span class="n">every_nth_frame</span><span class="p">)</span>
+    <span class="n">lambda_scheme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>  <span class="c1"># equilibrium lambda scheme</span>
+    <span class="n">samples</span><span class="p">,</span> <span class="n">N_k</span> <span class="o">=</span> <span class="n">_collect_equ_samples</span><span class="p">(</span><span class="n">trajs</span><span class="p">,</span> <span class="n">every_nth_frame</span><span class="p">)</span>  <span class="c1"># collect samples</span>
 
     <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">))</span>  <span class="c1"># positions in nanometer</span>
     <span class="n">u_kn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
@@ -149,7 +146,6 @@
     <span class="k">assert</span> <span class="n">total_nr_of_samples</span> <span class="o">&gt;</span> <span class="mi">20</span>  <span class="c1"># make sure that there are samples present</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">N_k</span><span class="p">,</span> <span class="n">u_kn</span><span class="p">)</span></div>
-
 </pre></div>
 
            </div>

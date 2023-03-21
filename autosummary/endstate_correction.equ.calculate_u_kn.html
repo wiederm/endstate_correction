@@ -100,11 +100,11 @@
 <span class="sig-prename descclassname"><span class="pre">endstate_correction.equ.</span></span><span class="sig-name descname"><span class="pre">calculate_u_kn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Simulation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">every_nth_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/endstate_correction/equ.html#calculate_u_kn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.equ.calculate_u_kn" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the u_kn matrix to be used by the mbar estimator</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.
-reload (bool, optional): do you want to reload a previously saved mbar pickle file if present (every time the free energy is calculated the mbar pickle file is saved — only loading is optional)
-override (bool, optional) : override</p>
+<dt>Args:</dt><dd><p>trajs (list): list of trajectories
+sim (Simulation): simulation object
+every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.</p>
 </dd>
-<dt>Returns:</dt><dd><p>Tuple(np.array, np.ndarray): (N_k, u_kn)</p>
+<dt>Returns:</dt><dd><p>np.ndarray: u_kn matrix</p>
 </dd>
 </dl>
 </dd></dl>

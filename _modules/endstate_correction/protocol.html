@@ -75,7 +75,7 @@
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
@@ -179,12 +179,12 @@
 <span class="k">class</span> <span class="nc">Protocol</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defining the endstate correction protocol&quot;&quot;&quot;</span>
 
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span>
-    <span class="n">reference_samples</span><span class="p">:</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span>
-    <span class="n">target_samples</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="n">neq_switching_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5_000</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># FEP, NEQ, ALL</span>
+    <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span>  <span class="c1"># simulation object</span>
+    <span class="n">reference_samples</span><span class="p">:</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span>  <span class="c1"># reference samples</span>
+    <span class="n">target_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># target samples</span>
+    <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># number of switches</span>
+    <span class="n">neq_switching_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5_000</span>  <span class="c1"># switching length in steps</span>
     <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># True makes only sense for NEQ</span>
     <span class="n">save_trajs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># True makes only sense for NEQ</span></div>
 
@@ -193,15 +193,23 @@
 <span class="k">class</span> <span class="nc">Results</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a dataclass containing the results of a protocol&quot;&quot;&quot;</span>
 
-    <span class="n">equ_mbar</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MBAR</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">dE_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">dE_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">W_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">W_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">endstate_samples_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">endstate_samples_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">switching_traj_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">switching_traj_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span></div>
+    <span class="n">equ_mbar</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MBAR</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># MBAR object for each lambda</span>
+    <span class="n">dE_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>  <span class="c1"># dE from reference to target</span>
+    <span class="n">dE_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>  <span class="c1"># dE from target to reference</span>
+    <span class="n">W_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>  <span class="c1"># W from reference to target</span>
+    <span class="n">W_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>  <span class="c1"># W from target to reference</span>
+    <span class="n">endstate_samples_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[]</span>
+    <span class="p">)</span>  <span class="c1"># endstate samples from reference to target</span>
+    <span class="n">endstate_samples_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[]</span>
+    <span class="p">)</span>  <span class="c1"># endstate samples from target to reference</span>
+    <span class="n">switching_traj_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[]</span>
+    <span class="p">)</span>  <span class="c1"># switching traj from reference to target</span>
+    <span class="n">switching_traj_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[]</span>
+    <span class="p">)</span>  <span class="c1"># switching traj from target to reference</span></div>
 
 
 <div class="viewcode-block" id="perform_endstate_correction"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.perform_endstate_correction.html#endstate_correction.protocol.perform_endstate_correction">[docs]</a><span class="k">def</span> <span class="nf">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">:</span> <span class="n">Protocol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
@@ -223,7 +231,7 @@
     <span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
     <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">kBT</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing endstate correction using </span><span class="si">{protocol.method}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="c1"># check that all necessary keywords are present</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span> <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="s2">&quot;ALL&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -231,45 +239,41 @@
         <span class="p">)</span>
 
     <span class="n">sim</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">sim</span>
-    <span class="c1"># initialize Results with default values</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">Results</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">Results</span><span class="p">()</span>  <span class="c1"># initialize  with default values</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- FEP ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="c1"># from reference to target potential</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
-        <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">list_of_lambda_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># lambda values</span>
         <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
             <span class="n">sim</span><span class="p">,</span>
-            <span class="n">lambs</span><span class="p">,</span>
+            <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
             <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
             <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
-        <span class="c1"># set results</span>
+        <span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>  <span class="c1"># remove units</span>
         <span class="n">r</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">dE_reference_to_target</span>
 
-        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if target samples are provided</span>
             <span class="c1"># bidirectional protocol</span>
-            <span class="c1"># perform switching from reference to target potential</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># from target to reference potential</span>
+            <span class="n">list_of_lambda_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
-                <span class="n">lambs</span><span class="p">,</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
                 <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
                 <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">dE_target_to_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
-
-            <span class="c1"># set results</span>
+            <span class="n">dE_target_to_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>  <span class="c1"># remove units</span>
             <span class="n">r</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">=</span> <span class="n">dE_target_to_reference</span>
 
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;NEQ&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- NEQ ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
-        <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
+        <span class="n">list_of_lambda_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
 
         <span class="p">(</span>
             <span class="n">Ws</span><span class="p">,</span>
@@ -277,13 +281,13 @@
             <span class="n">trajs_reference_to_target</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
             <span class="n">sim</span><span class="p">,</span>
-            <span class="n">lambs</span><span class="p">,</span>
+            <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
             <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
             <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
             <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
             <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">Ws_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
+        <span class="n">Ws_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span> <span class="c1"># remove units</span>
         <span class="n">r</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">=</span> <span class="n">Ws_reference_to_target</span>
         <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_reference_to_target</span>
         <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span> <span class="o">=</span> <span class="n">trajs_reference_to_target</span>
@@ -296,7 +300,7 @@
                 <span class="n">trajs_target_to_reference</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
-                <span class="n">lambs</span><span class="p">,</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
                 <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span><span class="p">,</span>
                 <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
                 <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
@@ -304,7 +308,7 @@
             <span class="p">)</span>
             <span class="n">Ws_target_to_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
             <span class="n">r</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">=</span> <span class="n">Ws_target_to_reference</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_target_to_reference</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_target_to_reference</span> <span class="o">=</span> <span class="n">endstates_target_to_reference</span>
             <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span> <span class="o">=</span> <span class="n">trajs_target_to_reference</span>
 
     <span class="k">return</span> <span class="n">r</span></div>
