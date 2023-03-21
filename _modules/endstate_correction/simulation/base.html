@@ -88,9 +88,9 @@
 <span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">..constant</span> <span class="kn">import</span> <span class="n">check_implementation</span>
 <span class="kn">from</span> <span class="nn">..protocol</span> <span class="kn">import</span> <span class="n">BSSProtocol</span>
 <span class="kn">from</span> <span class="nn">..topology</span> <span class="kn">import</span> <span class="n">AMBERTopology</span><span class="p">,</span> <span class="n">CHARMMTopology</span>
+<span class="kn">from</span> <span class="nn">openmmtools.utils</span> <span class="kn">import</span> <span class="n">get_fastest_platform</span>
 
 
 <div class="viewcode-block" id="EndstateCorrectionBase"><a class="viewcode-back" href="../../../autosummary/endstate_correction.simulation.base.EndstateCorrectionBase.html#endstate_correction.simulation.base.EndstateCorrectionBase">[docs]</a><span class="k">class</span> <span class="nc">EndstateCorrectionBase</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
@@ -103,7 +103,7 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;endstate_correction&quot;</span><span class="p">,</span>
         <span class="n">work_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
         <span class="n">potential</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ani2x&quot;</span><span class="p">,</span>
-        <span class="n">implementation</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nnpops&quot;</span><span class="p">,</span>
+        <span class="n">implementation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nnpops&quot;</span><span class="p">,</span>
         <span class="n">interpolate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;EndstateCorrectionBase&quot;</span><span class="p">)</span>
@@ -125,8 +125,7 @@
             <span class="n">implementation</span><span class="o">=</span><span class="s2">&quot;nnpops&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">integrator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_integrator</span><span class="p">()</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">platform</span> <span class="o">=</span> <span class="n">check_implementation</span><span class="p">()</span>
-        <span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">get_fastest_platform</span><span class="p">(</span><span class="n">minimum_precision</span><span class="o">=</span><span class="s2">&quot;mixed&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_mm_topology</span><span class="p">()</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="n">platform</span>
         <span class="p">)</span>

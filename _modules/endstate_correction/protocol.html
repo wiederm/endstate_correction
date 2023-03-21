@@ -78,6 +78,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
@@ -154,7 +155,9 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collision_rate</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">collision_rate</span> <span class="o">=</span> <span class="n">collision_rate</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">picosecond</span><span class="o">**-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">collision_rate</span> <span class="o">=</span> <span class="n">collision_rate</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span>
+                    <span class="n">unit</span><span class="o">.</span><span class="n">picosecond</span><span class="o">**-</span><span class="mi">1</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`collision_rate` should be a 1/time unit.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
         <span class="k">else</span><span class="p">:</span>
@@ -178,12 +181,12 @@
 
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span>
-    <span class="n">trajectories</span><span class="p">:</span> <span class="n">List</span>
-    <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="n">reference_samples</span><span class="p">:</span> <span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span>
+    <span class="n">target_samples</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">md</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">neq_switching_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5_000</span>
-    <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># True makes only sense for NEQ </span>
-    <span class="n">save_trajs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># True makes only sense for NEQ </span></div>
+    <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># True makes only sense for NEQ</span>
+    <span class="n">save_trajs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># True makes only sense for NEQ</span></div>
 
 
 <div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.Results.html#endstate_correction.protocol.Results">[docs]</a><span class="nd">@dataclass</span>
@@ -191,15 +194,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a dataclass containing the results of a protocol&quot;&quot;&quot;</span>
 
     <span class="n">equ_mbar</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MBAR</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">dE_mm_to_qml</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">dE_qml_to_mm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">W_mm_to_qml</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">W_qml_to_mm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">endstate_samples_mm_to_qml</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">endstate_samples_qml_to_mm</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">switching_traj_mm_to_qml</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">switching_traj_qml_to_mm</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span></div>
-   
+    <span class="n">dE_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">dE_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">W_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">W_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">endstate_samples_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">endstate_samples_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">switching_traj_reference_to_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">switching_traj_target_to_reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span></div>
 
 
 <div class="viewcode-block" id="perform_endstate_correction"><a class="viewcode-back" href="../../autosummary/endstate_correction.protocol.perform_endstate_correction.html#endstate_correction.protocol.perform_endstate_correction">[docs]</a><span class="k">def</span> <span class="nf">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">:</span> <span class="n">Protocol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
@@ -209,10 +211,10 @@
 <span class="sd">        protocol (Protocol): defines the endstatte correction</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        AttributeError: _description_</span>
-<span class="sd">        AttributeError: _description_</span>
-<span class="sd">        RuntimeError: _description_</span>
-<span class="sd">        RuntimeError: _description_</span>
+<span class="sd">        NotImplementedError: raised if the reweighting method is not supported</span>
+<span class="sd">        AttributeError: raised if the direction is not supported</span>
+<span class="sd">        RuntimeError: raised if the direction is not supported</span>
+<span class="sd">        RuntimeError: raised if the direction is not supported</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Results: results generated using the passed protocol</span>
@@ -224,186 +226,86 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
     <span class="c1"># check that all necessary keywords are present</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span> <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="s2">&quot;ALL&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="s2">&quot;Only `FEP`, &#39;NEQ` or &#39;ALL&#39;  are supported methods for endstate corrections&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span>
-        <span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-    <span class="p">]</span> <span class="ow">and</span> <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span> <span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span> <span class="s2">&quot;unidirectional_forward&quot;</span><span class="p">,</span> <span class="s2">&quot;unidirectional_reverse&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;Only `bidirectional`, `unidirectional_forward` or `unidirectional_reverse` protocols are supported&quot;</span>
         <span class="p">)</span>
 
     <span class="n">sim</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">sim</span>
     <span class="c1"># initialize Results with default values</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">Results</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
-        <span class="c1">####################################################</span>
-        <span class="c1"># ------------------- FEP ---------------------------</span>
-        <span class="c1">####################################################</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- FEP ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
-        <span class="c1"># from MM to QML</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;bidirectional&quot;</span>
-            <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span>
-        <span class="p">):</span>
-            <span class="c1">####################################################</span>
-            <span class="c1"># ------------------- bidirectional-----------------</span>
-            <span class="c1"># perform switching from mm to qml</span>
+        <span class="c1"># from reference to target potential</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
+        <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+            <span class="n">sim</span><span class="p">,</span>
+            <span class="n">lambs</span><span class="p">,</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
+            <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
+        <span class="c1"># set results</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">dE_reference_to_target</span>
 
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span><span class="o">/</span><span class="n">kBT</span><span class="p">)</span>
-            
-            <span class="c1"># perform switching from qml to mm</span>
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># bidirectional protocol</span>
+            <span class="c1"># perform switching from reference to target potential</span>
             <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">dEs_from_qml_to_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span><span class="o">/</span><span class="n">kBT</span><span class="p">)</span>
+                <span class="n">sim</span><span class="p">,</span>
+                <span class="n">lambs</span><span class="p">,</span>
+                <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
+                <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">dE_target_to_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
 
             <span class="c1"># set results</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span> <span class="o">=</span> <span class="n">dEs_from_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span> <span class="o">=</span> <span class="n">dEs_from_qml_to_mm</span>
-
-            <span class="c1">####################################################</span>
-            <span class="c1"># ------------------- unidirectional---------------</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;unidirectional_forward&quot;</span>
-            <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;unidirectional&quot;</span>
-            <span class="p">):</span>
-            <span class="c1"># perform switching from mm to qml</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing unidirectional protocol from MM to QML...&quot;</span><span class="p">)</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span><span class="o">/</span><span class="n">kBT</span><span class="p">)</span>
-
-            <span class="n">r</span><span class="o">.</span><span class="n">dE_mm_to_qml</span> <span class="o">=</span> <span class="n">dEs_from_mm_to_qml</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;unidirectional_reverse&quot;</span><span class="p">):</span>
-            <span class="c1"># perform switching qml to mm</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing unidirectional protocol from QML to MM...&quot;</span><span class="p">)</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">dEs_from_qml_to_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span><span class="o">/</span><span class="n">kBT</span><span class="p">)</span>
-
-            <span class="n">r</span><span class="o">.</span><span class="n">dE_qml_to_mm</span> <span class="o">=</span> <span class="n">dEs_from_qml_to_mm</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">=</span> <span class="n">dE_target_to_reference</span>
 
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;NEQ&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
-        <span class="c1">####################################################</span>
-        <span class="c1"># ------------------- NEQ ---------------------------</span>
-        <span class="c1">####################################################</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- NEQ ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;bidirectional&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
-            <span class="c1">####################################################</span>
-            <span class="c1"># ------------------- bidirectional-----------------</span>
-            <span class="c1"># perform switching from mm to qml</span>
+        <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
 
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">(</span>
+            <span class="n">Ws</span><span class="p">,</span>
+            <span class="n">endstates_reference_to_target</span><span class="p">,</span>
+            <span class="n">trajs_reference_to_target</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+            <span class="n">sim</span><span class="p">,</span>
+            <span class="n">lambs</span><span class="p">,</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
+            <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+            <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
+            <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">Ws_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">=</span> <span class="n">Ws_reference_to_target</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_reference_to_target</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span> <span class="o">=</span> <span class="n">trajs_reference_to_target</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol...&quot;</span><span class="p">)</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
-            <span class="n">Ws</span><span class="p">,</span> <span class="n">endstates_mm_to_qml</span><span class="p">,</span> <span class="n">trajs_mm_to_qml</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                    <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
-                    <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span>
-                <span class="p">)</span>
-            <span class="n">Ws_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span><span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
-
-            <span class="c1"># perform switching from qml to mm</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
-            <span class="n">Ws</span><span class="p">,</span> <span class="n">endstates_qml_to_mm</span><span class="p">,</span> <span class="n">trajs_qml_to_mm</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                    <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
-                    <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span>
-                <span class="p">)</span>
-            <span class="n">Ws_from_qml_to_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span><span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>   
-
-            <span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span> <span class="o">=</span> <span class="n">Ws_from_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span> <span class="o">=</span> <span class="n">Ws_from_qml_to_mm</span>
-
-            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span> <span class="o">=</span> <span class="n">endstates_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span> <span class="o">=</span> <span class="n">endstates_qml_to_mm</span>
-
-            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span> <span class="o">=</span> <span class="n">trajs_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span> <span class="o">=</span> <span class="n">trajs_qml_to_mm</span>
-
-            <span class="c1">####################################################</span>
-            <span class="c1"># ------------------- unidirectional----------------</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;unidirectional_forward&quot;</span>
-            <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;unidirectional&quot;</span>
-            <span class="p">):</span>
-            <span class="c1"># perform switching from mm to qml</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing unidirectional protocol from MM to QML...&quot;</span><span class="p">)</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
-            <span class="n">Ws</span><span class="p">,</span> <span class="n">endstates_mm_to_qml</span><span class="p">,</span> <span class="n">trajs_mm_to_qml</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                    <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
-                    <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span>
-                <span class="p">)</span>
-            <span class="n">Ws_from_mm_to_qml</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span><span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
-
-            <span class="n">r</span><span class="o">.</span><span class="n">W_mm_to_qml</span> <span class="o">=</span> <span class="n">Ws_from_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_mm_to_qml</span> <span class="o">=</span> <span class="n">endstates_mm_to_qml</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_mm_to_qml</span> <span class="o">=</span> <span class="n">trajs_mm_to_qml</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">protocol</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;unidirectional_reverse&quot;</span><span class="p">):</span>
-            <span class="c1"># perform switching from qml to mm</span>
-            <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
-            <span class="n">Ws</span><span class="p">,</span> <span class="n">endstates_qml_to_mm</span><span class="p">,</span> <span class="n">trajs_qml_to_mm</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-                    <span class="n">sim</span><span class="p">,</span>
-                    <span class="n">lambs</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">trajectories</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-                    <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
-                    <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span>
-                <span class="p">)</span>
-            <span class="n">Ws_from_qml_to_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span><span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>   
-
-            <span class="n">r</span><span class="o">.</span><span class="n">W_qml_to_mm</span> <span class="o">=</span> <span class="n">Ws_from_qml_to_mm</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_qml_to_mm</span> <span class="o">=</span> <span class="n">endstates_qml_to_mm</span>            
-            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_qml_to_mm</span> <span class="o">=</span> <span class="n">trajs_qml_to_mm</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># perform switching from target to reference</span>
+            <span class="p">(</span>
+                <span class="n">Ws</span><span class="p">,</span>
+                <span class="n">endstates_target_to_reference</span><span class="p">,</span>
+                <span class="n">trajs_target_to_reference</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+                <span class="n">sim</span><span class="p">,</span>
+                <span class="n">lambs</span><span class="p">,</span>
+                <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span><span class="p">,</span>
+                <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+                <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
+                <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">Ws_target_to_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">=</span> <span class="n">Ws_target_to_reference</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_target_to_reference</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span> <span class="o">=</span> <span class="n">trajs_target_to_reference</span>
 
     <span class="k">return</span> <span class="n">r</span></div>
 </pre></div>

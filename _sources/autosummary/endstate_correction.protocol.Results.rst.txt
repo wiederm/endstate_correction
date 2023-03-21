@@ -25,14 +25,13 @@ endstate\_correction.protocol.Results
 
    .. autosummary::
    
-      ~Results.W_mm_to_qml
-      ~Results.W_qml_to_mm
-      ~Results.dE_mm_to_qml
-      ~Results.dE_qml_to_mm
-      ~Results.endstate_samples_mm_to_qml
-      ~Results.endstate_samples_qml_to_mm
-      ~Results.switching_traj_mm_to_qml
-      ~Results.switching_traj_qml_to_mm
+      ~Results.W_reference_to_target
+      ~Results.W_target_to_reference
+      ~Results.dE_reference_to_target
+      ~Results.dE_target_to_reference
+      ~Results.endstate_samples_reference_to_target
+      ~Results.switching_traj_reference_to_target
+      ~Results.switching_traj_target_to_reference
       ~Results.equ_mbar
    
    

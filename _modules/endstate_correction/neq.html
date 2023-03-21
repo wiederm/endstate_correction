@@ -78,22 +78,38 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
+<span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-
-<span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">distance_unit</span><span class="p">,</span> <span class="n">temperature</span>
+<span class="kn">from</span> <span class="nn">mdtraj</span> <span class="kn">import</span> <span class="n">Trajectory</span>
+<span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">temperature</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.system</span> <span class="kn">import</span> <span class="n">get_positions</span>
-<span class="kn">import</span> <span class="nn">openmm</span>
 
 
 <div class="viewcode-block" id="perform_switching"><a class="viewcode-back" href="../../autosummary/endstate_correction.neq.perform_switching.html#endstate_correction.neq.perform_switching">[docs]</a><span class="k">def</span> <span class="nf">perform_switching</span><span class="p">(</span>
-    <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> 
-    <span class="n">samples</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> 
-    <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> 
+    <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span>
+    <span class="n">lambdas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">samples</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
     <span class="n">save_trajs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">save_endstates</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;performs NEQ switching using the lambda sheme passed from randomly dranw samples&quot;&quot;&quot;</span>
-   
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform NEQ switching using the provided lambda schema on the passed simulation instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sim (Simulation): simulation instance</span>
+<span class="sd">        lambdas (list): list of lambda values</span>
+<span class="sd">        samples (Trajectory): samples from which the starting points fo the NEQ switching simulation are drawn</span>
+<span class="sd">        nr_of_switches (int, optional): number of switches. Defaults to 50.</span>
+<span class="sd">        save_trajs (bool, optional): save switching trajectories. Defaults to False.</span>
+<span class="sd">        save_endstates (bool, optional): save endstate of switching trajectory. Defaults to False.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if the number of lambda states is less than 2</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[list, list, list]: work values, endstate samples, switching trajectories</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">save_endstates</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Endstate of each switch will be saved.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
@@ -120,23 +136,22 @@
         <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
             <span class="c1"># if switching trajectories need to be saved, create an empty list at the beginning</span>
             <span class="c1"># of each switch for saving conformations</span>
-            <span class="n">switching_trajectory</span> <span class="o">=</span> <span class="p">[]</span> 
+            <span class="n">switching_trajectory</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># select a random sample</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">distance_unit</span><span class="p">))</span>
-            <span class="o">*</span> <span class="n">distance_unit</span>
-        <span class="p">)</span>
+        <span class="c1"># select a random frame</span>
+        <span class="n">random_frame_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># select the coordinates of the random frame</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">samples</span><span class="o">.</span><span class="n">unitcell_lengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">box_length</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">unitcell_lengths</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">box_length</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># set position</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
+        <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">box_length</span><span class="p">:</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPeriodicBoxVectors</span><span class="p">(</span><span class="o">*</span><span class="n">box_length</span><span class="p">)</span>
         <span class="c1"># reseed velocities</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">openmm</span><span class="o">.</span><span class="n">OpenMMException</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">endstate_correction.equ</span> <span class="kn">import</span> <span class="n">_seed_velocities</span><span class="p">,</span> <span class="n">_get_masses</span>
-
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocities</span><span class="p">(</span><span class="n">_seed_velocities</span><span class="p">(</span><span class="n">_get_masses</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">system</span><span class="p">)))</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
         <span class="c1"># initialize work</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -160,6 +175,7 @@
             <span class="n">u_before</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span>
             <span class="c1"># add to accumulated work</span>
             <span class="n">w</span> <span class="o">+=</span> <span class="p">(</span><span class="n">u_now</span> <span class="o">-</span> <span class="n">u_before</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
+            <span class="c1"># TODO: expand to reduced potential</span>
         <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
             <span class="c1"># at the end of each switch save the last conformation</span>
             <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
@@ -170,11 +186,14 @@
             <span class="n">endstate_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
         <span class="c1"># get all work values</span>
         <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">,</span> <span class="n">endstate_samples</span><span class="p">,</span> <span class="n">all_switching_trajectories</span></div>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">,</span>
+        <span class="n">endstate_samples</span><span class="p">,</span>
+        <span class="n">all_switching_trajectories</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_collect_work_values</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-
     <span class="n">ws</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
     <span class="n">number_of_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of samples used: </span><span class="si">{</span><span class="n">number_of_samples</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
