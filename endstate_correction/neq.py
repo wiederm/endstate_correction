@@ -7,21 +7,38 @@ from typing import Tuple
 
 import numpy as np
 from openmm import unit
+from openmm.app import Simulation
 from tqdm import tqdm
-
-from endstate_correction.constant import distance_unit, temperature
+from mdtraj import Trajectory
+from endstate_correction.constant import temperature
 from endstate_correction.system import get_positions
 
 
 def perform_switching(
-    sim, lambdas: list, 
-    samples: list, 
-    nr_of_switches: int = 50, 
+    sim: Simulation,
+    lambdas: list,
+    samples: Trajectory,
+    nr_of_switches: int = 50,
     save_trajs: bool = False,
-    save_endstates:bool = False,
+    save_endstates: bool = False,
 ) -> Tuple[list, list, list]:
-    """performs NEQ switching using the lambda sheme passed from randomly dranw samples"""
-   
+    """Perform NEQ switching using the provided lambda schema on the passed simulation instance.
+
+    Args:
+        sim (Simulation): simulation instance
+        lambdas (list): list of lambda values
+        samples (Trajectory): samples from which the starting points fo the NEQ switching simulation are drawn
+        nr_of_switches (int, optional): number of switches. Defaults to 50.
+        save_trajs (bool, optional): save switching trajectories. Defaults to False.
+        save_endstates (bool, optional): save endstate of switching trajectory. Defaults to False.
+
+    Raises:
+        RuntimeError: if the number of lambda states is less than 2
+
+    Returns:
+        Tuple[list, list, list]: work values, endstate samples, switching trajectories
+    """
+
     if save_endstates:
         print("Endstate of each switch will be saved.")
     if save_trajs:
@@ -48,16 +65,20 @@ def perform_switching(
         if save_trajs:
             # if switching trajectories need to be saved, create an empty list at the beginning
             # of each switch for saving conformations
-            switching_trajectory = [] 
+            switching_trajectory = []
 
-        # select a random sample
-        x = (
-            np.array(random.choice(samples).value_in_unit(distance_unit))
-            * distance_unit
-        )
+        # select a random frame
+        random_frame_idx = random.randint(0, len(samples.xyz) - 1)
+        # select the coordinates of the random frame
+        coord = samples.xyz[random_frame_idx]
+        if samples.unitcell_lengths is not None:
+            box_length = samples.unitcell_lengths[random_frame_idx]
+        else:
+            box_length = None
         # set position
-        sim.context.setPositions(x)
-
+        sim.context.setPositions(coord)
+        if box_length:
+            sim.context.setPeriodicBoxVectors(*box_length)
         # reseed velocities
         sim.context.setVelocitiesToTemperature(temperature)
         # initialize work
@@ -94,11 +115,14 @@ def perform_switching(
             endstate_samples.append(get_positions(sim))
         # get all work values
         ws.append(w)
-    return np.array(ws) * unit.kilojoule_per_mole, endstate_samples, all_switching_trajectories
+    return (
+        np.array(ws) * unit.kilojoule_per_mole,
+        endstate_samples,
+        all_switching_trajectories,
+    )
 
 
 def _collect_work_values(file: str) -> list:
-
     ws = pickle.load(open(file, "rb")).value_in_unit(unit.kilojoule_per_mole)
     number_of_samples = len(ws)
     print(f"Number of samples used: {number_of_samples}")

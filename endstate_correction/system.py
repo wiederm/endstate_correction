@@ -1,15 +1,11 @@
 # general imports
 import json
 
-import openmm as mm
 from openmm import unit
 from openmm.app import (
-    PME,
     CharmmPsfFile,
     CharmmCrdFile,
-    NoCutoff,
 )
-from openmmml import MLPotential
 
 
 def gen_box(psf: CharmmPsfFile, crd: CharmmCrdFile) -> CharmmPsfFile:
