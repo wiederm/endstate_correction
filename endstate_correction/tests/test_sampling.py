@@ -1,27 +1,25 @@
 from openmm.app import (
     CharmmParameterSet,
     CharmmPsfFile,
-    PDBFile,
     CharmmCrdFile,
+    PDBFile,
 )
 import endstate_correction
 import pathlib
+from openmm.app import DCDReporter
+from .test_system import setup_vacuum_simulation, setup_waterbox_simulation
 
 # define path to test systems
 path = pathlib.Path(endstate_correction.__file__).resolve().parent
 hipen_testsystem = f"{path}/data/hipen_data"
-
-path = pathlib.Path(endstate_correction.__file__).resolve().parent
 jctc_testsystem = f"{path}/data/jctc_data"
 
 
 def test_sampling():
     """Test if we can sample with simulation instance in vacuum and watervox"""
     from endstate_correction.system import (
-        create_charmm_system,
         read_box,
     )
-    from endstate_correction.equ import generate_samples
 
     ########################################################
     ########################################################
@@ -36,14 +34,11 @@ def test_sampling():
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
     # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
+    sim = setup_vacuum_simulation(psf, params)
     sim.context.setPositions(crd.positions)
-    generate_samples(sim, 1, 50)
+    sim.context.setVelocitiesToTemperature(300)
+    sim.reporters.append(DCDReporter("test.dcd", 100))
+    sim.step(1000)
 
     ########################################################
     ########################################################
@@ -67,6 +62,6 @@ def test_sampling():
     chains = list(psf.topology.chains())
     ml_atoms = [atom.index for atom in chains[0].atoms()]
     # set up system
-    sim = create_charmm_system(psf=psf, parameters=params, env="waterbox", ml_atoms=ml_atoms)
+    sim = setup_waterbox_simulation(psf, params, ml_atoms)
     sim.context.setPositions(pdb.positions)
-    generate_samples(sim, 1, 50)
+    sim.step(50)

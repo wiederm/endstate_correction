@@ -1,11 +1,12 @@
 # general imports
-from endstate_correction.system import create_charmm_system, read_box
+from openmm import LangevinIntegrator
 from openmm.app import (
     PME,
     CharmmParameterSet,
     CharmmPsfFile,
     CharmmCrdFile,
     PDBFile,
+    Simulation,
 )
 from endstate_correction.constant import zinc_systems, blacklist
 from endstate_correction.analysis import plot_endstate_correction_results
@@ -14,7 +15,7 @@ from endstate_correction.protocol import perform_endstate_correction, Protocol
 import mdtraj
 from openmm import unit
 import pickle, sys, os
-from endstate_correction.utils import convert_pickle_to_dcd_file
+from openmmml import MLPotential
 
 ########################################################
 ########################################################
@@ -24,7 +25,7 @@ system_idx = int(sys.argv[1])
 system_name = zinc_systems[system_idx][0]
 
 if system_name in blacklist:
-    print('System in blacklist. Aborting.')
+    print("System in blacklist. Aborting.")
     sys.exit()
 
 env = "vacuum"
@@ -51,9 +52,14 @@ with open("temp.pdb", "w") as outfile:
 # define region that should be treated with the qml
 chains = list(psf.topology.chains())
 ml_atoms = [atom.index for atom in chains[0].atoms()]
+print(f"{ml_atoms=}")
+mm_system = psf.createSystem(params=params)
 # define system
-sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)
-
+potential = MLPotential("ani2x")
+ml_system = potential.createMixedSystem(
+    psf.topology, mm_system, ml_atoms, interpolate=True
+)
+sim = Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
 ########################################################
 ########################################################
 # ------------------- load samples --------------------#
@@ -61,33 +67,33 @@ n_samples = 5_000
 n_steps_per_sample = 1_000
 
 # define directory containing MM and QML sampling data
-traj_base =  f"/data/shared/projects/endstate_rew/{system_name}/sampling_charmmff/"
+traj_base = f"/data/shared/projects/endstate_rew/{system_name}/sampling_charmmff/"
 
 # load MM samples
 mm_samples = []
-for i in range(1,4):
-    base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000" 
+for i in range(1, 4):
+    base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000"
     # if needed, convert pickle file to dcd
-    #convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
+    # convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
     traj = mdtraj.load_dcd(
-            f"{base}.dcd",
-            top=psf_file,
+        f"{base}.dcd",
+        top=psf_file,
     )
     mm_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
-print(f'Initializing switch from {len(mm_samples)} MM samples')
+print(f"Initializing switch from {len(mm_samples)} MM samples")
 
 # load QML samples
 qml_samples = []
-for i in range(1,4):
+for i in range(1, 4):
     base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000"
     # if needed, convert pickle file to dcd
-    #convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
+    # convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
     traj = mdtraj.load_dcd(
-            f"{base}.dcd",
-            top=psf_file,
+        f"{base}.dcd",
+        top=psf_file,
     )
     qml_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
-print(f'Initializing switch from {len(mm_samples)} QML samples')
+print(f"Initializing switch from {len(mm_samples)} QML samples")
 
 ########################################################
 ########################################################
@@ -105,7 +111,7 @@ fep_protocol = Protocol(
     direction="bidirectional",
     sim=sim,
     trajectories=[mm_samples, qml_samples],
-    nr_of_switches=10 #2_000,
+    nr_of_switches=10,  # 2_000,
 )
 
 ####################################################
@@ -116,10 +122,10 @@ neq_protocol = Protocol(
     direction="bidirectional",
     sim=sim,
     trajectories=[mm_samples, qml_samples],
-    nr_of_switches=3, #500,
-    neq_switching_length=5, #_000,
+    nr_of_switches=3,  # 500,
+    neq_switching_length=5,  # _000,
     save_endstates=True,
-    save_trajs=True
+    save_trajs=True,
 )
 
 # perform correction

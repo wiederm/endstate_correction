@@ -7,6 +7,7 @@ import numpy as np
 from endstate_correction.neq import perform_switching
 from openmm import unit
 from openmm.app import Simulation
+from .test_system import setup_vacuum_simulation
 
 
 def test_collect_work_values():
@@ -22,10 +23,8 @@ def test_collect_work_values():
 def load_endstate_system_and_samples(
     system_name: str,
 ) -> Tuple[Simulation, list, list]:
-
     # initialize simulation and load pre-generated samples
 
-    from endstate_correction.system import create_charmm_system
     from openmm.app import CharmmCrdFile, CharmmParameterSet, CharmmPsfFile
 
     ########################################################
@@ -43,30 +42,27 @@ def load_endstate_system_and_samples(
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
     # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-    sim = create_charmm_system(psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms)
+    sim = setup_vacuum_simulation(psf=psf, params=params)
     sim.context.setPositions(crd.positions)
     n_samples = 5_000
     n_steps_per_sample = 1_000
     ###########################################################################################
-    mm_samples = []
-    xyz, unitcell_lengths, _ = mdtraj.open(
+    pdb_file = f"data/{system_name}/{system_name}.pdb"
+    mm_samples = mdtraj.load_dcd(
         f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000.dcd",
-    ).read()
+        top=pdb_file,
+    )
 
-    mm_samples.extend(xyz * unit.angstrom)  # NOTE: this is in angstrom!
     qml_samples = []
-    xyz, unitcell_lengths, _ = mdtraj.open(
+    qml_samples = mdtraj.load_dcd(
         f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000.dcd",
-    ).read()
-    qml_samples.extend(xyz * unit.angstrom)  # NOTE: this is in angstrom!
+        top=pdb_file,
+    )
 
     return sim, mm_samples, qml_samples
 
 
 def test_switching():
-
     system_name = "ZINC00077329"
     print(f"{system_name=}")
 
@@ -99,36 +95,68 @@ def test_switching():
     # perform NEQ switching
     lambs = np.linspace(0, 1, 21)
     dW_forw, _, _ = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
+        sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
+    assert dW_forw[0] != dW_forw[1]
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 101)
     dW_forw, _, _ = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
+        sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
+    assert dW_forw[0] != dW_forw[1]
 
     # check return values
     lambs = np.linspace(0, 1, 3)
     list_1, list_2, list_3 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=False, save_trajs=False
+        sim,
+        lambdas=lambs,
+        samples=samples_mm[:1],
+        nr_of_switches=1,
+        save_endstates=False,
+        save_trajs=False,
     )
     assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 0
 
     list_1, list_2, list_3 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=False, save_trajs=True
+        sim,
+        lambdas=lambs,
+        samples=samples_mm[:1],
+        nr_of_switches=1,
+        save_endstates=False,
+        save_trajs=True,
     )
 
-    assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 1 and len(list_3[0]) == 3
+    assert (
+        len(list_1) == 1
+        and len(list_2) == 0
+        and len(list_3) == 1
+        and len(list_3[0]) == 3
+    )
 
     list_1, list_2, list_3 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=True, save_trajs=False
+        sim,
+        lambdas=lambs,
+        samples=samples_mm[:1],
+        nr_of_switches=1,
+        save_endstates=True,
+        save_trajs=False,
     )
     assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 0
 
     list_1, list_2, list_3 = perform_switching(
-        sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1, save_endstates=True, save_trajs=True
+        sim,
+        lambdas=lambs,
+        samples=samples_mm[:1],
+        nr_of_switches=1,
+        save_endstates=True,
+        save_trajs=True,
     )
-    assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 1 and len(list_3[0]) == 3
+    assert (
+        len(list_1) == 1
+        and len(list_2) == 1
+        and len(list_3) == 1
+        and len(list_3[0]) == 3
+    )

@@ -6,13 +6,12 @@ import endstate_correction
 import mdtraj as md
 import numpy as np
 from endstate_correction.equ import calculate_u_kn
-from endstate_correction.system import create_charmm_system
 from openmm import unit
 from openmm.app import CharmmParameterSet, CharmmPsfFile
 from pymbar import MBAR
 from openmm.app import Simulation
 from typing import Tuple
-
+from .test_system import setup_vacuum_simulation
 
 def load_equ_samples(
     system_name: str,
@@ -70,14 +69,7 @@ def test_equilibrium_free_energy():
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-
-    # create a charmm system given the defininition above
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
+    sim = setup_vacuum_simulation(psf, params)
     # load samples
     trajs = load_equ_samples(system_name)
     # calculate u_kn
