@@ -4,7 +4,7 @@
 from openmm.app import Simulation
 import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Union
+from typing import List, Union, Optional
 
 import numpy as np
 import mdtraj as md
@@ -111,7 +111,7 @@ class Protocol:
     method: str  # FEP, NEQ, ALL
     sim: Simulation  # simulation object
     reference_samples: md.Trajectory  # reference samples
-    target_samples: Union[md.Trajectory, None] = None  # target samples
+    target_samples: Optional[md.Trajectory] = None  # target samples
     nr_of_switches: int = -1  # number of switches
     neq_switching_length: int = 5_000  # switching length in steps
     save_endstates: bool = False  # True makes only sense for NEQ

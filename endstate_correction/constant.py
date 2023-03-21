@@ -14,7 +14,7 @@ stepsize = 1 * time_unit
 collision_rate = 1 / unit.picosecond
 temperature = 300 * unit.kelvin
 
-kBT = kB * temperature
+kBT = kB * temperature # thermal energy
 
 jctc_systems = [
     "1_octanol",

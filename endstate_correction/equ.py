@@ -11,7 +11,6 @@ from endstate_correction.constant import kBT
 def _collect_equ_samples(
     trajs: list, every_nth_frame: int = 10
 ) -> Tuple[list, np.array]:
-
     """
     Given a list of k trajectories with n samples a dictionary with the number of samples per trajektory
     and a list with all samples [n_1, n_2, ...] is generated
@@ -25,7 +24,6 @@ def _collect_equ_samples(
 
     # loop over lambda scheme and collect samples in nanometer
     for idx, xyz in enumerate(trajs):
-
         xyz = xyz[1_000:]  # remove the first 1k samples
         xyz = xyz[::every_nth_frame]  # take only every nth sample
         N_k[idx] = len(xyz)
@@ -37,24 +35,23 @@ def _collect_equ_samples(
 
 
 def calculate_u_kn(
-    trajs: list,
+    trajs: list,  # list of trajectories
     sim: Simulation,
-    every_nth_frame: int = 10,
+    every_nth_frame: int = 10,  # prune the samples further by taking only every nth sample
 ) -> np.ndarray:
-
     """
     Calculate the u_kn matrix to be used by the mbar estimator
 
     Args:
+        trajs (list): list of trajectories
+        sim (Simulation): simulation object
         every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.
-        reload (bool, optional): do you want to reload a previously saved mbar pickle file if present (every time the free energy is calculated the mbar pickle file is saved --- only loading is optional)
-        override (bool, optional) : override
     Returns:
-        Tuple(np.array, np.ndarray): (N_k, u_kn)
+        np.ndarray: u_kn matrix
     """
 
-    lambda_scheme = np.linspace(0, 1, 11)
-    samples, N_k = _collect_equ_samples(trajs, every_nth_frame)
+    lambda_scheme = np.linspace(0, 1, 11)  # equilibrium lambda scheme
+    samples, N_k = _collect_equ_samples(trajs, every_nth_frame)  # collect samples
 
     samples = np.array(samples.value_in_unit(unit.nanometer))  # positions in nanometer
     u_kn = np.zeros(
@@ -78,4 +75,3 @@ def calculate_u_kn(
     assert total_nr_of_samples > 20  # make sure that there are samples present
 
     return (N_k, u_kn)
-
