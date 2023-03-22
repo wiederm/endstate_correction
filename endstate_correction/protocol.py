@@ -216,7 +216,7 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
             save_endstates=protocol.save_endstates,
             save_trajs=protocol.save_trajs,
         )
-        Ws_reference_to_target = np.array(Ws / kBT) # remove units
+        Ws_reference_to_target = np.array(Ws / kBT)  # remove units
         r.W_reference_to_target = Ws_reference_to_target
         r.endstate_samples_reference_to_target = endstates_reference_to_target
         r.switching_traj_reference_to_target = trajs_reference_to_target

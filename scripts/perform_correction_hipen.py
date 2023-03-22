@@ -70,7 +70,7 @@ n_steps_per_sample = 1_000
 traj_base = f"/data/shared/projects/endstate_rew/{system_name}/sampling_charmmff/"
 
 # load MM samples
-mm_samples = []
+trajs = []
 for i in range(1, 4):
     base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000"
     # if needed, convert pickle file to dcd
@@ -79,7 +79,9 @@ for i in range(1, 4):
         f"{base}.dcd",
         top=psf_file,
     )
-    mm_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
+    traj = traj[1000:]  # remove equilibration
+    trajs.append(traj)
+mm_samples = mdtraj.join(trajs)
 print(f"Initializing switch from {len(mm_samples)} MM samples")
 
 # load QML samples
@@ -92,8 +94,10 @@ for i in range(1, 4):
         f"{base}.dcd",
         top=psf_file,
     )
-    qml_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
-print(f"Initializing switch from {len(mm_samples)} QML samples")
+    traj = traj[1000:]  # remove equilibration
+    trajs.append(traj)
+qml_samples = mdtraj.join(trajs)
+print(f"Initializing switch from {len(qml_samples)} QML samples")
 
 ########################################################
 ########################################################
@@ -108,9 +112,9 @@ os.makedirs(output_base, exist_ok=True)
 ####################################################
 fep_protocol = Protocol(
     method="FEP",
-    direction="bidirectional",
     sim=sim,
-    trajectories=[mm_samples, qml_samples],
+    reference_samples=mm_samples,
+    target_samples=qml_samples,
     nr_of_switches=10,  # 2_000,
 )
 
@@ -119,9 +123,9 @@ fep_protocol = Protocol(
 ####################################################
 neq_protocol = Protocol(
     method="NEQ",
-    direction="bidirectional",
     sim=sim,
-    trajectories=[mm_samples, qml_samples],
+    reference_samples=mm_samples,
+    target_samples=qml_samples,
     nr_of_switches=3,  # 500,
     neq_switching_length=5,  # _000,
     save_endstates=True,
