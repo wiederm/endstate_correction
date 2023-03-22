@@ -46,8 +46,6 @@ jobs:
           key: ${{ matrix.label }}-conda-${{ hashFiles('docs/requirements.yaml') }}-${{ env.DATE }}-${{ env.CACHE_NUMBER }}
         id: cache
       - name: Update environment
-        env:
-          CONDA_OVERRIDE_CUDA: "11.4"
         run: mamba env update -n docs -f docs/requirements.yaml
         if: steps.cache.outputs.cache-hit != 'true'
         
