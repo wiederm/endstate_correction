@@ -11,7 +11,7 @@ dependencies:
   - openmm-torch
   - openff-toolkit
   - openmmtools
-  - nnpops>=0.4
+  - "nnpops>=0.4=cuda*"
   - cudatoolkit
   - tqdm
   - pymbar>=4.0
