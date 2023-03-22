@@ -60,14 +60,16 @@ class TestPerformCorrection:
     @pytest.fixture(scope="module")
     def perform_correction(ec):
         sim = ec.get_simulation()
-        traj = ec.get_xyz()
+        traj = ec.get_trajectory()
         fep_protocol = Protocol(
             method="NEQ",
             sim=sim,
             reference_samples=traj,
-            target_samples=traj,
+            reference_samples=mm_samples,
             nr_of_switches=5,
             neq_switching_length=10,
+            save_endstates=False,
+            save_trajs=False,
         )
 
         r = perform_endstate_correction(fep_protocol)

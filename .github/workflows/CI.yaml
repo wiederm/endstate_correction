@@ -37,13 +37,12 @@ jobs:
         uname -a
         df -h
         ulimit -a
-        echo CONDA_OVERRIDE_CUDA  $CONDA_OVERRIDE_CUDA
 
 
     # More info on options: https://github.com/conda-incubator/setup-miniconda
     - uses: mamba-org/provision-with-micromamba@main
       env:
-        CONDA_OVERRIDE_CUDA: "11.7"
+        CONDA_OVERRIDE_CUDA: "11.4"
       with:
         python-version: ${{ matrix.python-version }}
         environment-file: devtools/conda-envs/test_env.yaml
