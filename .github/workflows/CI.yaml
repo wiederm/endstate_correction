@@ -39,7 +39,7 @@ jobs:
         uname -a
         df -h
         ulimit -a
-        echo CONDA_OVERRIDE_CUDA $CONDA_OVERRIDE_CUDA
+        echo CONDA_OVERRIDE_CUDA  $CONDA_OVERRIDE_CUDA
 
 
     # More info on options: https://github.com/conda-incubator/setup-miniconda
