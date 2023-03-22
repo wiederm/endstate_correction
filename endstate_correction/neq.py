@@ -71,7 +71,7 @@ def perform_switching(
         # select a random frame
         random_frame_idx = random.randint(0, len(samples.xyz) - 1)
         # select the coordinates of the random frame
-        coord = samples.xyz[random_frame_idx]
+        coord = samples.openmm_positions(random_frame_idx)
         if samples.unitcell_lengths is not None:
             box_length = samples.openmm_boxes(random_frame_idx)
         else:
