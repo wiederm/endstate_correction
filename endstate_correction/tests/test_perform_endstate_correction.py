@@ -53,7 +53,7 @@ class TestPerformCorrection:
             name=system_name,
             work_dir=str(output_base),
         )
-        simulation._traj_file = str(parameter_base / f"{system_name}.h5")
+        simulation.set_trajectory(str(parameter_base / f"{system_name}.h5"))
         return simulation
 
     @staticmethod
