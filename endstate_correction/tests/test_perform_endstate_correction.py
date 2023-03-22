@@ -65,7 +65,6 @@ class TestPerformCorrection:
             method="NEQ",
             sim=sim,
             reference_samples=traj,
-            reference_samples=mm_samples,
             nr_of_switches=5,
             neq_switching_length=10,
             save_endstates=False,
