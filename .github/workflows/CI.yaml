@@ -37,6 +37,7 @@ jobs:
         uname -a
         df -h
         ulimit -a
+        export CONDA_OVERRIDE_CUDA="11.7"
 
 
     # More info on options: https://github.com/conda-incubator/setup-miniconda
