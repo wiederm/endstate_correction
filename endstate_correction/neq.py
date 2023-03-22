@@ -6,10 +6,11 @@ import random
 from typing import Tuple
 
 import numpy as np
+from mdtraj import Trajectory
 from openmm import unit
 from openmm.app import Simulation
 from tqdm import tqdm
-from mdtraj import Trajectory
+
 from endstate_correction.constant import temperature
 from endstate_correction.system import get_positions
 
@@ -72,12 +73,12 @@ def perform_switching(
         # select the coordinates of the random frame
         coord = samples.xyz[random_frame_idx]
         if samples.unitcell_lengths is not None:
-            box_length = samples.unitcell_lengths[random_frame_idx]
+            box_length = samples.openmm_boxes(random_frame_idx)
         else:
             box_length = None
         # set position
         sim.context.setPositions(coord)
-        if box_length:
+        if box_length is not None:
             sim.context.setPeriodicBoxVectors(*box_length)
         # reseed velocities
         sim.context.setVelocitiesToTemperature(temperature)
