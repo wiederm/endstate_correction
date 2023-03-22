@@ -20,8 +20,6 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  env:
-    CONDA_OVERRIDE_CUDA: "11.7"
   test:
     name: Test on ${{ matrix.os }}, Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
@@ -44,6 +42,8 @@ jobs:
 
     # More info on options: https://github.com/conda-incubator/setup-miniconda
     - uses: mamba-org/provision-with-micromamba@main
+      env:
+        CONDA_OVERRIDE_CUDA: "11.7"
       with:
         python-version: ${{ matrix.python-version }}
         environment-file: devtools/conda-envs/test_env.yaml
