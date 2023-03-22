@@ -20,6 +20,8 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
+  env:
+    CONDA_OVERRIDE_CUDA: "11.7"
   test:
     name: Test on ${{ matrix.os }}, Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
@@ -37,7 +39,6 @@ jobs:
         uname -a
         df -h
         ulimit -a
-        export CONDA_OVERRIDE_CUDA="11.7"
 
 
     # More info on options: https://github.com/conda-incubator/setup-miniconda
