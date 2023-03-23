@@ -22,6 +22,7 @@ endstate\_correction.simulation.amber.EndstateCorrectionAMBER
       ~EndstateCorrectionAMBER.get_simulation
       ~EndstateCorrectionAMBER.get_trajectory
       ~EndstateCorrectionAMBER.get_xyz
+      ~EndstateCorrectionAMBER.set_trajectory
       ~EndstateCorrectionAMBER.start
    
    

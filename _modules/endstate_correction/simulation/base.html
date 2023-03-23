@@ -71,11 +71,13 @@
   <h1>Source code for endstate_correction.simulation.base</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">mdtraj</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">mdtraj</span>
 <span class="kn">from</span> <span class="nn">mdtraj.core.trajectory</span> <span class="kn">import</span> <span class="n">Trajectory</span> <span class="k">as</span> <span class="n">mdtraj_trajectory</span>
 <span class="kn">from</span> <span class="nn">mdtraj.reporters</span> <span class="kn">import</span> <span class="n">HDF5Reporter</span>
-<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">Integrator</span><span class="p">,</span> <span class="n">LangevinIntegrator</span><span class="p">,</span> <span class="n">OpenMMException</span><span class="p">,</span> <span class="n">Platform</span>
+<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">Integrator</span><span class="p">,</span> <span class="n">LangevinIntegrator</span><span class="p">,</span> <span class="n">OpenMMException</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AmberPrmtopFile</span><span class="p">,</span>
@@ -86,11 +88,10 @@
     <span class="n">Topology</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">openmmtools.utils</span> <span class="kn">import</span> <span class="n">get_fastest_platform</span>
 
 <span class="kn">from</span> <span class="nn">..protocol</span> <span class="kn">import</span> <span class="n">BSSProtocol</span>
 <span class="kn">from</span> <span class="nn">..topology</span> <span class="kn">import</span> <span class="n">AMBERTopology</span><span class="p">,</span> <span class="n">CHARMMTopology</span>
-<span class="kn">from</span> <span class="nn">openmmtools.utils</span> <span class="kn">import</span> <span class="n">get_fastest_platform</span>
 
 
 <div class="viewcode-block" id="EndstateCorrectionBase"><a class="viewcode-back" href="../../../autosummary/endstate_correction.simulation.base.EndstateCorrectionBase.html#endstate_correction.simulation.base.EndstateCorrectionBase">[docs]</a><span class="k">class</span> <span class="nc">EndstateCorrectionBase</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
@@ -206,6 +207,9 @@
         <span class="c1"># perform sampling</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="o">.</span><span class="n">n_integration_steps</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">reporters</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">set_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traj_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traj_file</span> <span class="o">=</span> <span class="n">traj_file</span>
 
     <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mdtraj_trajectory</span><span class="p">:</span>
         <span class="n">traj</span> <span class="o">=</span> <span class="n">mdtraj</span><span class="o">.</span><span class="n">load_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traj_file</span><span class="p">)</span>

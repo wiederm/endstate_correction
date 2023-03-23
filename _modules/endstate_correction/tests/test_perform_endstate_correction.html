@@ -124,21 +124,22 @@
             <span class="n">name</span><span class="o">=</span><span class="n">system_name</span><span class="p">,</span>
             <span class="n">work_dir</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">output_base</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="n">simulation</span><span class="o">.</span><span class="n">_traj_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parameter_base</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">set_trajectory</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parameter_base</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">simulation</span>
 
     <span class="nd">@staticmethod</span>
     <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">perform_correction</span><span class="p">(</span><span class="n">ec</span><span class="p">):</span>
         <span class="n">sim</span> <span class="o">=</span> <span class="n">ec</span><span class="o">.</span><span class="n">get_simulation</span><span class="p">()</span>
-        <span class="n">traj</span> <span class="o">=</span> <span class="n">ec</span><span class="o">.</span><span class="n">get_xyz</span><span class="p">()</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">ec</span><span class="o">.</span><span class="n">get_trajectory</span><span class="p">()</span>
         <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
             <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
             <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
             <span class="n">reference_samples</span><span class="o">=</span><span class="n">traj</span><span class="p">,</span>
-            <span class="n">target_samples</span><span class="o">=</span><span class="n">traj</span><span class="p">,</span>
             <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
             <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">save_endstates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_trajs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>

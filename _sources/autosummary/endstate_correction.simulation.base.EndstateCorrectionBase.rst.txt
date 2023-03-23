@@ -22,6 +22,7 @@ endstate\_correction.simulation.base.EndstateCorrectionBase
       ~EndstateCorrectionBase.get_simulation
       ~EndstateCorrectionBase.get_trajectory
       ~EndstateCorrectionBase.get_xyz
+      ~EndstateCorrectionBase.set_trajectory
       ~EndstateCorrectionBase.start
    
    
