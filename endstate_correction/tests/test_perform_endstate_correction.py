@@ -53,21 +53,22 @@ class TestPerformCorrection:
             name=system_name,
             work_dir=str(output_base),
         )
-        simulation._traj_file = str(parameter_base / f"{system_name}.h5")
+        simulation.set_trajectory(str(parameter_base / f"{system_name}.h5"))
         return simulation
 
     @staticmethod
     @pytest.fixture(scope="module")
     def perform_correction(ec):
         sim = ec.get_simulation()
-        traj = ec.get_xyz()
+        traj = ec.get_trajectory()
         fep_protocol = Protocol(
             method="NEQ",
             sim=sim,
             reference_samples=traj,
-            target_samples=traj,
             nr_of_switches=5,
             neq_switching_length=10,
+            save_endstates=False,
+            save_trajs=False,
         )
 
         r = perform_endstate_correction(fep_protocol)
