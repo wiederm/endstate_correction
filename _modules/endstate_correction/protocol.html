@@ -231,7 +231,7 @@
     <span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
     <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">kBT</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing endstate correction using </span><span class="si">{protocol.method}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing endstate correction using </span><span class="si">{</span><span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="c1"># check that all necessary keywords are present</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span> <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="s2">&quot;ALL&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
