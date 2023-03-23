@@ -160,7 +160,7 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
     from endstate_correction.neq import perform_switching
     from endstate_correction.constant import kBT
 
-    print("Performing endstate correction using {protocol.method}")
+    print(f"Performing endstate correction using {protocol.method}")
     # check that all necessary keywords are present
     if protocol.method.upper() not in ["FEP", "NEQ", "ALL"]:
         raise NotImplementedError(
