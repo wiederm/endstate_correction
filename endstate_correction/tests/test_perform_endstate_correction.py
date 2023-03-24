@@ -11,7 +11,7 @@ from endstate_correction.simulation import (
 from endstate_correction.topology import AMBERTopology
 
 
-class TestPerformCorrection():
+class TestPerformCorrection:
     @staticmethod
     @pytest.fixture(scope="module")
     def bss_protocol():
@@ -29,6 +29,7 @@ class TestPerformCorrection():
             lam=0,
         )
         return protocol
+
     @staticmethod
     @pytest.fixture(scope="module")
     def ec(tmp_path_factory, bss_protocol):
@@ -52,21 +53,22 @@ class TestPerformCorrection():
             name=system_name,
             work_dir=str(output_base),
         )
-        simulation._traj_file = str(parameter_base / f"{system_name}.h5")
+        simulation.set_trajectory(str(parameter_base / f"{system_name}.h5"))
         return simulation
 
     @staticmethod
     @pytest.fixture(scope="module")
     def perform_correction(ec):
         sim = ec.get_simulation()
-        traj = ec.get_xyz()
+        traj = ec.get_trajectory()
         fep_protocol = Protocol(
             method="NEQ",
-            direction="bidirectional",
             sim=sim,
-            trajectories=[traj, traj],
+            reference_samples=traj,
             nr_of_switches=5,
             neq_switching_length=10,
+            save_endstates=False,
+            save_trajs=False,
         )
 
         r = perform_endstate_correction(fep_protocol)

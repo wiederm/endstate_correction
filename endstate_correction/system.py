@@ -1,24 +1,10 @@
 # general imports
 import json
 
-import openmm as mm
 from openmm import unit
 from openmm.app import (
-    PME,
-    CharmmParameterSet,
     CharmmPsfFile,
     CharmmCrdFile,
-    NoCutoff,
-    Simulation,
-)
-from openmmml import MLPotential
-from tqdm import tqdm
-
-from endstate_correction.constant import (
-    collision_rate,
-    stepsize,
-    temperature,
-    check_implementation,
 )
 
 
@@ -73,63 +59,6 @@ def read_box(psf: CharmmPsfFile, filename: str) -> CharmmPsfFile:
                 boxlz = float(segments[1])
     psf.setBox(boxlx * unit.angstroms, boxly * unit.angstroms, boxlz * unit.angstroms)
     return psf
-
-
-def create_charmm_system(
-    psf: CharmmPsfFile,
-    parameters: CharmmParameterSet,
-    env: str,
-    ml_atoms: list,
-    r_off: int = 1.0,
-    r_on: int = 0,
-) -> Simulation:
-    """Generate an openMM simulation object using CHARMM topology and parameter files
-
-    Args:
-        psf (CharmmPsfFile): topology instance
-        parameters (CharmmParameterSet): parameter instance
-        env (str): either complex, waterbox or vacuum
-        ml_atoms (list): list of atoms described by the QML potential
-
-
-    Returns:
-        Simulation: openMM simulation instance
-    """
-
-    ###################
-    print(f"Generating charmm system in {env}")
-
-    potential = MLPotential("ani2x")
-    _, platform = check_implementation()
-
-    ###################
-    print(f"{platform=}")
-    print(f"{env=}")
-    ###################
-    # TODO: add additional parameters for complex
-    if env == "vacuum":
-        mm_system = psf.createSystem(parameters, nonbondedMethod=NoCutoff)
-    else:
-        mm_system = psf.createSystem(
-            parameters,
-            nonbondedMethod=PME,
-            nonbondedCutoff=r_off * unit.nanometers,
-            switchDistance=r_on * unit.nanometers,
-        )
-
-    print(f"{ml_atoms=}")
-
-    #####################
-    potential = MLPotential("ani2x")
-    ml_system = potential.createMixedSystem(
-        psf.topology, mm_system, ml_atoms, interpolate=True
-    )
-    #####################
-
-    integrator = mm.LangevinIntegrator(temperature, collision_rate, stepsize)
-    platform = mm.Platform.getPlatformByName(platform)
-
-    return Simulation(psf.topology, ml_system, integrator, platform=platform)
 
 
 def get_positions(sim):

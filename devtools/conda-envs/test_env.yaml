@@ -7,17 +7,17 @@ dependencies:
   - python
   - pip
 
-  - openmm
+  - openmm>=8.0
   - openmm-torch
   - openff-toolkit
   - openmmtools
-  - nnpops
-  - cudatoolkit=11.3
+  - nnpops>=0.4
+  - cudatoolkit
   - tqdm
   - pymbar>=4.0
   - torchani
   - seaborn
-  - pytorch=1.11.0
+  - pytorch
   - mdtraj
   # Testing
   - pytest

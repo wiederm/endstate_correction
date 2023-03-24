@@ -1,10 +1,12 @@
 import abc
 import logging
-import mdtraj
 import os
+from typing import List, Literal, Union
+
+import mdtraj
 from mdtraj.core.trajectory import Trajectory as mdtraj_trajectory
 from mdtraj.reporters import HDF5Reporter
-from openmm import Integrator, LangevinIntegrator, OpenMMException, Platform
+from openmm import Integrator, LangevinIntegrator, OpenMMException
 from openmm import unit
 from openmm.app import (
     AmberPrmtopFile,
@@ -15,9 +17,8 @@ from openmm.app import (
     Topology,
 )
 from openmmml import MLPotential
-from typing import List, Literal, Union
+from openmmtools.utils import get_fastest_platform
 
-from ..constant import check_implementation
 from ..protocol import BSSProtocol
 from ..topology import AMBERTopology, CHARMMTopology
 
@@ -32,7 +33,7 @@ class EndstateCorrectionBase(abc.ABC):
         name: str = "endstate_correction",
         work_dir: str = "./",
         potential: str = "ani2x",
-        implementation:str = "nnpops",
+        implementation: str = "nnpops",
         interpolate: bool = True,
     ):
         self.logger = logging.getLogger("EndstateCorrectionBase")
@@ -54,8 +55,7 @@ class EndstateCorrectionBase(abc.ABC):
             implementation="nnpops",
         )
         integrator = self.get_integrator()
-        _, platform = check_implementation()
-        platform = Platform.getPlatformByName(platform)
+        platform = get_fastest_platform(minimum_precision="mixed")
         self.simulation = Simulation(
             self.get_mm_topology().topology, ml_system, integrator, platform=platform
         )
@@ -136,6 +136,9 @@ class EndstateCorrectionBase(abc.ABC):
         # perform sampling
         self.simulation.step(self.protocol.n_integration_steps)
         self.simulation.reporters.clear()
+
+    def set_trajectory(self, traj_file: str) -> None:
+        self._traj_file = traj_file
 
     def get_trajectory(self) -> mdtraj_trajectory:
         traj = mdtraj.load_hdf5(self._traj_file)

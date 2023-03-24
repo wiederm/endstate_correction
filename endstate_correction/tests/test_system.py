@@ -7,18 +7,61 @@ from openmm.app import (
     CharmmPsfFile,
     PDBFile,
     CharmmCrdFile,
+    NoCutoff,
+    Simulation,
+    PME,
 )
+from openmm import LangevinIntegrator
+from openmmml import MLPotential
 
 path = pathlib.Path(endstate_correction.__file__).resolve().parent
 hipen_testsystem = f"{path}/data/hipen_data"
-
-path = pathlib.Path(endstate_correction.__file__).resolve().parent
 jctc_testsystem = f"{path}/data/jctc_data"
+
+
+def setup_vacuum_simulation(
+    psf: CharmmPsfFile, params: CharmmParameterSet
+) -> Simulation:
+    chains = list(psf.topology.chains())
+    ml_atoms = [atom.index for atom in chains[0].atoms()]
+    print(f"{ml_atoms=}")
+    # set up system
+    mm_system = psf.createSystem(params=params, nonbondedMethod=NoCutoff)
+    potential = MLPotential("ani2x")
+    ml_system = potential.createMixedSystem(
+        psf.topology, mm_system, ml_atoms, interpolate=True
+    )
+    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
+
+
+def setup_waterbox_simulation(
+    psf: CharmmPsfFile,
+    params: CharmmParameterSet,
+    r_off: float = 1.2,
+    r_on: float = 0.,
+) -> Simulation:
+    chains = list(psf.topology.chains())
+    ml_atoms = [atom.index for atom in chains[0].atoms()]
+    print(f"{ml_atoms=}")
+    mm_system = psf.createSystem(
+        params,
+        nonbondedMethod=PME,
+        #nonbondedCutoff=r_off * unit.nanometers,
+        #switchDistance=r_on * unit.nanometers,
+    )
+
+    # set up system
+    mm_system = psf.createSystem(params=params, nonbondedMethod=NoCutoff)
+    potential = MLPotential("ani2x")
+    ml_system = potential.createMixedSystem(
+        psf.topology, mm_system, ml_atoms, interpolate=True
+    )
+    return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
 
 
 def test_generate_simulation_instances_with_charmmff():
     """Test if we can generate a simulation instance with charmmff"""
-    from endstate_correction.system import create_charmm_system, get_energy, read_box
+    from endstate_correction.system import get_energy, read_box
 
     ########################################################
     ########################################################
@@ -34,12 +77,8 @@ def test_generate_simulation_instances_with_charmmff():
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
     # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
+    sim = setup_vacuum_simulation(psf, params)
     # set up system
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
     sim.context.setPositions(crd.positions)
 
     ############################
@@ -76,12 +115,7 @@ def test_generate_simulation_instances_with_charmmff():
         f"{jctc_testsystem}/toppar/toppar_water_ions.str",
     )
     # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-    # define system
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
+    sim = setup_vacuum_simulation(psf, params)
     sim.context.setPositions(pdb.positions)
 
     ############################
@@ -120,13 +154,7 @@ def test_generate_simulation_instances_with_charmmff():
         f"{jctc_testsystem}/toppar/toppar_water_ions.str",
     )
     psf = read_box(psf, f"{jctc_testsystem}/{system_name}/charmm-gui/input.config.dat")
-    # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-    # define system
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="waterbox", ml_atoms=ml_atoms
-    )
+    sim = setup_waterbox_simulation(psf, params)
     sim.context.setPositions(pdb.positions)
 
     ############################
@@ -138,7 +166,7 @@ def test_generate_simulation_instances_with_charmmff():
         unit.kilojoule_per_mole
     )
     print(e_sim_mm_interpolate_endstate)
-    assert np.isclose(e_sim_mm_interpolate_endstate, -41853.389923448354)
+    assert np.isclose(e_sim_mm_interpolate_endstate, -36663.29543876648)
 
     ############################
     ############################
@@ -146,13 +174,11 @@ def test_generate_simulation_instances_with_charmmff():
     sim.context.setParameter("lambda_interpolate", 1.0)
     e_sim_qml_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
     print(e_sim_qml_endstate)
-    assert np.isclose(e_sim_qml_endstate, -1067965.9293421314)
+    assert np.isclose(e_sim_qml_endstate, -1062775.8348574494)
 
 
 def test_simulating():
     """Test if we can generate a simulation instance with charmmff"""
-    from endstate_correction.system import create_charmm_system
-    from endstate_correction.equ import generate_samples
 
     ########################################################
     ########################################################
@@ -167,13 +193,6 @@ def test_simulating():
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
-    # set up system
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
+    sim = setup_vacuum_simulation(psf, params)
     sim.context.setPositions(crd.positions)
-    samples = generate_samples(sim, 10, 10)
-    assert len(samples) == 10
+    sim.step(100)

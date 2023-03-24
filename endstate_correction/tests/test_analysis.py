@@ -1,10 +1,10 @@
 import pathlib
 
 import endstate_correction
-from endstate_correction.system import create_charmm_system
 from openmm.app import CharmmParameterSet, CharmmPsfFile
 import pytest
 import os
+from .test_system import setup_vacuum_simulation
 
 @pytest.mark.skipif(
     os.getenv("CI") == "true",
@@ -35,15 +35,10 @@ def test_plotting_equilibrium_free_energy():
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
-    chains = list(psf.topology.chains())
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
 
-    sim = create_charmm_system(
-        psf=psf, parameters=params, env="vacuum", ml_atoms=ml_atoms
-    )
+
     trajs = load_equ_samples(system_name)
-
+    sim = setup_vacuum_simulation(psf, params)
     N_k, u_kn = calculate_u_kn(
         trajs=trajs,
         every_nth_frame=50,
@@ -72,9 +67,9 @@ def test_plot_results_for_FEP_protocol():
 
     fep_protocol = Protocol(
         method="FEP",
-        direction="unidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=50,
     )
 
@@ -86,9 +81,9 @@ def test_plot_results_for_FEP_protocol():
 
     fep_protocol = Protocol(
         method="FEP",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples = qml_samples,
         nr_of_switches=100,
     )
 
@@ -119,9 +114,9 @@ def test_plot_results_for_NEQ_protocol():
 
     fep_protocol = Protocol(
         method="NEQ",
-        direction="unidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples = qml_samples,
         nr_of_switches=100,
     )
 
@@ -136,9 +131,9 @@ def test_plot_results_for_NEQ_protocol():
 
     fep_protocol = Protocol(
         method="NEQ",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
     # load pregenerated data
@@ -173,9 +168,9 @@ def test_plot_results_for_all_protocol():
 
     fep_protocol = Protocol(
         method="All",
-        direction="bidirectional",
         sim=sim,
-        trajectories=[mm_samples, qml_samples],
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
 
