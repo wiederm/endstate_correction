@@ -86,50 +86,34 @@ def plot_results_for_equilibrium_free_energy(
     plt.close()
 
 
-def plot_endstate_correction_results(
-    name: str, results: Results, filename: str = "plot.png"
-):
+def summarize_endstate_correction_results(results: Results):
     assert type(results) == Results
-
-    multiple_results = 1
-    ax_index = 0
     print("#--------------- SUMMARY ---------------#")
-    ##############################################
-    # ---------------------- FEP ------------------
+
     if results.dE_reference_to_target.size:
         print(
             f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
         )
-        multiple_results += 1
     if results.dE_target_to_reference.size:
         print(
             f"Zwanzig's equation (from qml to mm): {exp(results.dE_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
     if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
         print(
             f"Zwanzig's equation bidirectional: {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
-    ##############################################
-    # ---------------------- NEQ ------------------
     if results.W_reference_to_target.size:
         print(
             f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
         )
-        multiple_results += 1
     if results.W_target_to_reference.size:
         print(
             f"Jarzynski's equation (from qml to mm): {exp(results.W_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
     if results.W_reference_to_target.size and results.W_target_to_reference.size:
         print(
             f"Crooks' equation: {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
-    ##############################################
-    # ---------------------- EQU ------------------
     if results.equ_mbar:
         ddG_equ = np.average(
             [
@@ -144,9 +128,18 @@ def plot_endstate_correction_results(
             ]
         )
         print(f"Equilibrium free energy: {ddG_equ}+/-{dddG_equ}")
-        multiple_results += 1
-    print("#--------------------------------------#")
 
+
+def plot_endstate_correction_results(
+    name: str, results: Results, filename: str = "plot.png"
+):
+    assert type(results) == Results
+
+    multiple_results = [
+        n for n, r in enumerate(results, 1) if r.dE_reference_to_target.size
+    ]
+    ax_index = 0
+    summarize_endstate_correction_results(results)
     ###########################################################
     # ------------------- Plot distributions ------------------
 
