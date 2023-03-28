@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">pymbar</span> <span class="kn">import</span> <span class="n">bar</span><span class="p">,</span> <span class="n">exp</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">Results</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">zinc_systems</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
 
 
 <div class="viewcode-block" id="plot_overlap_for_equilibrium_free_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_overlap_for_equilibrium_free_energy</span><span class="p">(</span>
@@ -157,50 +158,40 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="plot_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_endstate_correction_results.html#endstate_correction.analysis.plot_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">plot_endstate_correction_results</span><span class="p">(</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plot.png&quot;</span>
-<span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
+<div class="viewcode-block" id="summarize_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.summarize_endstate_correction_results.html#endstate_correction.analysis.summarize_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">summarize_endstate_correction_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Summarize the results of the endstate correction analysis.</span>
 
-    <span class="n">multiple_results</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">ax_index</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="sd">    Args:</span>
+<span class="sd">        results (Results): instance of the Results class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#--------------- SUMMARY ---------------#&quot;</span><span class="p">)</span>
-    <span class="c1">##############################################</span>
-    <span class="c1"># ---------------------- FEP ------------------</span>
+
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from mm to qml): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from qml to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation bidirectional: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="c1">##############################################</span>
-    <span class="c1"># ---------------------- NEQ ------------------</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from mm to qml): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from qml to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Crooks&#39; equation: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="c1">##############################################</span>
-    <span class="c1"># ---------------------- EQU ------------------</span>
     <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
         <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
             <span class="p">[</span>
@@ -214,10 +205,28 @@
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equilibrium free energy: </span><span class="si">{</span><span class="n">ddG_equ</span><span class="si">}</span><span class="s2">+/-</span><span class="si">{</span><span class="n">dddG_equ</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#--------------------------------------#&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equilibrium free energy: </span><span class="si">{</span><span class="n">ddG_equ</span><span class="si">}</span><span class="s2">+/-</span><span class="si">{</span><span class="n">dddG_equ</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="plot_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_endstate_correction_results.html#endstate_correction.analysis.plot_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">plot_endstate_correction_results</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plot.png&quot;</span>
+<span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
+
+    <span class="c1">###########################################################</span>
+    <span class="c1"># count how many results are available</span>
+    <span class="n">multiple_results</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">multiple_results</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        
+    <span class="n">ax_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">###########################################################</span>
+    <span class="n">summarize_endstate_correction_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
     <span class="c1">###########################################################</span>
     <span class="c1"># ------------------- Plot distributions ------------------</span>
 

@@ -1,0 +1,6 @@
+endstate\_correction.analysis.summarize\_endstate\_correction\_results
+======================================================================
+
+.. currentmodule:: endstate_correction.analysis
+
+.. autofunction:: summarize_endstate_correction_results
