@@ -13,6 +13,7 @@ from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
 from endstate_correction.protocol import Results
 from endstate_correction.constant import zinc_systems
+from dataclasses import dataclass, fields
 
 
 def plot_overlap_for_equilibrium_free_energy(
@@ -87,6 +88,12 @@ def plot_results_for_equilibrium_free_energy(
 
 
 def summarize_endstate_correction_results(results: Results):
+    """ Summarize the results of the endstate correction analysis.
+
+    Args:
+        results (Results): instance of the Results class
+    """
+    
     assert type(results) == Results
     print("#--------------- SUMMARY ---------------#")
 
@@ -135,10 +142,19 @@ def plot_endstate_correction_results(
 ):
     assert type(results) == Results
 
-    multiple_results = [
-        n for n, r in enumerate(results, 1) if r.dE_reference_to_target.size
-    ]
+    ###########################################################
+    # count how many results are available
+    multiple_results = 0
+    for field in fields(results):
+        print(field.name, getattr(results, field.name))
+        try:
+            if getattr(results, field.name).size:
+                multiple_results += 1
+        except AttributeError:
+            continue
+        
     ax_index = 0
+    ###########################################################
     summarize_endstate_correction_results(results)
     ###########################################################
     # ------------------- Plot distributions ------------------
