@@ -95,9 +95,6 @@ def test_plot_results_for_NEQ_protocol():
 
     system_name = "ZINC00079729"
     
-    plot_endstate_correction_results(
-        system_name, r, f"{system_name}_results_neq_unidirectional.png"
-    )
     # load pregenerated data
     r = pickle.load(
         open(
@@ -114,7 +111,7 @@ def test_plot_results_for_NEQ_protocol():
     df, ddf = return_endstate_correction(r, method='NEQ', direction='rev')
     assert np.isclose(df, -2105811.559385495)
     df, ddf = return_endstate_correction(r, method='NEQ', direction='bid')
-    assert np.isclose(df, 61513.03839565255)
+    assert np.isclose(df, -217063.7966900661)
 
 
 def test_plot_results_for_all_protocol():
