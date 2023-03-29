@@ -105,31 +105,33 @@ def return_neq_correction(
     assert type(results) == Results
     assert method in ["NEQ", "FEP"]
     print(f"method: {method}, direction: {direction}")
+    
     if method == "FEP" and direction == "forw":
         print(
             f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
         )
         est = exp(results.dE_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
-    if method == "FEP" and direction == "rev":
+    elif method == "FEP" and direction == "rev":
         print(
             f"Zwanzig's equation (from mm to qml): {exp(results.dE_target_to_reference)['Delta_f']}"
         )
         est = exp(results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
-    if method == "NEQ" and direction == "forw":
+    elif method == "NEQ" and direction == "forw":
         print(
             f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
         )
         est = exp(results.W_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
-    if method == "NEQ" and direction == "rev":
+    elif method == "NEQ" and direction == "rev":
         print(
             f"Jarzynski's equation (from mm to qml): {exp(results.W_target_to_reference)['Delta_f']}"
         )
         est = exp(results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
-
+    else:
+        raise ValueError("method and direction combination not supported")
 
 def summarize_endstate_correction_results(results: Results):
     """Summarize the results of the endstate correction analysis.
