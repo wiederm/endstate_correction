@@ -19,7 +19,7 @@ endstate\_correction.analysis
       plot_endstate_correction_results
       plot_overlap_for_equilibrium_free_energy
       plot_results_for_equilibrium_free_energy
-      return_neq_correction
+      return_endstate_correction
       save_mol_pic
       summarize_endstate_correction_results
       visualize_torsion_profile

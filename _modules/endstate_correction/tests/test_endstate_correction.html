@@ -94,6 +94,7 @@
         <span class="n">target_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
         <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">100</span>
     <span class="p">)</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
@@ -108,15 +109,15 @@
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-        <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
         <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">100</span>
     <span class="p">)</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
     <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
         <span class="n">r</span><span class="p">,</span>
         <span class="nb">open</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/switching_charmmff/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_neq_unid.pickle&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/switching_charmmff/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_neq_forw.pickle&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span></div>
 
@@ -177,10 +178,6 @@
         <span class="n">system_name</span><span class="o">=</span><span class="n">system_name</span>
     <span class="p">)</span>
 
-    <span class="c1">####################################################</span>
-    <span class="c1"># ----------------------- NEQ ----------------------</span>
-    <span class="c1">####################################################</span>
-
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
@@ -211,7 +208,7 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
 
     <span class="c1"># longer NEQ switching</span>
-    <span class="c1"># save_pickle_results(sim, mm_samples, qml_samples, system_name)</span>
+    <span class="c1">#save_pickle_results(sim, mm_samples, qml_samples, system_name)</span>
 
 
 <div class="viewcode-block" id="test_ALL_protocol"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_endstate_correction.test_ALL_protocol.html#endstate_correction.tests.test_endstate_correction.test_ALL_protocol">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
