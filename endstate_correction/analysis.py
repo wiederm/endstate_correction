@@ -1,19 +1,21 @@
 """Provide the analysis functions."""
 
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass, fields
+from typing import List, Tuple, Union
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
 import seaborn as sns
-from matplotlib.offsetbox import AnnotationBbox, DrawingArea, OffsetImage, TextArea
+from matplotlib.offsetbox import (AnnotationBbox, DrawingArea, OffsetImage,
+                                  TextArea)
 from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
-from endstate_correction.protocol import Results
+
 from endstate_correction.constant import zinc_systems
-from dataclasses import dataclass, fields
+from endstate_correction.protocol import Results
 
 
 def plot_overlap_for_equilibrium_free_energy(
@@ -87,13 +89,55 @@ def plot_results_for_equilibrium_free_energy(
     plt.close()
 
 
+def return_neq_correction(
+    results: Results, method: str = "NEQ", direction: str = "forw"
+) -> Tuple[float, float]:
+    # generate docstring
+    """Return the endstate correction for a given method and direction.
+    Args:
+        results (Results): instance of the Results class
+        method (str): NEQ or MBAR
+        direction (str): forw or rev
+    Returns:
+        float: endstate correction delta_f
+        float: endstate correction error
+    """
+    assert type(results) == Results
+    assert method in ["NEQ", "FEP"]
+    print(f"method: {method}, direction: {direction}")
+    if method == "FEP" and direction == "forw":
+        print(
+            f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
+        )
+        est = exp(results.dE_reference_to_target)
+        return est["Delta_f"], est["dDelta_f"]
+    if method == "FEP" and direction == "rev":
+        print(
+            f"Zwanzig's equation (from mm to qml): {exp(results.dE_target_to_reference)['Delta_f']}"
+        )
+        est = exp(results.dE_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    if method == "NEQ" and direction == "forw":
+        print(
+            f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
+        )
+        est = exp(results.W_reference_to_target)
+        return est["Delta_f"], est["dDelta_f"]
+    if method == "NEQ" and direction == "rev":
+        print(
+            f"Jarzynski's equation (from mm to qml): {exp(results.W_target_to_reference)['Delta_f']}"
+        )
+        est = exp(results.W_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+
+
 def summarize_endstate_correction_results(results: Results):
-    """ Summarize the results of the endstate correction analysis.
+    """Summarize the results of the endstate correction analysis.
 
     Args:
         results (Results): instance of the Results class
     """
-    
+
     assert type(results) == Results
     print("#--------------- SUMMARY ---------------#")
 
@@ -152,7 +196,7 @@ def plot_endstate_correction_results(
                 multiple_results += 1
         except AttributeError:
             continue
-        
+
     ax_index = 0
     ###########################################################
     summarize_endstate_correction_results(results)

@@ -6,6 +6,7 @@ import pytest
 import os
 from .test_system import setup_vacuum_simulation
 
+
 @pytest.mark.skipif(
     os.getenv("CI") == "true",
     reason="Skipping tests that take too long in github actions",
@@ -36,7 +37,6 @@ def test_plotting_equilibrium_free_energy():
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
 
-
     trajs = load_equ_samples(system_name)
     sim = setup_vacuum_simulation(psf, params)
     N_k, u_kn = calculate_u_kn(
@@ -53,7 +53,7 @@ def test_plot_results_for_FEP_protocol():
     """Perform FEP uni- and bidirectional protocol"""
     from endstate_correction.protocol import perform_endstate_correction, Protocol
     from .test_neq import load_endstate_system_and_samples
-    from endstate_correction.analysis import plot_endstate_correction_results
+    from endstate_correction.analysis import plot_endstate_correction_results, return_neq_correction
 
     system_name = "ZINC00079729"
     # start with FEP
@@ -75,6 +75,9 @@ def test_plot_results_for_FEP_protocol():
 
     r = perform_endstate_correction(fep_protocol)
     print(r)
+    return_neq_correction(r, method='FEP', direction='forw')
+    return_neq_correction(r, method='FEP', direction='rev')
+    
     plot_endstate_correction_results(
         system_name, r, f"{system_name}_results_fep_unidirectional.png"
     )
@@ -83,7 +86,7 @@ def test_plot_results_for_FEP_protocol():
         method="FEP",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples = qml_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
 
@@ -98,7 +101,7 @@ def test_plot_results_for_NEQ_protocol():
     from endstate_correction.protocol import Protocol, perform_endstate_correction
     from .test_neq import load_endstate_system_and_samples
     from endstate_correction.analysis import (
-        plot_endstate_correction_results,
+        plot_endstate_correction_results,return_neq_correction
     )
     import pickle
 
@@ -116,7 +119,7 @@ def test_plot_results_for_NEQ_protocol():
         method="NEQ",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples = qml_samples,
+        target_samples=qml_samples,
         nr_of_switches=100,
     )
 
@@ -145,6 +148,8 @@ def test_plot_results_for_NEQ_protocol():
     plot_endstate_correction_results(
         system_name, r, f"{system_name}_results_neq_bidirectional.png"
     )
+    return_neq_correction(r, method='NEQ', direction='forw')
+    return_neq_correction(r, method='FEP', direction='rev')
 
 
 def test_plot_results_for_all_protocol():
