@@ -1,0 +1,6 @@
+endstate\_correction.analysis.return\_neq\_correction
+=====================================================
+
+.. currentmodule:: endstate_correction.analysis
+
+.. autofunction:: return_neq_correction

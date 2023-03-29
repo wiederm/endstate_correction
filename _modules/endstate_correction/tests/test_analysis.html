@@ -77,6 +77,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span>
 
+
 <div class="viewcode-block" id="test_plotting_equilibrium_free_energy"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_analysis.test_plotting_equilibrium_free_energy.html#endstate_correction.tests.test_analysis.test_plotting_equilibrium_free_energy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
     <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
     <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Skipping tests that take too long in github actions&quot;</span><span class="p">,</span>
@@ -107,7 +108,6 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-
     <span class="n">trajs</span> <span class="o">=</span> <span class="n">load_equ_samples</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
     <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">N_k</span><span class="p">,</span> <span class="n">u_kn</span> <span class="o">=</span> <span class="n">calculate_u_kn</span><span class="p">(</span>
@@ -124,7 +124,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform FEP uni- and bidirectional protocol&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">perform_endstate_correction</span><span class="p">,</span> <span class="n">Protocol</span>
     <span class="kn">from</span> <span class="nn">.test_neq</span> <span class="kn">import</span> <span class="n">load_endstate_system_and_samples</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.analysis</span> <span class="kn">import</span> <span class="n">plot_endstate_correction_results</span>
+    <span class="kn">from</span> <span class="nn">endstate_correction.analysis</span> <span class="kn">import</span> <span class="n">plot_endstate_correction_results</span><span class="p">,</span> <span class="n">return_neq_correction</span>
 
     <span class="n">system_name</span> <span class="o">=</span> <span class="s2">&quot;ZINC00079729&quot;</span>
     <span class="c1"># start with FEP</span>
@@ -146,6 +146,9 @@
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">return_neq_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;FEP&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;forw&#39;</span><span class="p">)</span>
+    <span class="n">return_neq_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;FEP&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;rev&#39;</span><span class="p">)</span>
+    
     <span class="n">plot_endstate_correction_results</span><span class="p">(</span>
         <span class="n">system_name</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_results_fep_unidirectional.png&quot;</span>
     <span class="p">)</span>
@@ -154,7 +157,7 @@
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-        <span class="n">target_samples</span> <span class="o">=</span> <span class="n">qml_samples</span><span class="p">,</span>
+        <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
         <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -169,7 +172,7 @@
     <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">perform_endstate_correction</span>
     <span class="kn">from</span> <span class="nn">.test_neq</span> <span class="kn">import</span> <span class="n">load_endstate_system_and_samples</span>
     <span class="kn">from</span> <span class="nn">endstate_correction.analysis</span> <span class="kn">import</span> <span class="p">(</span>
-        <span class="n">plot_endstate_correction_results</span><span class="p">,</span>
+        <span class="n">plot_endstate_correction_results</span><span class="p">,</span><span class="n">return_neq_correction</span>
     <span class="p">)</span>
     <span class="kn">import</span> <span class="nn">pickle</span>
 
@@ -187,7 +190,7 @@
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-        <span class="n">target_samples</span> <span class="o">=</span> <span class="n">qml_samples</span><span class="p">,</span>
+        <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
         <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -215,7 +218,9 @@
     <span class="p">)</span>
     <span class="n">plot_endstate_correction_results</span><span class="p">(</span>
         <span class="n">system_name</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_results_neq_bidirectional.png&quot;</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">return_neq_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NEQ&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;forw&#39;</span><span class="p">)</span>
+    <span class="n">return_neq_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;FEP&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;rev&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_plot_results_for_all_protocol"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_analysis.test_plot_results_for_all_protocol.html#endstate_correction.tests.test_analysis.test_plot_results_for_all_protocol">[docs]</a><span class="k">def</span> <span class="nf">test_plot_results_for_all_protocol</span><span class="p">():</span>
