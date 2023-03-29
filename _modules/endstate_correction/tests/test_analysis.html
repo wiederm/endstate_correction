@@ -166,9 +166,6 @@
 
     <span class="n">system_name</span> <span class="o">=</span> <span class="s2">&quot;ZINC00079729&quot;</span>
     
-    <span class="n">plot_endstate_correction_results</span><span class="p">(</span>
-        <span class="n">system_name</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_results_neq_unidirectional.png&quot;</span>
-    <span class="p">)</span>
     <span class="c1"># load pregenerated data</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
         <span class="nb">open</span><span class="p">(</span>
@@ -185,7 +182,7 @@
     <span class="n">df</span><span class="p">,</span> <span class="n">ddf</span> <span class="o">=</span> <span class="n">return_endstate_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NEQ&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;rev&#39;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">-</span><span class="mf">2105811.559385495</span><span class="p">)</span>
     <span class="n">df</span><span class="p">,</span> <span class="n">ddf</span> <span class="o">=</span> <span class="n">return_endstate_correction</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NEQ&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;bid&#39;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mf">61513.03839565255</span><span class="p">)</span></div>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">-</span><span class="mf">217063.7966900661</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_plot_results_for_all_protocol"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_analysis.test_plot_results_for_all_protocol.html#endstate_correction.tests.test_analysis.test_plot_results_for_all_protocol">[docs]</a><span class="k">def</span> <span class="nf">test_plot_results_for_all_protocol</span><span class="p">():</span>
