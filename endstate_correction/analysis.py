@@ -89,15 +89,15 @@ def plot_results_for_equilibrium_free_energy(
     plt.close()
 
 
-def return_neq_correction(
+def return_endstate_correction(
     results: Results, method: str = "NEQ", direction: str = "forw"
 ) -> Tuple[float, float]:
     # generate docstring
     """Return the endstate correction for a given method and direction.
     Args:
         results (Results): instance of the Results class
-        method (str): NEQ or MBAR
-        direction (str): forw or rev
+        method (str): NEQ or FEP
+        direction (str): forw, rev or bid
     Returns:
         float: endstate correction delta_f
         float: endstate correction error
@@ -108,27 +108,41 @@ def return_neq_correction(
     
     if method == "FEP" and direction == "forw":
         print(
-            f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
+            f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}"
         )
         est = exp(results.dE_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "FEP" and direction == "rev":
         print(
-            f"Zwanzig's equation (from mm to qml): {exp(results.dE_target_to_reference)['Delta_f']}"
+            f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}"
         )
         est = exp(results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
+    elif method == "FEP" and direction == "bid":
+        
+        print(
+            f"FEP(bid): {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
+        )
+        est = bar(results.dE_reference_to_target, results.dE_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "forw":
         print(
-            f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
+            f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}"
         )
         est = exp(results.W_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "rev":
         print(
-            f"Jarzynski's equation (from mm to qml): {exp(results.W_target_to_reference)['Delta_f']}"
+            f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}"
         )
         est = exp(results.W_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "NEQ" and direction == "bid":
+        
+        print(
+            f"NEQ(bid): {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
+        )
+        est = bar(results.W_reference_to_target, results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     else:
         raise ValueError("method and direction combination not supported")
