@@ -1,18 +1,21 @@
 """Provide the analysis functions."""
 
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass, fields
+from typing import List, Tuple, Union
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
 import seaborn as sns
-from matplotlib.offsetbox import AnnotationBbox, DrawingArea, OffsetImage, TextArea
+from matplotlib.offsetbox import (AnnotationBbox, DrawingArea, OffsetImage,
+                                  TextArea)
 from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
-from endstate_correction.protocol import Results
+
 from endstate_correction.constant import zinc_systems
+from endstate_correction.protocol import Results
 
 
 def plot_overlap_for_equilibrium_free_energy(
@@ -86,50 +89,98 @@ def plot_results_for_equilibrium_free_energy(
     plt.close()
 
 
-def plot_endstate_correction_results(
-    name: str, results: Results, filename: str = "plot.png"
-):
+def return_endstate_correction(
+    results: Results, method: str = "NEQ", direction: str = "forw"
+) -> Tuple[float, float]:
+    # generate docstring
+    """Return the endstate correction for a given method and direction.
+    Args:
+        results (Results): instance of the Results class
+        method (str): NEQ or FEP
+        direction (str): forw, rev or bid
+    Returns:
+        float: endstate correction delta_f
+        float: endstate correction error
+    """
     assert type(results) == Results
+    assert method in ["NEQ", "FEP"]
+    print(f"method: {method}, direction: {direction}")
+    
+    if method == "FEP" and direction == "forw":
+        print(
+            f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}"
+        )
+        est = exp(results.dE_reference_to_target)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "FEP" and direction == "rev":
+        print(
+            f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}"
+        )
+        est = exp(results.dE_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "FEP" and direction == "bid":
+        
+        print(
+            f"FEP(bid): {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
+        )
+        est = bar(results.dE_reference_to_target, results.dE_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "NEQ" and direction == "forw":
+        print(
+            f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}"
+        )
+        est = exp(results.W_reference_to_target)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "NEQ" and direction == "rev":
+        print(
+            f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}"
+        )
+        est = exp(results.W_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    elif method == "NEQ" and direction == "bid":
+        
+        print(
+            f"NEQ(bid): {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
+        )
+        est = bar(results.W_reference_to_target, results.W_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"]
+    else:
+        raise ValueError("method and direction combination not supported")
 
-    multiple_results = 1
-    ax_index = 0
+def summarize_endstate_correction_results(results: Results):
+    """Summarize the results of the endstate correction analysis.
+
+    Args:
+        results (Results): instance of the Results class
+    """
+
+    assert type(results) == Results
     print("#--------------- SUMMARY ---------------#")
-    ##############################################
-    # ---------------------- FEP ------------------
+
     if results.dE_reference_to_target.size:
         print(
             f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
         )
-        multiple_results += 1
     if results.dE_target_to_reference.size:
         print(
             f"Zwanzig's equation (from qml to mm): {exp(results.dE_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
     if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
         print(
             f"Zwanzig's equation bidirectional: {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
-    ##############################################
-    # ---------------------- NEQ ------------------
     if results.W_reference_to_target.size:
         print(
             f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
         )
-        multiple_results += 1
     if results.W_target_to_reference.size:
         print(
             f"Jarzynski's equation (from qml to mm): {exp(results.W_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
     if results.W_reference_to_target.size and results.W_target_to_reference.size:
         print(
             f"Crooks' equation: {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
         )
-        multiple_results += 1
-    ##############################################
-    # ---------------------- EQU ------------------
     if results.equ_mbar:
         ddG_equ = np.average(
             [
@@ -144,9 +195,27 @@ def plot_endstate_correction_results(
             ]
         )
         print(f"Equilibrium free energy: {ddG_equ}+/-{dddG_equ}")
-        multiple_results += 1
-    print("#--------------------------------------#")
 
+
+def plot_endstate_correction_results(
+    name: str, results: Results, filename: str = "plot.png"
+):
+    assert type(results) == Results
+
+    ###########################################################
+    # count how many results are available
+    multiple_results = 0
+    for field in fields(results):
+        print(field.name, getattr(results, field.name))
+        try:
+            if getattr(results, field.name).size:
+                multiple_results += 1
+        except AttributeError:
+            continue
+
+    ax_index = 0
+    ###########################################################
+    summarize_endstate_correction_results(results)
     ###########################################################
     # ------------------- Plot distributions ------------------
 

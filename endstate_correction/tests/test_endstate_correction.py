@@ -23,6 +23,7 @@ def save_pickle_results(sim, mm_samples, qml_samples, system_name):
         target_samples=mm_samples,
         reference_samples=qml_samples,
         nr_of_switches=100,
+        neq_switching_length=100
     )
 
     r = perform_endstate_correction(protocol)
@@ -37,15 +38,15 @@ def save_pickle_results(sim, mm_samples, qml_samples, system_name):
         method="NEQ",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
         nr_of_switches=100,
+        neq_switching_length=100
     )
 
     r = perform_endstate_correction(protocol)
     pickle.dump(
         r,
         open(
-            f"data/{system_name}/switching_charmmff/{system_name}_neq_unid.pickle", "wb"
+            f"data/{system_name}/switching_charmmff/{system_name}_neq_forw.pickle", "wb"
         ),
     )
 
@@ -106,10 +107,6 @@ def test_NEQ_protocol():
         system_name=system_name
     )
 
-    ####################################################
-    # ----------------------- NEQ ----------------------
-    ####################################################
-
     protocol = Protocol(
         method="NEQ",
         sim=sim,
@@ -140,7 +137,7 @@ def test_NEQ_protocol():
     assert len(r.W_target_to_reference) == 0
 
     # longer NEQ switching
-    # save_pickle_results(sim, mm_samples, qml_samples, system_name)
+    #save_pickle_results(sim, mm_samples, qml_samples, system_name)
 
 
 @pytest.mark.skipif(
