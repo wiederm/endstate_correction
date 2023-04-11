@@ -28,7 +28,7 @@ class BSSProtocol:
         rlist: Union[float, unit.Quantity],
         collision_rate: Union[float, unit.Quantity],
         switchDistance: Union[float, unit.Quantity],
-        lam: pd.Series,
+        lam: float,
         restart: bool,
     ):
         """Class for storing the run information
@@ -42,7 +42,7 @@ class BSSProtocol:
         :param rlist: short-range cutoff in nanometers.
         :param collision_rate: 1/picosecond
         :param switchDistance: nanometers
-        :param lam: Current lambda
+        :param lam: Current lambda between 0 and 1
         :param restart: Whether to reset the velocity or not
         """
         if isinstance(timestep, unit.Quantity):
