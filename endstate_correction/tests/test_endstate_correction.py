@@ -23,7 +23,7 @@ def save_pickle_results(sim, mm_samples, qml_samples, system_name):
         target_samples=mm_samples,
         reference_samples=qml_samples,
         nr_of_switches=100,
-        neq_switching_length=100
+        neq_switching_length=100,
     )
 
     r = perform_endstate_correction(protocol)
@@ -39,7 +39,7 @@ def save_pickle_results(sim, mm_samples, qml_samples, system_name):
         sim=sim,
         reference_samples=mm_samples,
         nr_of_switches=100,
-        neq_switching_length=100
+        neq_switching_length=100,
     )
 
     r = perform_endstate_correction(protocol)
@@ -76,6 +76,7 @@ def test_FEP_protocol():
     assert len(r.dE_target_to_reference) == 0
     assert len(r.W_reference_to_target) == 0
     assert len(r.W_target_to_reference) == 0
+    assert np.all(r.dE_reference_to_target < 0)  # the dE_forw has negative values
 
     fep_protocol = Protocol(
         sim=sim,
@@ -90,6 +91,8 @@ def test_FEP_protocol():
     assert len(r.dE_target_to_reference) == fep_protocol.nr_of_switches
     assert len(r.W_reference_to_target) == 0
     assert len(r.W_target_to_reference) == 0
+    assert np.all(r.dE_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.dE_target_to_reference > 0)  # the dE_rev have positive values
 
 
 @pytest.mark.skipif(
@@ -121,6 +124,8 @@ def test_NEQ_protocol():
     assert len(r.dE_target_to_reference) == 0
     assert len(r.W_reference_to_target) == protocol.nr_of_switches
     assert len(r.W_target_to_reference) == protocol.nr_of_switches
+    assert np.all(r.W_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.W_target_to_reference > 0)  # the dE_rev have positive values
 
     protocol = Protocol(
         method="NEQ",
@@ -135,9 +140,7 @@ def test_NEQ_protocol():
     assert len(r.dE_target_to_reference) == 0
     assert len(r.W_reference_to_target) == protocol.nr_of_switches
     assert len(r.W_target_to_reference) == 0
-
-    # longer NEQ switching
-    #save_pickle_results(sim, mm_samples, qml_samples, system_name)
+    assert np.all(r.W_reference_to_target < 0)  # the dE_forw have negative values
 
 
 @pytest.mark.skipif(
@@ -188,6 +191,12 @@ def test_ALL_protocol():
     assert not np.isclose(
         r.W_target_to_reference[0], r.W_reference_to_target[0], rtol=1e-8
     )
+
+    assert np.all(r.W_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.W_target_to_reference > 0)  # the dE_rev have positive values
+    assert np.all(r.dE_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.dE_target_to_reference > 0)  # the dE_rev have positive values
+
 
 
 def test_each_protocol():
