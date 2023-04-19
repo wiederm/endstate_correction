@@ -190,7 +190,7 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
             # from target to reference potential
             dEs, _, _ = perform_switching(
                 sim,
-                lambdas=list_of_lambda_values.flip(), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
+                lambdas=np.flip(list_of_lambda_values), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
                 samples=protocol.reference_samples,
                 nr_of_switches=protocol.nr_of_switches,
             )
@@ -228,7 +228,7 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
                 trajs_target_to_reference,
             ) = perform_switching(
                 sim,
-                lambdas=list_of_lambda_values.flip(), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
+                lambdas=np.flip(list_of_lambda_values), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
                 samples=protocol.target_samples,
                 nr_of_switches=protocol.nr_of_switches,
                 save_endstates=protocol.save_endstates,
