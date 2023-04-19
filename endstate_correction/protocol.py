@@ -167,6 +167,12 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
             "Only `FEP`, 'NEQ` or 'ALL'  are supported methods for endstate corrections"
         )
 
+    # exit if neither reference nor target samples are provided
+    if protocol.reference_samples is None and protocol.target_samples is None:
+        raise RuntimeError(
+            "Either `reference_samples` or `target_samples` must be provided."
+        )
+
     sim = protocol.sim
     r = Results()  # initialize  with default values
     if protocol.method.upper() == "FEP" or protocol.method.upper() == "ALL":
@@ -174,23 +180,25 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
         print("# ------------------- FEP ---------------------------")
         print("#####################################################")
         # from reference to target potential
-        print("Performing bidirectional protocol ...")
         list_of_lambda_values = np.linspace(0, 1, 2)  # lambda values
-        dEs, _, _ = perform_switching(
-            sim,
-            lambdas=list_of_lambda_values,
-            samples=protocol.reference_samples,
-            nr_of_switches=protocol.nr_of_switches,
-        )
-        dE_reference_to_target = np.array(dEs / kBT)  # remove units
-        r.dE_reference_to_target = dE_reference_to_target
-
-        if protocol.target_samples is not None:  # if target samples are provided
-            # bidirectional protocol
-            # from target to reference potential
+        if protocol.reference_samples is not None:  # if target samples are provided
+            print("Performing FEP from reference to target potential")
             dEs, _, _ = perform_switching(
                 sim,
-                lambdas=np.flip(list_of_lambda_values), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
+                lambdas=list_of_lambda_values,
+                samples=protocol.reference_samples,
+                nr_of_switches=protocol.nr_of_switches,
+            )
+            dE_reference_to_target = np.array(dEs / kBT)  # remove units
+            r.dE_reference_to_target = dE_reference_to_target
+
+        if protocol.target_samples is not None:  # if target samples are provided
+            print("Performing FEP from target to reference potential")
+            dEs, _, _ = perform_switching(
+                sim,
+                lambdas=np.flip(
+                    list_of_lambda_values
+                ),  # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
                 samples=protocol.reference_samples,
                 nr_of_switches=protocol.nr_of_switches,
             )
@@ -202,33 +210,36 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
         print("# ------------------- NEQ ---------------------------")
         print("#####################################################")
         list_of_lambda_values = np.linspace(0, 1, protocol.neq_switching_length)
-
-        (
-            Ws,
-            endstates_reference_to_target,
-            trajs_reference_to_target,
-        ) = perform_switching(
-            sim,
-            lambdas=list_of_lambda_values,
-            samples=protocol.reference_samples,
-            nr_of_switches=protocol.nr_of_switches,
-            save_endstates=protocol.save_endstates,
-            save_trajs=protocol.save_trajs,
-        )
-        Ws_reference_to_target = np.array(Ws / kBT) # remove units
-        r.W_reference_to_target = Ws_reference_to_target
-        r.endstate_samples_reference_to_target = endstates_reference_to_target
-        r.switching_traj_reference_to_target = trajs_reference_to_target
+        if protocol.reference_samples is not None:
+            print("Performing NEQ from reference to target potential")
+            (
+                Ws,
+                endstates_reference_to_target,
+                trajs_reference_to_target,
+            ) = perform_switching(
+                sim,
+                lambdas=list_of_lambda_values,
+                samples=protocol.reference_samples,
+                nr_of_switches=protocol.nr_of_switches,
+                save_endstates=protocol.save_endstates,
+                save_trajs=protocol.save_trajs,
+            )
+            Ws_reference_to_target = np.array(Ws / kBT)  # remove units
+            r.W_reference_to_target = Ws_reference_to_target
+            r.endstate_samples_reference_to_target = endstates_reference_to_target
+            r.switching_traj_reference_to_target = trajs_reference_to_target
 
         if protocol.target_samples is not None:
-            # perform switching from target to reference
+            print("Performing NEQ from target to reference potential")
             (
                 Ws,
                 endstates_target_to_reference,
                 trajs_target_to_reference,
             ) = perform_switching(
                 sim,
-                lambdas=np.flip(list_of_lambda_values), # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
+                lambdas=np.flip(
+                    list_of_lambda_values
+                ),  # NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential
                 samples=protocol.target_samples,
                 nr_of_switches=protocol.nr_of_switches,
                 save_endstates=protocol.save_endstates,
