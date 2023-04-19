@@ -238,6 +238,12 @@
             <span class="s2">&quot;Only `FEP`, &#39;NEQ` or &#39;ALL&#39;  are supported methods for endstate corrections&quot;</span>
         <span class="p">)</span>
 
+    <span class="c1"># exit if neither reference nor target samples are provided</span>
+    <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Either `reference_samples` or `target_samples` must be provided.&quot;</span>
+        <span class="p">)</span>
+
     <span class="n">sim</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">sim</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">Results</span><span class="p">()</span>  <span class="c1"># initialize  with default values</span>
     <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">or</span> <span class="n">protocol</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
@@ -245,23 +251,25 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- FEP ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="c1"># from reference to target potential</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing bidirectional protocol ...&quot;</span><span class="p">)</span>
         <span class="n">list_of_lambda_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># lambda values</span>
-        <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-            <span class="n">sim</span><span class="p">,</span>
-            <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
-            <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
-            <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>  <span class="c1"># remove units</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">dE_reference_to_target</span>
-
-        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if target samples are provided</span>
-            <span class="c1"># bidirectional protocol</span>
-            <span class="c1"># from target to reference potential</span>
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if target samples are provided</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing FEP from reference to target potential&quot;</span><span class="p">)</span>
             <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
-                <span class="n">lambdas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">list_of_lambda_values</span><span class="p">),</span> <span class="c1"># NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
+                <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
+                <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dEs</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>  <span class="c1"># remove units</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">=</span> <span class="n">dE_reference_to_target</span>
+
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if target samples are provided</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing FEP from target to reference potential&quot;</span><span class="p">)</span>
+            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+                <span class="n">sim</span><span class="p">,</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
+                    <span class="n">list_of_lambda_values</span>
+                <span class="p">),</span>  <span class="c1"># NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential</span>
                 <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
                 <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
             <span class="p">)</span>
@@ -273,33 +281,36 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# ------------------- NEQ ---------------------------&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#####################################################&quot;</span><span class="p">)</span>
         <span class="n">list_of_lambda_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">protocol</span><span class="o">.</span><span class="n">neq_switching_length</span><span class="p">)</span>
-
-        <span class="p">(</span>
-            <span class="n">Ws</span><span class="p">,</span>
-            <span class="n">endstates_reference_to_target</span><span class="p">,</span>
-            <span class="n">trajs_reference_to_target</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
-            <span class="n">sim</span><span class="p">,</span>
-            <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
-            <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
-            <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
-            <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
-            <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">Ws_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span> <span class="c1"># remove units</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">=</span> <span class="n">Ws_reference_to_target</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_reference_to_target</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span> <span class="o">=</span> <span class="n">trajs_reference_to_target</span>
+        <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing NEQ from reference to target potential&quot;</span><span class="p">)</span>
+            <span class="p">(</span>
+                <span class="n">Ws</span><span class="p">,</span>
+                <span class="n">endstates_reference_to_target</span><span class="p">,</span>
+                <span class="n">trajs_reference_to_target</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+                <span class="n">sim</span><span class="p">,</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
+                <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
+                <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
+                <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
+                <span class="n">save_trajs</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_trajs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">Ws_reference_to_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ws</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>  <span class="c1"># remove units</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">=</span> <span class="n">Ws_reference_to_target</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="n">endstates_reference_to_target</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span> <span class="o">=</span> <span class="n">trajs_reference_to_target</span>
 
         <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># perform switching from target to reference</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing NEQ from target to reference potential&quot;</span><span class="p">)</span>
             <span class="p">(</span>
                 <span class="n">Ws</span><span class="p">,</span>
                 <span class="n">endstates_target_to_reference</span><span class="p">,</span>
                 <span class="n">trajs_target_to_reference</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
-                <span class="n">lambdas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">list_of_lambda_values</span><span class="p">),</span> <span class="c1"># NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential</span>
+                <span class="n">lambdas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
+                    <span class="n">list_of_lambda_values</span>
+                <span class="p">),</span>  <span class="c1"># NOTE: we reverse the list of provided lamba values to indicate switching from the reference to the target potential</span>
                 <span class="n">samples</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">target_samples</span><span class="p">,</span>
                 <span class="n">nr_of_switches</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span><span class="p">,</span>
                 <span class="n">save_endstates</span><span class="o">=</span><span class="n">protocol</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">,</span>
