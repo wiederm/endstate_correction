@@ -61,7 +61,7 @@ print(f"Initializing switch from {len(mm_samples)} MM samples")
 # --------------------------------------------- #
 # load QML samples
 qml_samples = []
-base = f"{traj_base}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000_{env}"
+base = f"{traj_base}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000_{env}"
 qml_samples = mdtraj.load_dcd(
     f"{base}.dcd",
     top=f"{traj_base}/{system_name}.pdb",
@@ -101,5 +101,5 @@ r_neq = perform_endstate_correction(neq_protocol)
 pickle.dump((r_fep, r_neq), open(f"{output_base}/results.pickle", "wb"))
 
 # plot results
-plot_endstate_correction_results(system_name, r_fep, f"{output_base}/results_neq.png")
+plot_endstate_correction_results(system_name, r_fep, f"{output_base}/results_fep.png")
 plot_endstate_correction_results(system_name, r_neq, f"{output_base}/results_neq.png")
