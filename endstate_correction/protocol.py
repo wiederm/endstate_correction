@@ -110,7 +110,7 @@ class Protocol:
 
     method: str  # FEP, NEQ, ALL
     sim: Simulation  # simulation object
-    reference_samples: md.Trajectory  # reference samples
+    reference_samples: Optional[md.Trajectory] = None  # reference samples
     target_samples: Optional[md.Trajectory] = None  # target samples
     nr_of_switches: int = -1  # number of switches
     neq_switching_length: int = 5_000  # switching length in steps
