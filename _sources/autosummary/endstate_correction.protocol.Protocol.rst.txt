@@ -27,11 +27,11 @@ endstate\_correction.protocol.Protocol
    
       ~Protocol.neq_switching_length
       ~Protocol.nr_of_switches
+      ~Protocol.reference_samples
       ~Protocol.save_endstates
       ~Protocol.save_trajs
       ~Protocol.target_samples
       ~Protocol.method
       ~Protocol.sim
-      ~Protocol.reference_samples
    
    
