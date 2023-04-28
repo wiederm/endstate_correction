@@ -87,7 +87,7 @@
              
   <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
-<p>This page details how to get started with endstate_correction.</p>
+<p>This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is sued) and a neural network potential (ANI-2x).</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>We recommend setting up a new python conda environment with <code class="code docutils literal notranslate"><span class="pre">python=3.9</span></code> and installing the packages defined <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml">here</a> using <code class="code docutils literal notranslate"><span class="pre">mamba</span></code>.
@@ -97,40 +97,42 @@ This package can be installed using:
 <section id="how-to-use-this-package">
 <h2>How to use this package<a class="headerlink" href="#how-to-use-this-package" title="Permalink to this heading"></a></h2>
 <p>We have prepared two scripts that should help to use this package, both are located in <code class="code docutils literal notranslate"><span class="pre">endstate_correction/scripts</span></code>.
-We will start by describing the use of the  <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script and then discuss the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
+We will start by describing the use of the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script and then discuss the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
 </section>
 <section id="a-typical-neq-workflow">
 <h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
 <section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
 <h3>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
-<p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing moves.
-If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script provides and easy way to obtain these samples.</p>
-<p>In the following we will use 1-octanol in a waterbox as a test system. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
-Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script are explained — but they should work for 1-octanol without any modifications.</p>
-<p>The scripts starts by defining an openMM system object. Here, CHARMM parameter, topology and coordinate files are used, but any other supported parameter set and files can be used.
-We start by defining a <code class="docutils literal notranslate"><span class="pre">CharmmPsfFile</span></code>, <code class="docutils literal notranslate"><span class="pre">PDBFile</span></code> and <code class="docutils literal notranslate"><span class="pre">CharmmParameterSet</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.psf&quot;</span><span class="p">)</span>
-<span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/openmm/step3_input.pdb&quot;</span><span class="p">)</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.rtf&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/unk/unk.prm&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/top_all36_cgenff.rtf&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_base</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+<p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing simulations.
+If samples are not already available, the <code class="code docutils literal notranslate"><span class="pre">generate_endstate_samples.py</span></code> script provides and easy way to obtain these samples.</p>
+<p>In the following we will use a molecule from the HiPen dataset with the SMILES string “”Cn1cc(Cl)c(/C=N/O)n1” as a test system.</p>
+<p>The scripts starts by defining some control parameters such as <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> (number of samples that should be generated), <code class="docutils literal notranslate"><span class="pre">n_steps_per_sample</span></code> (integration steps between samples), <code class="docutils literal notranslate"><span class="pre">base</span></code> (where to store the samples).</p>
+<p>We then start setting the simulation object</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">forcefield</span> <span class="o">=</span> <span class="n">ForceField</span><span class="p">(</span><span class="s2">&quot;openff_unconstrained-2.0.0.offxml&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="s2">&quot;vacuum&quot;</span>
+
+<span class="n">potential</span> <span class="o">=</span> <span class="n">MLPotential</span><span class="p">(</span><span class="s2">&quot;ani2x&quot;</span><span class="p">)</span>
+<span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">from_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">hydrogens_are_explicit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># generate molecule from smile</span>
+<span class="n">molecule</span><span class="o">.</span><span class="n">generate_conformers</span><span class="p">(</span><span class="n">n_conformers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># generate a single conforamtion</span>
+
+<span class="n">topology</span> <span class="o">=</span> <span class="n">molecule</span><span class="o">.</span><span class="n">to_topology</span><span class="p">()</span>
+<span class="n">system</span> <span class="o">=</span> <span class="n">forcefield</span><span class="o">.</span><span class="n">create_openmm_system</span><span class="p">(</span><span class="n">topology</span><span class="p">)</span>
+<span class="c1"># define region that should be treated with the nnp</span>
+<span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">molecule_particle_index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">topology</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+<span class="c1"># set up the integrator and the platform (here we are assuming you have a CUDA GPU)</span>
+<span class="n">integrator</span> <span class="o">=</span> <span class="n">LangevinIntegrator</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">collision_rate</span><span class="p">,</span> <span class="n">stepsize</span><span class="p">)</span>
+<span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="s2">&quot;CUDA&quot;</span><span class="p">)</span>
+<span class="c1"># we are creating a mixed system using openmm-ml</span>
+<span class="n">topology</span> <span class="o">=</span> <span class="n">topology</span><span class="o">.</span><span class="n">to_openmm</span><span class="p">()</span>
+<span class="n">ml_system</span> <span class="o">=</span> <span class="n">potential</span><span class="o">.</span><span class="n">createMixedSystem</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>and then we define the atoms that should be perturbed using the coupling parameter <span class="math notranslate nohighlight">\(\lambda\)</span> with</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
+<p>Note that we explicitly define the atoms that should be perturbed from the reference to the target potential using</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">molecule_particle_index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">topology</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Depending if all atoms in your system are included in the <code class="code docutils literal notranslate"><span class="pre">ml_atoms</span></code> list or only a subset, you can set up your QML or QML/MM simulation object using</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">create_charmm_system</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="o">=</span><span class="n">ml_atoms</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>That is everything you need to define to run the equilibrium sampling.
-The parameters controling the number of samples to save and time interval between samples can be set in the script in the relevant parts.
-Keep in mind that if you want to perform bidirectional FEP or NEQ you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> <em>and</em> <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
+<p>If you want to perform bidirectional FEP or NEQ you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> <em>and</em> <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
 This can be controlled by setting the number using the variable <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.
 The default value set in the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script is <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states=2</span></code>, generating samples from both endstate equilibrium distributions.</p>
 </section>
@@ -144,11 +146,10 @@ Subsequently, the relevant section of the <code class="code docutils literal not
 with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -159,11 +160,11 @@ with:</p>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> and the following protocol.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -173,15 +174,6 @@ with:</p>
 <h3>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 The protocol has to be adopted slightly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FE{&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
-    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
@@ -191,41 +183,25 @@ The protocol has to be adopted slightly:</p>
 </section>
 <section id="available-protocols">
 <h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
-    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;unidirectional&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
-    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;bidirectional&quot;</span><span class="p">,</span>
-    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
-    <span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span><span class="p">],</span>
-    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="c1"># in fs</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+    <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_trajs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
