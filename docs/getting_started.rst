@@ -1,6 +1,6 @@
 Getting Started
 ===============
-This page details how to get started with endstate_correction. 
+This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is sued) and a neural network potential (ANI-2x).
 
 Installation
 -----------------
@@ -12,52 +12,56 @@ This package can be installed using:
 How to use this package
 -----------------
 We have prepared two scripts that should help to use this package, both are located in :code:`endstate_correction/scripts`.
-We will start by describing the use of the  :code:`sampling.py` script and then discuss the :code:`perform_correction.py` script.
+We will start by describing the use of the :code:`sampling.py` script and then discuss the :code:`perform_correction.py` script.
 
 A typical NEQ workflow
 -----------------
 Generate the equilibrium distribution :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
 
-In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing moves.
-If samples are not already available, the :code:`sampling.py` script provides and easy way to obtain these samples.
+In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing simulations.
+If samples are not already available, the :code:`generate_endstate_samples.py` script provides and easy way to obtain these samples.
 
-In the following we will use 1-octanol in a waterbox as a test system. Parameters, topology and initial coordinate set come with the :code:`endstate_correction` repository.
-Subsequently, the relevant section of the :code:`sampling.py` script are explained --- but they should work for 1-octanol without any modifications. 
+In the following we will use a molecule from the HiPen dataset with the SMILES string ""Cn1cc(Cl)c(/C=N/O)n1" as a test system. 
 
-The scripts starts by defining an openMM system object. Here, CHARMM parameter, topology and coordinate files are used, but any other supported parameter set and files can be used. 
-We start by defining a ``CharmmPsfFile``, ``PDBFile`` and ``CharmmParameterSet``:  
+The scripts starts by defining some control parameters such as ``n_samples`` (number of samples that should be generated), ``n_steps_per_sample`` (integration steps between samples), ``base`` (where to store the samples).
 
-.. code::
-
-    psf = CharmmPsfFile(f"{parameter_base}/{system_name}/charmm-gui/openmm/step3_input.psf")
-    pdb = PDBFile(f"{parameter_base}/{system_name}/charmm-gui/openmm/step3_input.pdb")
-    params = CharmmParameterSet(
-        f"{parameter_base}/{system_name}/charmm-gui/unk/unk.rtf",
-        f"{parameter_base}/{system_name}/charmm-gui/unk/unk.prm",
-        f"{parameter_base}/toppar/top_all36_cgenff.rtf",
-        f"{parameter_base}/toppar/par_all36_cgenff.prm",
-        f"{parameter_base}/toppar/toppar_water_ions.str",
-    )
-
-and then we define the atoms that should be perturbed using the coupling parameter :math:`\lambda` with
+We then start setting the simulation object 
 
 .. code:: python
 
-    ml_atoms = [atom.index for atom in chains[0].atoms()]
+    forcefield = ForceField("openff_unconstrained-2.0.0.offxml")
+    env = "vacuum"
 
-Depending if all atoms in your system are included in the :code:`ml_atoms` list or only a subset, you can set up your QML or QML/MM simulation object using 
+    potential = MLPotential("ani2x")
+    molecule = Molecule.from_smiles(smiles, hydrogens_are_explicit=False) # generate molecule from smile
+    molecule.generate_conformers(n_conformers=1) # generate a single conforamtion
+
+    topology = molecule.to_topology()
+    system = forcefield.create_openmm_system(topology) 
+    # define region that should be treated with the nnp
+    ml_atoms = [atom.molecule_particle_index for atom in topology.atoms]
+    # set up the integrator and the platform (here we are assuming you have a CUDA GPU)
+    integrator = LangevinIntegrator(temperature, collision_rate, stepsize)
+    platform = Platform.getPlatformByName("CUDA")
+    # we are creating a mixed system using openmm-ml
+    topology = topology.to_openmm()
+    ml_system = potential.createMixedSystem(topology, system, ml_atoms, interpolate=True)
+    sim = Simulation(topology, ml_system, integrator, platform=platform)
+
+Note that we explicitly define the atoms that should be perturbed from the reference to the target potential using 
 
 .. code:: python
 
-    sim = create_charmm_system(psf=psf, parameters=params, env=env, ml_atoms=ml_atoms)
+    ml_atoms = [atom.molecule_particle_index for atom in topology.atoms]
 
-
-That is everything you need to define to run the equilibrium sampling. 
-The parameters controling the number of samples to save and time interval between samples can be set in the script in the relevant parts.
-Keep in mind that if you want to perform bidirectional FEP or NEQ you need to sample at :math:`\pi(x, \lambda=0)` *and* :math:`\pi(x, \lambda=1)`. 
+If you want to perform bidirectional FEP or NEQ you need to sample at :math:`\pi(x, \lambda=0)` *and* :math:`\pi(x, \lambda=1)`. 
 This can be controlled by setting the number using the variable :code:`nr_lambda_states`.
 The default value set in the :code:`sampling.py` script is :code:`nr_lambda_states=2`, generating samples from both endstate equilibrium distributions.
+
+.. code:: python
+    nr_lambda_states = 2  # samples equilibrium distribution at both endstates
+    lambs = np.linspace(0, 1, nr_lambda_states)
 
 Perform unidirectional NEQ from :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -71,14 +75,13 @@ with:
 
 .. code:: python
 
-  neq_protocol = Protocol(
-      method="NEQ",
-      direction="unidirectional",
-      sim=sim,
-      trajectories=[mm_samples],
-      nr_of_switches=400,
-      neq_switching_length=5_000, # in fs
-  )
+    neq_protocol = Protocol(
+        method="NEQ",
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_switches=100,
+        neq_switching_length=1_000,
+    )
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
 
@@ -88,14 +91,14 @@ The endstate correction can be performed using the script :code:`perform_correct
 
 .. code:: python
 
-  neq_protocol = Protocol(
-      method="NEQ",
-      direction="bidirectional",
-      sim=sim,
-      trajectories=[mm_samples, qml_samples],
-      nr_of_switches=400,
-      neq_switching_length=5_000, # in fs
-  )
+    neq_protocol = Protocol(
+        method="NEQ",
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
+        nr_of_switches=100,
+        neq_switching_length=1_000,
+    )
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
 
@@ -106,14 +109,13 @@ The endstate correction can be performed using the script :code:`perform_correct
 The protocol has to be adopted slightly:
 
 .. code:: python
+    fep_protocol = Protocol(
+        method="FEP",
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_switches=1_000,
+    )
 
-  fep_protocol = Protocol(
-      method="FE{",
-      direction="unidirectional",
-      sim=sim,
-      trajectories=[mm_samples],
-      nr_of_switches=400,
-  )
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(fep_protocol)`.
 
 
@@ -127,42 +129,25 @@ Available protocols
 
 .. code:: python
 
-  fep_protocol = Protocol(
-      method="FEP",
-      direction="unidirectional",
-      sim=sim,
-      trajectories=[mm_samples],
-      nr_of_switches=400,
-  )
+    neq_protocol = Protocol(
+        method="NEQ",
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
+        nr_of_switches=100,
+        neq_switching_length=1_000,
+    )
 
 .. code:: python
 
-  fep_protocol = Protocol(
-      method="FEP",
-      direction="bidirectional",
-      sim=sim,
-      trajectories=[mm_samples, qml_samples],
-      nr_of_switches=400,
-  )
+    neq_protocol = Protocol(
+        method="FEP",
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
+        nr_of_switches=100,
+        neq_switching_length=1_000,
+        save_endstates=True,
+        save_trajs=True,
+    )
 
-.. code:: python
-
-  neq_protocol = Protocol(
-      method="NEQ",
-      direction="unidirectional",
-      sim=sim,
-      trajectories=[mm_samples],
-      nr_of_switches=400,
-      neq_switching_length=5_000, # in fs
-  )
-
-.. code:: python
-
-  neq_protocol = Protocol(
-      method="NEQ",
-      direction="bidirectional",
-      sim=sim,
-      trajectories=[mm_samples, qml_samples],
-      nr_of_switches=400,
-      neq_switching_length=5_000, # in fs
-  )
