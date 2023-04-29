@@ -139,8 +139,8 @@ The default value set in the <code class="code docutils literal notranslate"><sp
 <section id="perform-unidirectional-neq-from-pi-x-lambda-0">
 <h3>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
-1-octanol in a waterbox will be the test system again. Parameters, topology and initial coordinate set come with the <code class="code docutils literal notranslate"><span class="pre">endstate_correction</span></code> repository.
-Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for 1-octanol without any modifications.</p>
+The script will calculate the free energy estimate using the samples generated with the <code class="code docutils literal notranslate"><span class="pre">generate_endstate_samples.py</span></code> script.
+Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for for the testsystem without any modifications.</p>
 <p>To perform a specific endstate correction we need to define a protocol
 (some standard protocols are shown <span class="xref std std-ref">here</span>)
 with:</p>
@@ -153,7 +153,11 @@ with:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.</p>
+<p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.
+The particular code above defines unidirectional NEQ switching using 100 switches and a switching length of 1 ps.
+The direciton of the switching simulation is controlled by the sampels that are provided:
+if <cite>reference_samples</cite> are provided, switching is performed from the reference to the target level of theory, if <cite>target_samples</cite> are provided, switching is performed from the target level to the reference level.
+If both samples are provided, bidirectional NEQ switching is performed (for an example see below).</p>
 </section>
 <section id="perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">
 <h3>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h3>
@@ -172,8 +176,7 @@ with:</p>
 </section>
 <section id="perform-unidirectional-fep-from-pi-x-lambda-0">
 <h3>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
-<p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
-The protocol has to be adopted slightly:</p>
+<p>The protocol has to be adopted slightly:</p>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">

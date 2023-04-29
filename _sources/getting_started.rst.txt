@@ -66,8 +66,8 @@ The default value set in the :code:`sampling.py` script is :code:`nr_lambda_stat
 Perform unidirectional NEQ from :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
 The endstate correction can be performed using the script :code:`perform_correction.py`.
-1-octanol in a waterbox will be the test system again. Parameters, topology and initial coordinate set come with the :code:`endstate_correction` repository.
-Subsequently, the relevant section of the :code:`perform_correction.py` script are explained --- but they should work for 1-octanol without any modifications. 
+The script will calculate the free energy estimate using the samples generated with the :code:`generate_endstate_samples.py` script.
+Subsequently, the relevant section of the :code:`perform_correction.py` script are explained --- but they should work for for the testsystem without any modifications. 
 
 To perform a specific endstate correction we need to define a protocol 
 (some standard protocols are shown :ref:`here<Available protocols>`) 
@@ -84,6 +84,10 @@ with:
     )
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
+The particular code above defines unidirectional NEQ switching using 100 switches and a switching length of 1 ps.
+The direciton of the switching simulation is controlled by the sampels that are provided: 
+if `reference_samples` are provided, switching is performed from the reference to the target level of theory, if `target_samples` are provided, switching is performed from the target level to the reference level.
+If both samples are provided, bidirectional NEQ switching is performed (for an example see below).
 
 Perform bidirectional NEQ from :math:`\pi(x, \lambda=0)` and :math:`\pi(x, \lambda=1)`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -105,7 +109,6 @@ This protocol is then passed to the actual function performing the protocol: :co
 
 Perform unidirectional FEP from :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
-The endstate correction can be performed using the script :code:`perform_correction.py`.
 The protocol has to be adopted slightly:
 
 .. code:: python
