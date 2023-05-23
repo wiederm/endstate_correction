@@ -103,10 +103,7 @@ class EndstateCorrectionBase(abc.ABC):
         lamb = self.protocol.lam
         self.logger.info(f"{lamb=}")
         # define where to store samples
-        trajectory_dir = f"{self.work_dir}/lambda_{lamb:.4f}"
-        # path where samples should be stored (will be created if it doesn't exist)
-        os.makedirs(trajectory_dir, exist_ok=True)
-        trajectory_file = f"{self.work_dir}/lambda_{lamb:.4f}/{self.name}.h5"
+        trajectory_file = f"{self.work_dir}/{self.name}.h5"
         self._traj_file = trajectory_file
         self.logger.info(f"Trajectory saved to: {trajectory_file}")
         # set lambda
