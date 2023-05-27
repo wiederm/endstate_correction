@@ -1,0 +1,31 @@
+endstate\_correction.smc
+========================
+
+.. automodule:: endstate_correction.smc
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      perform_SMC
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

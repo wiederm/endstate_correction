@@ -1,0 +1,31 @@
+endstate\_correction.tests.test\_smc
+====================================
+
+.. automodule:: endstate_correction.tests.test_smc
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      test_SMC
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

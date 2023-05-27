@@ -34,5 +34,6 @@ endstate\_correction.tests
    endstate_correction.tests.test_perform_endstate_correction
    endstate_correction.tests.test_sampling
    endstate_correction.tests.test_simulation
+   endstate_correction.tests.test_smc
    endstate_correction.tests.test_system
 

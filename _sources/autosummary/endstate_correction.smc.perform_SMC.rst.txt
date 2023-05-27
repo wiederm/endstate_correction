@@ -1,0 +1,6 @@
+endstate\_correction.smc.perform\_SMC
+=====================================
+
+.. currentmodule:: endstate_correction.smc
+
+.. autofunction:: perform_SMC
