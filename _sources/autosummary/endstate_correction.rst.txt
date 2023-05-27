@@ -33,6 +33,7 @@
    endstate_correction.neq
    endstate_correction.protocol
    endstate_correction.simulation
+   endstate_correction.smc
    endstate_correction.system
    endstate_correction.tests
    endstate_correction.topology
