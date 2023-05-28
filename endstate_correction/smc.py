@@ -6,7 +6,7 @@ from openmm import unit
 from openmm.app import Simulation
 from tqdm import tqdm
 
-from endstate_correction.constant import kBT
+from endstate_correction.constant import kBT, temperature
 
 
 def perform_SMC(
@@ -51,11 +51,12 @@ def perform_SMC(
         u_intermediate = np.zeros(nr_of_particles)
 
         for p_idx, p in enumerate(particles):
-            sim.context.setPositions(p / 10)
-            e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy()
-            print(e_pot / kBT)
+            sim.context.setPositions(p)
+            sim.context.setVelocitiesToTemperature(temperature)
+            e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
+            print(e_pot)
             print(p_idx)
-            u_intermediate[p_idx] = e_pot / kBT
+            u_intermediate[p_idx] = e_pot
 
         log_weights = (
             np.log(weights) + u_intermediate - np.roll(u_intermediate, shift=1)
@@ -77,8 +78,8 @@ def perform_SMC(
         # Propagate the particles
         _intermediate_particles = []
         for p_idx, p in enumerate(particles):
-            sim.context.setPositions(p / 10)
-            sim.step(1)
+            sim.context.setPositions(p)
+            sim.step(10)
             _intermediate_particles.append(
                 sim.context.getState(getPositions=True).getPositions(asNumpy=True)
             )
