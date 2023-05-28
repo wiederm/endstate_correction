@@ -12,4 +12,5 @@ def test_SMC():
     )
 
     # perform SMC switching
-    perform_SMC(sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10)
+    free_energy, pot_e = perform_SMC(sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10)
+    

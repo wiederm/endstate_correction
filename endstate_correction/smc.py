@@ -33,6 +33,9 @@ def perform_SMC(
         0, 1, nr_of_steps
     )  # temperature values for the intermediate potentials
 
+    # initialize pot_e matrix
+    pot_e = np.zeros((nr_of_particles, nr_of_steps))
+
     # select initial samples
     random_frame_idxs = np.random.choice(len(samples.xyz) - 1, size=nr_of_particles)
 
@@ -44,7 +47,7 @@ def perform_SMC(
 
     assert len(particles) == nr_of_particles
     # start with SMC
-    for lamb in tqdm(t_values):
+    for idx, lamb in enumerate(tqdm(t_values)):
         # set lambda parameter
         sim.context.setParameter("lambda_interpolate", lamb)
         # calculate the current potentials for each particle
@@ -81,7 +84,7 @@ def perform_SMC(
             sim.context.setPositions(p)
             sim.step(10)
             _intermediate_particles.append(
-                sim.context.getState(getPositions=True).getPositions(asNumpy=True)
+                sim.context.getState(getPositions=True).getPositions(asNumpy=True) / 10
             )
 
         particles = _intermediate_particles
@@ -91,4 +94,4 @@ def perform_SMC(
 
     print(free_energy_diff)
 
-    return np.mean(u_intermediate)
+    return (free_energy_diff, pot_e)
