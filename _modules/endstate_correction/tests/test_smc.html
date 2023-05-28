@@ -80,12 +80,12 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># load simulation and samples for ZINC00077329</span>
-    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_qml</span> <span class="o">=</span> <span class="n">load_endstate_system_and_samples</span><span class="p">(</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_endstate_system_and_samples</span><span class="p">(</span>
         <span class="n">system_name</span><span class="o">=</span><span class="n">system_name</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># perform SMC switching</span>
-    <span class="n">perform_SMC</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span></div>
+    <span class="n">perform_SMC</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -124,7 +124,7 @@
         <span class="n">u_intermediate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nr_of_particles</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">p_idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">particles</span><span class="p">):</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
             <span class="n">e_pot</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">e_pot</span> <span class="o">/</span> <span class="n">kBT</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">p_idx</span><span class="p">)</span>
@@ -138,13 +138,19 @@
         <span class="n">weights</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
 
         <span class="c1"># Resample the particles</span>
-        <span class="n">particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span>
+        <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
+        <span class="p">)</span>
+
+        <span class="c1"># select the coordinates of the random frame</span>
+        <span class="n">particles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">particles</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
+        <span class="p">]</span>
+
         <span class="c1"># Propagate the particles</span>
         <span class="n">_intermediate_particles</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">p_idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">particles</span><span class="p">):</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
             <span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">_intermediate_particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getPositions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPositions</span><span class="p">(</span><span class="n">asNumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
