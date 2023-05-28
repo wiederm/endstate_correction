@@ -51,7 +51,7 @@ def perform_SMC(
         u_intermediate = np.zeros(nr_of_particles)
 
         for p_idx, p in enumerate(particles):
-            sim.context.setPositions(p)
+            sim.context.setPositions(p / 10)
             e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy()
             print(e_pot / kBT)
             print(p_idx)
@@ -65,13 +65,19 @@ def perform_SMC(
         weights /= np.sum(weights)
 
         # Resample the particles
-        particles = np.random.choice(particles, size=nr_of_particles, p=weights)
-        print(particles.shape)
-        print(particles)
+        random_frame_idxs = np.random.choice(
+            nr_of_particles, size=nr_of_particles, p=weights
+        )
+
+        # select the coordinates of the random frame
+        particles = [
+            particles[random_frame_idx] for random_frame_idx in random_frame_idxs
+        ]
+
         # Propagate the particles
         _intermediate_particles = []
         for p_idx, p in enumerate(particles):
-            sim.context.setPositions(p)
+            sim.context.setPositions(p / 10)
             sim.step(1)
             _intermediate_particles.append(
                 sim.context.getState(getPositions=True).getPositions(asNumpy=True)
