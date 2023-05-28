@@ -47,7 +47,7 @@ def perform_SMC(
 
     assert len(particles) == nr_of_particles
     # start with SMC
-    for idx, lamb in enumerate(tqdm(t_values)):
+    for lamb in tqdm(t_values):
         # set lambda parameter
         sim.context.setParameter("lambda_interpolate", lamb)
         # calculate the current potentials for each particle
@@ -80,11 +80,11 @@ def perform_SMC(
 
         # Propagate the particles
         _intermediate_particles = []
-        for p_idx, p in enumerate(particles):
+        for p in particles:
             sim.context.setPositions(p)
             sim.step(10)
             _intermediate_particles.append(
-                sim.context.getState(getPositions=True).getPositions(asNumpy=True) / 10
+                sim.context.getState(getPositions=True).getPositions(asNumpy=True)
             )
 
         particles = _intermediate_particles
