@@ -55,7 +55,6 @@ def perform_SMC(
 
         for p_idx, p in enumerate(particles):
             sim.context.setPositions(p)
-            sim.context.setVelocitiesToTemperature(temperature)
             e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
             print(e_pot)
             print(p_idx)
@@ -82,6 +81,7 @@ def perform_SMC(
         _intermediate_particles = []
         for p in particles:
             sim.context.setPositions(p)
+            sim.context.setVelocitiesToTemperature(temperature)       
             sim.step(10)
             _intermediate_particles.append(
                 sim.context.getState(getPositions=True).getPositions(asNumpy=True)
