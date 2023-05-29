@@ -6,8 +6,10 @@ import pytest, os
 @pytest.fixture
 def _am_I_on_GH() -> bool:
     # will return True if on GH, and false locally
-    return os.getenv("CI")
-
+    if os.getenv("CI") == None:
+        return False
+    else:
+        return True
 
 def test_SMC(_am_I_on_GH):
     system_name = "ZINC00077329"
@@ -19,7 +21,10 @@ def test_SMC(_am_I_on_GH):
     )
 
     # perform SMC switching
-    if _am_I_on_GH == True:
+    print("Performing SMC switching")
+    print(_am_I_on_GH)
+    assert False
+    if _am_I_on_GH() == True:
         free_energy, pot_e = perform_SMC(
             sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10
         )
