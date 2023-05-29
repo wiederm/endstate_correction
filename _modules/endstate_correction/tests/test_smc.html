@@ -84,6 +84,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 
+
 <div class="viewcode-block" id="test_SMC"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_smc.test_SMC.html#endstate_correction.tests.test_smc.test_SMC">[docs]</a><span class="k">def</span> <span class="nf">test_SMC</span><span class="p">(</span><span class="n">_am_I_on_GH</span><span class="p">):</span>
     <span class="n">system_name</span> <span class="o">=</span> <span class="s2">&quot;ZINC00077329&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -95,16 +96,17 @@
 
     <span class="c1"># perform SMC switching</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SMC switching&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">_am_I_on_GH</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">_am_I_on_GH</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">_am_I_on_GH</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">perform_SMC</span><span class="p">(</span>
             <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">10</span>
         <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Am I on GH: </span><span class="si">{</span><span class="n">_am_I_on_GH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">perform_SMC</span><span class="p">(</span>
             <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">100</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Am I on GH: </span><span class="si">{</span><span class="n">_am_I_on_GH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
