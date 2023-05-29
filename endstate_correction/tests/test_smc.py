@@ -21,16 +21,17 @@ def test_SMC(_am_I_on_GH):
         system_name=system_name,
     )
 
+    smc_sampler = SMC(sim=sim, samples=samples_mm)
     # perform SMC switching
     print("Performing SMC switching")
     if _am_I_on_GH == True:
-        free_energy, pot_e = SMC.perform_SMC(
-            sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10
+        free_energy, pot_e = smc_sampler.perform_SMC(
+            nr_of_steps=100, nr_of_particles=10
         )
         print(f"Am I on GH: {_am_I_on_GH}")
 
     else:
-        free_energy, pot_e = perform_SMC(
-            sim=sim, nr_of_steps=1000, samples=samples_mm, nr_of_particles=100
+        free_energy, pot_e = smc_sampler.perform_SMC(
+            nr_of_steps=1000, nr_of_particles=100
         )
         print(f"Am I on GH: {_am_I_on_GH}")
