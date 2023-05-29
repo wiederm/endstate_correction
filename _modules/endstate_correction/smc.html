@@ -176,37 +176,41 @@
         <span class="p">]</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="n">nr_of_particles</span>
-        <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span>
 
-        <span class="n">u_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+        <span class="c1"># calculate the initial potential for each particle</span>
+        <span class="n">u_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
 
         <span class="c1"># for each lambda value calculate the intermediate potential for each particle</span>
         <span class="c1"># and update the weights based on the ratio of successive intermediate potentials</span>
         <span class="k">for</span> <span class="n">lamb</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">lamb_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>  <span class="c1"># exclude the first lambda value</span>
-            <span class="n">u_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="n">lamb</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+            <span class="n">u_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="n">lamb</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
             <span class="c1"># update the weights based on the ratio of successive intermediate potentials</span>
             <span class="n">log_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
                 <span class="n">u_now</span> <span class="o">-</span> <span class="n">u_before</span>
-            <span class="p">)</span>  <span class="c1"># NOTE: unsure if this is actually ture</span>
+            <span class="p">)</span>  
+            <span class="c1"># NOTE: unsure if this is actually ture (shouldn&#39;t it be log(u_now/u_before)?))</span>
+            <span class="c1"># will leave this for now but revisit later!</span>
+            
             <span class="n">log_weights</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">log_weights</span><span class="p">)</span>
             <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_weights</span><span class="p">)</span>
             <span class="n">weights</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
 
-        <span class="c1"># Resample the particles based on the weights</span>
-        <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
-        <span class="p">)</span>
-        <span class="n">particles</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">particles</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
-        <span class="p">]</span>
+            <span class="c1"># Resample the particles based on the weights</span>
+            <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
+            <span class="p">)</span>
+            <span class="n">particles</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">particles</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
+            <span class="p">]</span>
 
-        <span class="c1"># Propagate the particles</span>
-        <span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagate_particles</span><span class="p">(</span><span class="n">particles</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+            <span class="c1"># Propagate the particles</span>
+            <span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagate_particles</span><span class="p">(</span><span class="n">particles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
 
-        <span class="c1"># Calculate the free energy difference</span>
-        <span class="n">free_energy_diff</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="n">free_energy_diff</span><span class="p">)</span>
+            <span class="c1"># Calculate the free energy difference</span>
+            <span class="n">free_energy_diff</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
+            <span class="c1"># update potential energy vector</span>
+            <span class="n">u_before</span> <span class="o">=</span> <span class="n">u_now</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">free_energy_diff</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">free_energy_diff</span><span class="p">,</span> <span class="n">pot_e</span><span class="p">)</span></div>
 </pre></div>
