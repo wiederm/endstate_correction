@@ -1,5 +1,5 @@
 from .test_neq import load_endstate_system_and_samples
-from endstate_correction.smc import perform_SMC
+from endstate_correction.smc import SMC
 import pytest, os
 
 
@@ -24,7 +24,7 @@ def test_SMC(_am_I_on_GH):
     # perform SMC switching
     print("Performing SMC switching")
     if _am_I_on_GH == True:
-        free_energy, pot_e = perform_SMC(
+        free_energy, pot_e = SMC.perform_SMC(
             sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10
         )
         print(f"Am I on GH: {_am_I_on_GH}")

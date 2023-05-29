@@ -14,8 +14,6 @@ class SMC:
         self,
         sim: Simulation,
         samples: Trajectory,
-        nr_of_particles: int = 100,
-        nr_of_steps: int = 1_000,
     ) -> None:
         """Initialize the SMC class
 
@@ -28,8 +26,6 @@ class SMC:
 
         self.sim = sim
         self.samples = samples
-        self.nr_of_particles = nr_of_particles
-        self.nr_of_steps = nr_of_steps
 
     @staticmethod
     def _calculate_potential_E_for_particles(
@@ -60,7 +56,11 @@ class SMC:
         # update particles
         return _intermediate_particles
 
-    def perform_SMC(self):
+    def perform_SMC(
+        self,
+        nr_of_particles: int = 100,
+        nr_of_steps: int = 1_000,
+    ):
         # ------------------------- #
         # Outline of the algorithm:
         # ------------------------- #
@@ -87,22 +87,22 @@ class SMC:
         # ------------------------- #
 
         # initialize weights
-        weights = np.ones(self.nr_of_particles) / self.nr_of_particles
+        weights = np.ones(nr_of_particles) / nr_of_particles
         # initialize lambda values
-        lamb_values = np.linspace(0, 1, self.nr_of_steps)
+        lamb_values = np.linspace(0, 1, nr_of_steps)
         # initialize potential energy matrix
-        pot_e = np.zeros((self.nr_of_particles, self.nr_of_steps))
+        pot_e = np.zeros((nr_of_particles, nr_of_steps))
 
         # select initial samples
         random_frame_idxs = np.random.choice(
-            len(self.samples.xyz) - 1, size=self.nr_of_particles
+            len(self.samples.xyz) - 1, size=nr_of_particles
         )
         particles = [
             self.samples.openmm_positions(random_frame_idx)
             for random_frame_idx in random_frame_idxs
         ]
 
-        assert len(particles) == self.nr_of_particles
+        assert len(particles) == nr_of_particles
         sim = self.sim
 
         u_before = self._calculate_potential_E_for_particles(0.0, particles, sim)
@@ -121,7 +121,7 @@ class SMC:
 
         # Resample the particles based on the weights
         random_frame_idxs = np.random.choice(
-            self.nr_of_particles, size=self.nr_of_particles, p=weights
+            nr_of_particles, size=nr_of_particles, p=weights
         )
         particles = [
             particles[random_frame_idx] for random_frame_idx in random_frame_idxs
