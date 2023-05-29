@@ -23,7 +23,6 @@ def test_SMC(_am_I_on_GH):
     # perform SMC switching
     print("Performing SMC switching")
     print(_am_I_on_GH)
-    assert False
     if _am_I_on_GH() == True:
         free_energy, pot_e = perform_SMC(
             sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10
