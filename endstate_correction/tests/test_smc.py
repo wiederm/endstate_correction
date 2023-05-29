@@ -11,6 +11,7 @@ def _am_I_on_GH() -> bool:
     else:
         return True
 
+
 def test_SMC(_am_I_on_GH):
     system_name = "ZINC00077329"
     print(f"{system_name=}")
@@ -22,12 +23,14 @@ def test_SMC(_am_I_on_GH):
 
     # perform SMC switching
     print("Performing SMC switching")
-    print(_am_I_on_GH)
-    if _am_I_on_GH() == True:
+    if _am_I_on_GH == True:
         free_energy, pot_e = perform_SMC(
             sim=sim, nr_of_steps=100, samples=samples_mm, nr_of_particles=10
         )
+        print(f"Am I on GH: {_am_I_on_GH}")
+
     else:
         free_energy, pot_e = perform_SMC(
             sim=sim, nr_of_steps=1000, samples=samples_mm, nr_of_particles=100
         )
+        print(f"Am I on GH: {_am_I_on_GH}")
