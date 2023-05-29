@@ -24,42 +24,66 @@ def perform_SMC(
         nr_of_steps (int, optional): number of interpolation steps. Defaults to 1000.
 
     Returns:
-        np.array: weights of the particles
+        np.array: weights of the particles, np.ndarray of shape (nr_of_particles, nr_of_steps): potential energy of the particles at each lambda
     """
 
-    # list  of weights
-    weights = np.ones(nr_of_particles) / nr_of_particles
-    t_values = np.linspace(
-        0, 1, nr_of_steps
-    )  # temperature values for the intermediate potentials
+    # ------------------------- #
+    # Outline of the algorithm:
+    # ------------------------- #
+    # initialize particles with random values
+    # initialize weights to be uniform
 
-    # initialize pot_e matrix
+    # FOR each lambda lamb in a sequence from 0 to 1:
+    #     calculate the intermediate potential for each particle U = U_ref + lamb * (U_target - U_ref)
+    #     calculate the intermediate gradient for each particle 
+
+    # update the weights based on the ratio of successive intermediate potentials
+    # normalize the weights
+
+    # resample the particles based on the weights
+
+    # FOR each particle:
+    #     initialize velocity from a Maxwell-Boltzmann distribution corresponding to the temperature
+    #     update the state using Langevin dynamics, combining the gradient, the velocity, and Gaussian noise
+
+    # After all steps are completed, calculate the free energy difference:
+    #     compute the reference and target potentials for the final particles
+    #     compute the unnormalized weights as the exponential of the difference between the reference and target potentials
+    #     estimate the free energy difference as the negative logarithm of the average unnormalized weight
+    # ------------------------- #
+
+
+    # initialize weights
+    weights = np.ones(nr_of_particles) / nr_of_particles
+    # initialize lambda values
+    lamb_values = np.linspace(
+        0, 1, nr_of_steps
+    )
+    # initialize potential energy matrix
     pot_e = np.zeros((nr_of_particles, nr_of_steps))
 
     # select initial samples
     random_frame_idxs = np.random.choice(len(samples.xyz) - 1, size=nr_of_particles)
-
-    # select the coordinates of the random frame
     particles = [
         samples.openmm_positions(random_frame_idx)
         for random_frame_idx in random_frame_idxs
     ]
 
     assert len(particles) == nr_of_particles
-    # start with SMC
-    for lamb in tqdm(t_values):
+
+    # for each lambda value calculate the intermediate potential for each particle
+    # and update the weights based on the ratio of successive intermediate potentials
+    for lamb in tqdm(lamb_values):
         # set lambda parameter
         sim.context.setParameter("lambda_interpolate", lamb)
-        # calculate the current potentials for each particle
+        # initialize intermediate potential vector
         u_intermediate = np.zeros(nr_of_particles)
-
+        # for each particle calculate the intermediate potential in kBT
         for p_idx, p in enumerate(particles):
             sim.context.setPositions(p)
             e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
-            print(e_pot)
-            print(p_idx)
             u_intermediate[p_idx] = e_pot
-
+        # update the weights based on the ratio of successive intermediate potentials
         log_weights = (
             np.log(weights) + u_intermediate - np.roll(u_intermediate, shift=1)
         )
@@ -67,12 +91,10 @@ def perform_SMC(
         weights = np.exp(log_weights)
         weights /= np.sum(weights)
 
-        # Resample the particles
+        # Resample the particles based on the weights
         random_frame_idxs = np.random.choice(
             nr_of_particles, size=nr_of_particles, p=weights
         )
-
-        # select the coordinates of the random frame
         particles = [
             particles[random_frame_idx] for random_frame_idx in random_frame_idxs
         ]
@@ -86,7 +108,7 @@ def perform_SMC(
             _intermediate_particles.append(
                 sim.context.getState(getPositions=True).getPositions(asNumpy=True)
             )
-
+        # update particles
         particles = _intermediate_particles
 
     # Calculate the free energy difference
