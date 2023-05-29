@@ -1,0 +1,25 @@
+endstate\_correction.smc.SMC
+============================
+
+.. currentmodule:: endstate_correction.smc
+
+.. autoclass:: SMC
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~SMC.perform_SMC
+   
+   
+
+   
+   
+   

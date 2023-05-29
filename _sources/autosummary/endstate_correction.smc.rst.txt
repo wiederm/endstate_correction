@@ -9,17 +9,18 @@ endstate\_correction.smc
 
    
    
-   .. rubric:: Functions
+   
+
+   
+   
+   .. rubric:: Classes
 
    .. autosummary::
       :toctree:
+      :template: custom-class-template.rst
       :nosignatures:
    
-      perform_SMC
-   
-   
-
-   
+      SMC
    
    
 
