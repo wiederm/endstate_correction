@@ -87,8 +87,6 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span>
         <span class="n">samples</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span>
-        <span class="n">nr_of_particles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SMC class</span>
 
@@ -101,8 +99,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span> <span class="o">=</span> <span class="n">nr_of_particles</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_steps</span> <span class="o">=</span> <span class="n">nr_of_steps</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_calculate_potential_E_for_particles</span><span class="p">(</span>
@@ -133,7 +129,11 @@
         <span class="c1"># update particles</span>
         <span class="k">return</span> <span class="n">_intermediate_particles</span>
 
-    <span class="k">def</span> <span class="nf">perform_SMC</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">perform_SMC</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nr_of_particles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="c1"># ------------------------- #</span>
         <span class="c1"># Outline of the algorithm:</span>
         <span class="c1"># ------------------------- #</span>
@@ -160,22 +160,22 @@
         <span class="c1"># ------------------------- #</span>
 
         <span class="c1"># initialize weights</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nr_of_particles</span><span class="p">)</span> <span class="o">/</span> <span class="n">nr_of_particles</span>
         <span class="c1"># initialize lambda values</span>
-        <span class="n">lamb_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_steps</span><span class="p">)</span>
+        <span class="n">lamb_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span>
         <span class="c1"># initialize potential energy matrix</span>
-        <span class="n">pot_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_steps</span><span class="p">))</span>
+        <span class="n">pot_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">))</span>
 
         <span class="c1"># select initial samples</span>
         <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span>
         <span class="p">)</span>
         <span class="n">particles</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
         <span class="p">]</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="n">nr_of_particles</span>
         <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span>
 
         <span class="n">u_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
@@ -194,7 +194,7 @@
 
         <span class="c1"># Resample the particles based on the weights</span>
         <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
+            <span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_particles</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
         <span class="p">)</span>
         <span class="n">particles</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">particles</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>

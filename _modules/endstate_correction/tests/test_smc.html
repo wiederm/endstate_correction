@@ -72,7 +72,7 @@
              
   <h1>Source code for endstate_correction.tests.test_smc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.test_neq</span> <span class="kn">import</span> <span class="n">load_endstate_system_and_samples</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.smc</span> <span class="kn">import</span> <span class="n">perform_SMC</span>
+<span class="kn">from</span> <span class="nn">endstate_correction.smc</span> <span class="kn">import</span> <span class="n">SMC</span>
 <span class="kn">import</span> <span class="nn">pytest</span><span class="o">,</span> <span class="nn">os</span>
 
 
@@ -97,7 +97,7 @@
     <span class="c1"># perform SMC switching</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SMC switching&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_am_I_on_GH</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">perform_SMC</span><span class="p">(</span>
+        <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">SMC</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span>
             <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">10</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Am I on GH: </span><span class="si">{</span><span class="n">_am_I_on_GH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
