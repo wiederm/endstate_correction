@@ -103,36 +103,40 @@ class SMC:
         ]
 
         assert len(particles) == nr_of_particles
-        sim = self.sim
 
-        u_before = self._calculate_potential_E_for_particles(0.0, particles, sim)
+        # calculate the initial potential for each particle
+        u_before = self._calculate_potential_E_for_particles(0.0, particles, self.sim)
 
         # for each lambda value calculate the intermediate potential for each particle
         # and update the weights based on the ratio of successive intermediate potentials
         for lamb in tqdm(lamb_values[1:]):  # exclude the first lambda value
-            u_now = self._calculate_potential_E_for_particles(lamb, particles, sim)
+            u_now = self._calculate_potential_E_for_particles(lamb, particles, self.sim)
             # update the weights based on the ratio of successive intermediate potentials
             log_weights = np.log(weights) + (
                 u_now - u_before
-            )  # NOTE: unsure if this is actually ture
+            )  
+            # NOTE: unsure if this is actually ture (shouldn't it be log(u_now/u_before)?))
+            # will leave this for now but revisit later!
+            
             log_weights -= np.max(log_weights)
             weights = np.exp(log_weights)
             weights /= np.sum(weights)
 
-        # Resample the particles based on the weights
-        random_frame_idxs = np.random.choice(
-            nr_of_particles, size=nr_of_particles, p=weights
-        )
-        particles = [
-            particles[random_frame_idx] for random_frame_idx in random_frame_idxs
-        ]
+            # Resample the particles based on the weights
+            random_frame_idxs = np.random.choice(
+                nr_of_particles, size=nr_of_particles, p=weights
+            )
+            particles = [
+                particles[random_frame_idx] for random_frame_idx in random_frame_idxs
+            ]
 
-        # Propagate the particles
-        particles = self._propagate_particles(particles, sim)
+            # Propagate the particles
+            particles = self._propagate_particles(particles, self.sim)
 
-        # Calculate the free energy difference
-        free_energy_diff = -np.log(np.mean(np.exp(weights)))
-
-        print(free_energy_diff)
+            # Calculate the free energy difference
+            free_energy_diff = -np.log(np.mean(np.exp(weights)))
+            # update potential energy vector
+            u_before = u_now
+            print(free_energy_diff)
 
         return (free_energy_diff, pot_e)
