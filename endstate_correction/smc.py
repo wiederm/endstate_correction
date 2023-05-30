@@ -20,8 +20,6 @@ class SMC:
         Args:
             sim (Simulation): simulation instance
             samples (Trajectory): samples from which the starting points fo the SMC switching simulation are drawn
-            nr_of_particles (int, optional): number of particles. Defaults to 100.
-            nr_of_steps (int, optional): number of interpolation steps. Defaults to 1000.
         """
 
         self.sim = sim
@@ -29,14 +27,14 @@ class SMC:
 
     @staticmethod
     def _calculate_potential_E_for_particles(
-        lamb: float, particles, sim: Simulation
+        lamb: float, walkers, sim: Simulation
     ) -> np.ndarray:
         # set lambda parameter
         sim.context.setParameter("lambda_interpolate", lamb)
 
-        u_intermediate = np.zeros(len(particles))
+        u_intermediate = np.zeros(len(walkers))
         # for each particle calculate the intermediate potential in kBT
-        for p_idx, p in enumerate(particles):
+        for p_idx, p in enumerate(walkers):
             sim.context.setPositions(p)
             e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
             u_intermediate[p_idx] = e_pot
@@ -44,9 +42,9 @@ class SMC:
         return u_intermediate
 
     @staticmethod
-    def _propagate_particles(particles, sim: Simulation):
+    def _propagate_particles(walkers, sim: Simulation):
         _intermediate_particles = []
-        for p in particles:
+        for p in walkers:
             sim.context.setPositions(p)
             sim.context.setVelocitiesToTemperature(temperature)
             sim.step(10)
@@ -58,21 +56,28 @@ class SMC:
 
     def perform_SMC(
         self,
-        nr_of_particles: int = 100,
+        nr_of_walkers: int = 100,
         nr_of_steps: int = 1_000,
     ):
+        """Perform SMC sampling
+
+        Args:
+            nr_of_walkers (int, optional): number of walkers. Defaults to 100.
+            nr_of_steps (int, optional): number of interpolation steps. Defaults to 1000.
+        """
+
         # ------------------------- #
         # Outline of the algorithm:
         # ------------------------- #
-        # initialize particles with random values
+        # select random subset of walkers from the samples
         # initialize weights to be uniform
 
-        # FOR each lambda lamb in a sequence from 0 to 1:
-        #     calculate the intermediate potential for each particle U = U_ref + lamb * (U_target - U_ref)
+        # FOR each lambda in a sequence from 0 to 1:
+        #     calculate the intermediate potential for each particle U = (1 - lamb) * U_ref + lamb * (U_target - U_ref)
         #     calculate the intermediate gradient for each particle
-
-        # update the weights based on the ratio of successive intermediate potentials
-        # normalize the weights
+        #     calculate the weights based on the ratio of successive intermediate potentials
+        #     update the weights based on the ratio of successive intermediate potentials
+        #     normalize the weights
 
         # resample the particles based on the weights
 
@@ -87,51 +92,49 @@ class SMC:
         # ------------------------- #
 
         # initialize weights
-        weights = np.ones(nr_of_particles) / nr_of_particles
+        weights = np.ones(nr_of_walkers) / nr_of_walkers
         # initialize lambda values
         lamb_values = np.linspace(0, 1, nr_of_steps)
         # initialize potential energy matrix
-        pot_e = np.zeros((nr_of_particles, nr_of_steps))
+        pot_e = np.zeros((nr_of_walkers, nr_of_steps))
 
         # select initial samples
         random_frame_idxs = np.random.choice(
-            len(self.samples.xyz) - 1, size=nr_of_particles
+            len(self.samples.xyz) - 1, size=nr_of_walkers
         )
-        particles = [
+        walkers = [
             self.samples.openmm_positions(random_frame_idx)
             for random_frame_idx in random_frame_idxs
         ]
 
-        assert len(particles) == nr_of_particles
+        assert len(walkers) == nr_of_walkers
 
         # calculate the initial potential for each particle
-        u_before = self._calculate_potential_E_for_particles(0.0, particles, self.sim)
+        u_before = self._calculate_potential_E_for_particles(0.0, walkers, self.sim)
 
         # for each lambda value calculate the intermediate potential for each particle
         # and update the weights based on the ratio of successive intermediate potentials
         for lamb in tqdm(lamb_values[1:]):  # exclude the first lambda value
-            u_now = self._calculate_potential_E_for_particles(lamb, particles, self.sim)
+            u_now = self._calculate_potential_E_for_particles(lamb, walkers, self.sim)
             # update the weights based on the ratio of successive intermediate potentials
-            log_weights = np.log(weights) + (
-                u_now - u_before
-            )  
+            log_weights = np.log(weights) + (u_now - u_before)
             # NOTE: unsure if this is actually ture (shouldn't it be log(u_now/u_before)?))
             # will leave this for now but revisit later!
-            
+
             log_weights -= np.max(log_weights)
             weights = np.exp(log_weights)
             weights /= np.sum(weights)
 
             # Resample the particles based on the weights
             random_frame_idxs = np.random.choice(
-                nr_of_particles, size=nr_of_particles, p=weights
+                nr_of_walkers, size=nr_of_walkers, p=weights
             )
-            particles = [
-                particles[random_frame_idx] for random_frame_idx in random_frame_idxs
+            walkers = [
+                walkers[random_frame_idx] for random_frame_idx in random_frame_idxs
             ]
 
             # Propagate the particles
-            particles = self._propagate_particles(particles, self.sim)
+            walkers = self._propagate_particles(walkers, self.sim)
 
             # Calculate the free energy difference
             free_energy_diff = -np.log(np.mean(np.exp(weights)))
