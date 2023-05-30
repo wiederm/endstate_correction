@@ -98,14 +98,12 @@
     <span class="c1"># perform SMC switching</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SMC switching&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_am_I_on_GH</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span>
-            <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">10</span>
-        <span class="p">)</span>
+        <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span><span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Am I on GH: </span><span class="si">{</span><span class="n">_am_I_on_GH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">free_energy</span><span class="p">,</span> <span class="n">pot_e</span> <span class="o">=</span> <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span>
-            <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">nr_of_particles</span><span class="o">=</span><span class="mi">100</span>
+            <span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Am I on GH: </span><span class="si">{</span><span class="n">_am_I_on_GH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
