@@ -13,10 +13,66 @@ from openmm.app import (
 )
 from openmm import LangevinIntegrator
 from openmmml import MLPotential
+import mdtraj as md
+from typing import Tuple
+import pytest
 
 path = pathlib.Path(endstate_correction.__file__).resolve().parent
 hipen_testsystem = f"{path}/data/hipen_data"
 jctc_testsystem = f"{path}/data/jctc_data"
+
+
+def load_endstate_system_and_samples(
+    system_name: str,
+) -> Tuple[Simulation, list, list]:
+    # initialize simulation and load pre-generated samples
+
+    from openmm.app import CharmmCrdFile, CharmmParameterSet, CharmmPsfFile
+
+    ########################################################
+    ########################################################
+    # ----------------- vacuum -----------------------------
+    # get all relevant files
+    path = pathlib.Path(endstate_correction.__file__).resolve().parent
+    hipen_testsystem = f"{path}/data/hipen_data"
+
+    psf = CharmmPsfFile(f"{hipen_testsystem}/{system_name}/{system_name}.psf")
+    crd = CharmmCrdFile(f"{hipen_testsystem}/{system_name}/{system_name}.crd")
+    params = CharmmParameterSet(
+        f"{hipen_testsystem}/top_all36_cgenff.rtf",
+        f"{hipen_testsystem}/par_all36_cgenff.prm",
+        f"{hipen_testsystem}/{system_name}/{system_name}.str",
+    )
+    # define region that should be treated with the qml
+    sim = setup_vacuum_simulation(psf=psf, params=params)
+    sim.context.setPositions(crd.positions)
+    n_samples = 5_000
+    n_steps_per_sample = 1_000
+    ###########################################################################################
+    pdb_file = f"data/{system_name}/{system_name}.pdb"
+    mm_samples = md.load_dcd(
+        f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000.dcd",
+        top=pdb_file,
+    )
+
+    qml_samples = []
+    qml_samples = md.load_dcd(
+        f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000.dcd",
+        top=pdb_file,
+    )
+
+    return sim, mm_samples, qml_samples
+
+
+def setup_ZINC00077329_system():
+    system_name = "ZINC00077329"
+    print(f"{system_name=}")
+
+    # load simulation and samples for ZINC00077329
+    sim, samples_mm, samples_mm_qml = load_endstate_system_and_samples(
+        system_name=system_name,
+    )
+    return sim, samples_mm, samples_mm_qml
 
 
 def setup_vacuum_simulation(
@@ -38,7 +94,7 @@ def setup_waterbox_simulation(
     psf: CharmmPsfFile,
     params: CharmmParameterSet,
     r_off: float = 1.2,
-    r_on: float = 0.,
+    r_on: float = 0.0,
 ) -> Simulation:
     chains = list(psf.topology.chains())
     ml_atoms = [atom.index for atom in chains[0].atoms()]
@@ -46,8 +102,8 @@ def setup_waterbox_simulation(
     mm_system = psf.createSystem(
         params,
         nonbondedMethod=PME,
-        #nonbondedCutoff=r_off * unit.nanometers,
-        #switchDistance=r_on * unit.nanometers,
+        # nonbondedCutoff=r_off * unit.nanometers,
+        # switchDistance=r_on * unit.nanometers,
     )
 
     # set up system
@@ -57,6 +113,11 @@ def setup_waterbox_simulation(
         psf.topology, mm_system, ml_atoms, interpolate=True
     )
     return Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
+
+
+def test_initializing_ZINC00077329_system():
+    sim, samples_mm, samples_mm_qml = setup_ZINC00077329_system()
+    assert len(samples_mm) == 5000
 
 
 def test_generate_simulation_instances_with_charmmff():

@@ -61,13 +61,11 @@ def test_plot_results_for_FEP_protocol():
     )
     from endstate_correction.protocol import Protocol, perform_endstate_correction
 
-    from .test_neq import load_endstate_system_and_samples
+    from .test_system import setup_ZINC00077329_system
 
     system_name = "ZINC00079729"
     # start with FEP
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name=system_name
-    )
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     fep_protocol = Protocol(
         method="FEP",
@@ -126,13 +124,11 @@ def test_plot_results_for_all_protocol():
     from endstate_correction.analysis import plot_endstate_correction_results
     from endstate_correction.protocol import Protocol
 
-    from .test_neq import load_endstate_system_and_samples
+    from .test_system import setup_ZINC00077329_system
 
     system_name = "ZINC00079729"
     # start with NEQ
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name=system_name
-    )
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------

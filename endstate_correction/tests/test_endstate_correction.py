@@ -7,7 +7,7 @@ import sys, pickle, os
 import pytest
 import numpy as np
 from endstate_correction.protocol import perform_endstate_correction, Protocol
-from .test_neq import load_endstate_system_and_samples
+from .test_system import setup_ZINC00077329_system
 
 
 def test_endstate_correction_imported():
@@ -54,10 +54,8 @@ def save_pickle_results(sim, mm_samples, qml_samples, system_name):
 def test_FEP_protocol():
     """Perform FEP uni- and bidirectional protocol"""
 
-    # start with FEP
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name="ZINC00079729"
-    )
+    # load samples
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
@@ -102,13 +100,9 @@ def test_FEP_protocol():
 def test_NEQ_protocol():
     """Perform NEQ uni- and bidirectional protocol"""
     from endstate_correction.protocol import perform_endstate_correction, Protocol
-    from .test_neq import load_endstate_system_and_samples
 
-    system_name = "ZINC00079729"
-    # start with FEP
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name=system_name
-    )
+    # load samples
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     protocol = Protocol(
         method="NEQ",
@@ -150,14 +144,9 @@ def test_NEQ_protocol():
 def test_ALL_protocol():
     """Perform FEP uni- and bidirectional protocol"""
     from endstate_correction.protocol import Protocol, perform_endstate_correction
-    from .test_neq import load_endstate_system_and_samples
-    import pickle
 
-    system_name = "ZINC00079729"
-    # start with NEQ
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name=system_name
-    )
+    # load samples
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------
@@ -198,16 +187,12 @@ def test_ALL_protocol():
     assert np.all(r.dE_target_to_reference > 0)  # the dE_rev have positive values
 
 
-
 def test_each_protocol():
     """Perform FEP uni- and bidirectional protocol"""
     from endstate_correction.protocol import perform_endstate_correction, Protocol
-    from .test_neq import load_endstate_system_and_samples
 
-    # start with FEP
-    sim, mm_samples, qml_samples = load_endstate_system_and_samples(
-        system_name="ZINC00079729"
-    )
+    # load samples
+    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
