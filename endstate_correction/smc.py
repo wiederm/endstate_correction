@@ -138,7 +138,7 @@ class SMC:
 
             # Resample the particles based on the weights
             random_frame_idxs = np.random.choice(
-                nr_of_walkers, size=nr_of_walkers, p=weights
+                nr_of_walkers, size=nr_of_walkers, p=current_weights
             )
             walkers = [walkers[idx] for idx in random_frame_idxs]
 
