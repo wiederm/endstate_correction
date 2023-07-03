@@ -85,8 +85,10 @@ class SMC:
     ) -> float:
         # calculate ESS
         ESS = 1.0 / np.sum(current_weights**2)
-        log.info(f"Effective Sample Size at lambda = {self.lambdas[lamb_idx]}: {ESS}")
-        log.info(current_weights)
+        logger.info(
+            f"Effective Sample Size at lambda = {self.lambdas[lamb_idx]}: {ESS}"
+        )
+        logger.info(current_weights)
 
     def perform_SMC(
         self,
@@ -143,7 +145,7 @@ class SMC:
             # set lambda parameter
             self.sim.context.setParameter("lambda_interpolate", self.lambdas[lamb_idx])
             # Propagate the walkers
-            walkers = self._propagate_particles(walkers, self.sim)
+            walkers = self._propagate_walkers(walkers, self.sim)
             current_deltaEs = self._calculate_deltaEs(lamb_idx, walkers)
             current_weights = self._calculate_weights(current_deltaEs)
             # report effective sample size
