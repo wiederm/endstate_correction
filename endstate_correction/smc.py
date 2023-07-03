@@ -6,8 +6,10 @@ from openmm import unit
 from openmm.app import Simulation
 from scipy.special import logsumexp
 from tqdm import tqdm
-
+import logging
 from endstate_correction.constant import kBT, temperature
+
+logger = logging.getLogger(__name__)
 
 
 class SMC:
@@ -44,17 +46,47 @@ class SMC:
         return u_intermediate
 
     @staticmethod
-    def _propagate_particles(walkers, sim: Simulation):
-        _intermediate_particles = []
+    def _propagate_walkers(walkers, sim: Simulation, nr_of_steps: int = 1_000):
+        _intermediate_walkers = []
         for p in walkers:
             sim.context.setPositions(p)
             sim.context.setVelocitiesToTemperature(temperature)
-            sim.step(10)
-            _intermediate_particles.append(
+            sim.step(nr_of_steps)
+            _intermediate_walkers.append(
                 sim.context.getState(getPositions=True).getPositions(asNumpy=True)
             )
         # update particles
-        return _intermediate_particles
+        return _intermediate_walkers
+
+    def _calculate_deltaEs(self, lamb_idx: int, walkers: list) -> np.ndarray:
+        # calculate work
+        # evaluate U_(\lamb_(i+1))(x_i) -  U_(\lamb_(i))(x_i)
+        # calculate U_(\lamb_(i))(x_i)
+        u_now = self._calculate_potential_E_for_particles(
+            self.lambdas[lamb_idx], walkers, self.sim
+        )
+        # calculate U_(\lamb_(i+1))(x_i)
+        u_future = self._calculate_potential_E_for_particles(
+            self.lambdas[lamb_idx + 1], walkers, self.sim
+        )
+        # calculate weights (equation 2 in 10.1021/acs.jctc.1c01198)
+        current_deltaEs = u_future - u_now  # calculate difference in energy
+        return current_deltaEs
+
+    def _calculate_weights(self, current_deltaEs: np.ndarray) -> np.ndarray:
+        current_weights = np.exp(
+            np.nanmin(current_deltaEs) - current_deltaEs
+        )  # subtract minimum to avoid numerical issues
+        current_weights /= np.sum(current_weights)  # normalize
+        return current_weights
+
+    def _calculate_effective_sample_size(
+        self, current_weights: np.ndarray, lamb_idx: int
+    ) -> float:
+        # calculate ESS
+        ESS = 1.0 / np.sum(current_weights**2)
+        log.info(f"Effective Sample Size at lambda = {self.lambdas[lamb_idx]}: {ESS}")
+        log.info(current_weights)
 
     def perform_SMC(
         self,
@@ -92,47 +124,30 @@ class SMC:
         # calculate the free energy estimate using the weights of each walker and the Zwanzig relation
 
         # initialize weights
-        weights = np.ones(nr_of_walkers) / nr_of_walkers
+        self.weights = np.ones(nr_of_walkers) / nr_of_walkers
         # initialize lambda values
-        lambdas = np.linspace(0, 1, nr_of_steps)
+        self.lambdas = np.linspace(0, 1, nr_of_steps)
 
-        # select initial samples
-        random_frame_idxs = np.random.choice(
-            len(self.samples.xyz) - 1, size=nr_of_walkers
+        # select initial, equally spaced samples
+        equally_spaces_idx = np.linspace(
+            0, len(self.samples.xyz) - 1, nr_of_walkers, dtype=int
         )
         walkers = [
-            self.samples.openmm_positions(random_frame_idx)
-            for random_frame_idx in random_frame_idxs
+            self.samples.openmm_positions(frame_idx) for frame_idx in equally_spaces_idx
         ]
 
         assert len(walkers) == nr_of_walkers
 
         # start with switch
-        for lamb_idx in tqdm(range(len(lambdas) - 1)):
+        for lamb_idx in tqdm(range(len(self.lambdas) - 1)):
             # set lambda parameter
-            self.sim.context.setParameter("lambda_interpolate", lambdas[lamb_idx])
+            self.sim.context.setParameter("lambda_interpolate", self.lambdas[lamb_idx])
             # Propagate the walkers
             walkers = self._propagate_particles(walkers, self.sim)
-            # calculate work
-            # evaluate U_(\lamb_(i+1))(x_i) -  U_(\lamb_(i))(x_i)
-            # calculate U_(\lamb_(i))(x_i)
-            u_now = self._calculate_potential_E_for_particles(
-                lambdas[lamb_idx], walkers, self.sim
-            )
-            # calculate U_(\lamb_(i+1))(x_i)
-            u_future = self._calculate_potential_E_for_particles(
-                lambdas[lamb_idx + 1], walkers, self.sim
-            )
-            # calculate weights (equation 2 in 10.1021/acs.jctc.1c01198)
-            current_deltaEs = u_future - u_now  # calculate difference in energy
-            current_weights = np.exp(
-                np.nanmin(current_deltaEs) - current_deltaEs
-            )  # subtract minimum to avoid numerical issues
-            current_weights /= np.sum(current_weights)  # normalize
-            # calculate ESS
-            ESS = 1.0 / np.sum(current_weights**2)
-            print(f"Effective Sample Size at lambda = {lambdas[lamb_idx]}: {ESS}")
-            print(current_weights)
+            current_deltaEs = self._calculate_deltaEs(lamb_idx, walkers)
+            current_weights = self._calculate_weights(current_deltaEs)
+            # report effective sample size
+            self._calculate_effective_sample_size(current_weights, lamb_idx)
             # add to accumulated logZ
             self.logZ += logsumexp(-current_deltaEs) - np.log(nr_of_walkers)
 
