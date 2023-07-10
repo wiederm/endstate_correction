@@ -7,7 +7,7 @@ import numpy as np
 from endstate_correction.neq import perform_switching
 from openmm import unit
 from openmm.app import Simulation
-from .test_system import setup_vacuum_simulation
+from .test_system import setup_vacuum_simulation, setup_ZINC00077329_system
 
 
 def test_collect_work_values():
@@ -20,56 +20,10 @@ def test_collect_work_values():
     assert len(ws) == nr_of_switches
 
 
-def load_endstate_system_and_samples(
-    system_name: str,
-) -> Tuple[Simulation, list, list]:
-    # initialize simulation and load pre-generated samples
-
-    from openmm.app import CharmmCrdFile, CharmmParameterSet, CharmmPsfFile
-
-    ########################################################
-    ########################################################
-    # ----------------- vacuum -----------------------------
-    # get all relevant files
-    path = pathlib.Path(endstate_correction.__file__).resolve().parent
-    hipen_testsystem = f"{path}/data/hipen_data"
-
-    psf = CharmmPsfFile(f"{hipen_testsystem}/{system_name}/{system_name}.psf")
-    crd = CharmmCrdFile(f"{hipen_testsystem}/{system_name}/{system_name}.crd")
-    params = CharmmParameterSet(
-        f"{hipen_testsystem}/top_all36_cgenff.rtf",
-        f"{hipen_testsystem}/par_all36_cgenff.prm",
-        f"{hipen_testsystem}/{system_name}/{system_name}.str",
-    )
-    # define region that should be treated with the qml
-    sim = setup_vacuum_simulation(psf=psf, params=params)
-    sim.context.setPositions(crd.positions)
-    n_samples = 5_000
-    n_steps_per_sample = 1_000
-    ###########################################################################################
-    pdb_file = f"data/{system_name}/{system_name}.pdb"
-    mm_samples = mdtraj.load_dcd(
-        f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000.dcd",
-        top=pdb_file,
-    )
-
-    qml_samples = []
-    qml_samples = mdtraj.load_dcd(
-        f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000.dcd",
-        top=pdb_file,
-    )
-
-    return sim, mm_samples, qml_samples
-
-
 def test_switching():
-    system_name = "ZINC00077329"
-    print(f"{system_name=}")
 
     # load simulation and samples for ZINC00077329
-    sim, samples_mm, samples_qml = load_endstate_system_and_samples(
-        system_name=system_name,
-    )
+    sim, samples_mm, samples_qml = setup_ZINC00077329_system()
     # perform instantaneous switching with predetermined coordinate set
     # here, we evaluate dU_forw = dU(x)_qml - dU(x)_mm and make sure that it is the same as
     # dU_rev = dU(x)_mm - dU(x)_qml
