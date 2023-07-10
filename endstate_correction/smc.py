@@ -1,16 +1,54 @@
 # Perform SMC sampling for endstate correction
 
+import logging
+from typing import List
+
 import numpy as np
 from mdtraj import Trajectory
-from openmm import unit
 from openmm.app import Simulation
 from scipy.special import logsumexp
 from tqdm import tqdm
-import logging
+from itertools import accumulate
 from endstate_correction.constant import kBT, temperature
 
 logger = logging.getLogger(__name__)
 
+
+class Resampler:
+    def __init__(self):
+        pass
+
+    def stratified_resampling(self, samples: List, weights: List[float]) -> List:
+        """Stratified resampling of the walkers based on the weights
+        Implementation is inspired by @msuruzhon's openmmslicer package
+        https://github.com/openmmslicer/openmmslicer/blob/main/openmmslicer/resampling_methods.py
+
+
+        Returns:
+            list: resampled walkers
+        """
+
+        n_walkers = len(samples)
+        weights = np.asarray(weights)
+        weights /= sum(weights)
+
+        # stratified resampling
+        cdf = np.array([0] + list(np.cumsum(weights)))
+        random_numbers = np.random.uniform(size=n_walkers) / n_walkers
+        self.random_numbers = random_numbers
+        rational_weights = np.linspace(0, 1, endpoint=False, num=n_walkers)
+        all_cdf_points = random_numbers + rational_weights
+
+        int_weights = [
+            np.histogram(cdf_points, bins=cdf)[0] for cdf_points in all_cdf_points
+        ]
+        all_samples = [
+            sum([i * [x] for i, x in zip(int_weight, samples)], [])
+            for int_weight in int_weights
+        ]
+
+        # return resampled walkers
+        return all_samples
 
 class SMC:
     def __init__(
@@ -28,6 +66,7 @@ class SMC:
         self.sim = sim
         self.samples = samples
         self.logZ = 0.0
+        self.resampler = Resampler()
 
     @staticmethod
     def _calculate_potential_E_for_particles(
@@ -139,7 +178,6 @@ class SMC:
         ]
 
         assert len(walkers) == nr_of_walkers
-
         # start with switch
         for lamb_idx in tqdm(range(len(self.lambdas) - 1)):
             # set lambda parameter
@@ -154,10 +192,6 @@ class SMC:
             self.logZ += logsumexp(-current_deltaEs) - np.log(nr_of_walkers)
 
             # Resample the particles based on the weights
-            random_frame_idxs = np.random.choice(
-                nr_of_walkers, size=nr_of_walkers, p=current_weights
-            )
-            walkers = [walkers[idx] for idx in random_frame_idxs]
-
+            walkers = self.resampler.stratified_resampling(walkers, current_weights)
         # reset lambda value
         self.sim.context.setParameter("lambda_interpolate", 0.0)
