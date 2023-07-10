@@ -59,7 +59,6 @@ def test_SMC_algorithm():
         # resampling
         indexes = np.random.choice(range(N_samples), size=N_samples, p=current_weights)
         configurations = configurations[indexes]
-        weights = np.ones(N_samples) / N_samples
 
         # calculate free energy difference
         logZ += logsumexp(-current_deltaEs) - np.log(N_samples)
@@ -77,3 +76,27 @@ def test_SMC(_am_I_on_GH):
     else:
         smc_sampler.perform_SMC(nr_of_steps=5, nr_of_walkers=100)
     print(smc_sampler.logZ)
+
+
+def test_SMC_stratified_resampling():
+    from endstate_correction.smc import Resampler
+
+    N_samples = 1000  # Number of samples
+    samples = np.arange(N_samples)
+
+    # Generate initial weights
+    weights = abs(np.random.normal(1, 1, N_samples))
+
+    resampler = Resampler()
+
+    resampled_samples = resampler.stratified_resampling(samples, weights)
+
+    assert len(resampled_samples) == len(samples)
+    resampled_samples_with_uniform_weights_try1 = resampler.stratified_resampling(
+        samples, 0.1 * np.ones(N_samples)
+    )
+    resampled_samples_with_uniform_weights_try2 = resampler.stratified_resampling(
+        samples, 0.5 * np.ones(N_samples)
+    )
+    
+    assert np.allclose(resampled_samples_with_uniform_weights_try1, resampled_samples_with_uniform_weights_try2)
