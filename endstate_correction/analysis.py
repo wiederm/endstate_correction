@@ -105,40 +105,30 @@ def return_endstate_correction(
     assert type(results) == Results
     assert method in ["NEQ", "FEP"]
     print(f"method: {method}, direction: {direction}")
-    
+
     if method == "FEP" and direction == "forw":
-        print(
-            f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}"
-        )
+        print(f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}")
         est = exp(results.dE_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "FEP" and direction == "rev":
-        print(
-            f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}"
-        )
+        print(f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}")
         est = exp(results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "FEP" and direction == "bid":
-        
         print(
             f"FEP(bid): {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
         )
         est = bar(results.dE_reference_to_target, results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "forw":
-        print(
-            f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}"
-        )
+        print(f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}")
         est = exp(results.W_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "rev":
-        print(
-            f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}"
-        )
+        print(f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}")
         est = exp(results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "bid":
-        
         print(
             f"NEQ(bid): {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
         )
@@ -146,6 +136,7 @@ def return_endstate_correction(
         return est["Delta_f"], est["dDelta_f"]
     else:
         raise ValueError("method and direction combination not supported")
+
 
 def summarize_endstate_correction_results(results: Results):
     """Summarize the results of the endstate correction analysis.

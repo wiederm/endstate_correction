@@ -20,7 +20,7 @@ class Resampler:
 
     def stratified_resampling(self, samples: List, weights: List[float]) -> List:
         """Stratified resampling of the walkers based on the weights
-        Implementation is inspired by @msuruzhon's openmmslicer package
+        Implementation is taken and slightly modified from @msuruzhon's openmmslicer package
         https://github.com/openmmslicer/openmmslicer/blob/main/openmmslicer/resampling_methods.py
 
 
@@ -46,9 +46,9 @@ class Resampler:
             sum([i * [x] for i, x in zip(int_weight, samples)], [])
             for int_weight in int_weights
         ]
-
         # return resampled walkers
         return all_samples
+
 
 class SMC:
     def __init__(
