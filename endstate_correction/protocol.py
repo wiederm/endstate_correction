@@ -1,17 +1,17 @@
 """Provide functions for the endstate correction workflow."""
 
 
-from openmm.app import Simulation
-import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
-import numpy as np
 import mdtraj as md
+import numpy as np
 import pandas as pd
 from openmm import unit
 from openmm.app import Simulation
 from pymbar import MBAR
+
+from endstate_correction.smc import SMC
 
 
 class BSSProtocol:
@@ -105,26 +105,87 @@ class BSSProtocol:
 
 
 @dataclass
-class Protocol:
-    """Defining the endstate correction protocol"""
+class BaseProtocol:
+    """Base class for all endstate correction protocols"""
 
-    method: str  # FEP, NEQ, ALL
     sim: Simulation  # simulation object
     reference_samples: Optional[md.Trajectory] = None  # reference samples
     target_samples: Optional[md.Trajectory] = None  # target samples
-    nr_of_switches: int = -1  # number of switches
-    neq_switching_length: int = 5_000  # switching length in steps
-    save_endstates: bool = False  # True makes only sense for NEQ
-    save_trajs: bool = False  # True makes only sense for NEQ
+
+    def __post_init__(self):
+        if self.reference_samples is None and self.target_samples is None:
+            raise ValueError("reference_samples or target_samples must be provided!")
 
 
 @dataclass
-class Results:
-    """Provides a dataclass containing the results of a protocol"""
+class FEPProtocol(BaseProtocol):
+    """FEP-specific protocol"""
+
+    nr_of_switches: int = -1  # number of switches for NEQ
+
+    def __post_init__(self):
+        super().__post_init__()  # Call base class's post-init
+
+
+@dataclass
+class NEQProtocol(BaseProtocol):
+    """NEQ-specific protocol"""
+
+    nr_of_switches: int = -1  # number of switches for NEQ
+    switching_length: int = 5_000  # switching length in steps
+    save_endstates: bool = False
+    save_trajs: bool = False
+
+    def __post_init__(self):
+        super().__post_init__()  # Call base class's post-init
+
+
+@dataclass
+class SMCProtocol(BaseProtocol):
+    """SMC-specific protocol"""
+
+    nr_of_walkers: int = -1  # number of walkers for SMC
+    nr_of_resampling_steps: int = 1_000  # number of resampling steps for SMC
+    save_endstates: bool = False
+
+    def __post_init__(self):
+        super().__post_init__()  # Call base class's post-init
+
+
+class AllProtocol:
+    """Dataclass for running all protocols"""
+
+    fep_protocol: FEPProtocol
+    neq_protocol: NEQProtocol
+    smc_protocol: SMCProtocol
+
+    def __post_init__(self):
+        self.fep_protocol.__post_init__()  # check if reference and target samples are provided
+
+
+class BaseResults:
+    """Base class for all protocol results"""
+
+
+@dataclass
+class EquResults(BaseResults):
+    """Equilibrium simulation-specific results"""
 
     equ_mbar: List[MBAR] = field(default_factory=list)  # MBAR object for each lambda
+
+
+@dataclass
+class FEPResults(BaseResults):
+    """FEP-specific results"""
+
     dE_reference_to_target: np.array = np.array([])  # dE from reference to target
     dE_target_to_reference: np.array = np.array([])  # dE from target to reference
+
+
+@dataclass
+class NEQResults(BaseResults):
+    """Provides a dataclass containing the results of a protocol"""
+
     W_reference_to_target: np.array = np.array([])  # W from reference to target
     W_target_to_reference: np.array = np.array([])  # W from target to reference
     endstate_samples_reference_to_target: np.array = np.array(
@@ -141,7 +202,35 @@ class Results:
     )  # switching traj from target to reference
 
 
-def perform_endstate_correction(protocol: Protocol) -> Results:
+@dataclass
+class SMCResults(BaseResults):
+    W_reference_to_target: np.array = np.array([])  # W from reference to target
+    W_target_to_reference: np.array = np.array([])  # W from target to reference
+    endstate_samples_reference_to_target: np.array = np.array(
+        []
+    )  # endstate samples from reference to target
+    endstate_samples_target_to_reference: np.array = np.array(
+        []
+    )  # endstate samples from target to reference
+    switching_traj_reference_to_target: np.array = np.array(
+        []
+    )  # switching traj from reference to target
+    switching_traj_target_to_reference: np.array = np.array(
+        []
+    )  # switching traj from target to reference
+
+
+@dataclass
+class AllResults:
+    """Dataclass for combined results of all protocols"""
+
+    equ_results: Union[None, EquResults] = None
+    fep_results: Union[None, FEPResults] = None
+    neq_results: Union[None, NEQResults] = None
+    smc_results: Union[None, SMCResults] = None
+
+
+def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
     """Perform endstate correction using the provided protocol.
 
     Args:
@@ -157,44 +246,37 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
         Results: results generated using the passed protocol
     """
 
-    from endstate_correction.neq import perform_switching
     from endstate_correction.constant import kBT
-
-    print(f"Performing endstate correction using {protocol.method}")
-    # check that all necessary keywords are present
-    if protocol.method.upper() not in ["FEP", "NEQ", "ALL"]:
-        raise NotImplementedError(
-            "Only `FEP`, 'NEQ` or 'ALL'  are supported methods for endstate corrections"
-        )
-
-    # exit if neither reference nor target samples are provided
-    if protocol.reference_samples is None and protocol.target_samples is None:
-        raise RuntimeError(
-            "Either `reference_samples` or `target_samples` must be provided."
-        )
+    from endstate_correction.neq import perform_switching
 
     sim = protocol.sim
-    r = Results()  # initialize  with default values
-    if protocol.method.upper() == "FEP" or protocol.method.upper() == "ALL":
+    r = AllResults()
+    if isinstance(protocol, AllProtocol) or isinstance(protocol, FEPProtocol):
+        print(f"Performing endstate correction using FEP")
+        if isinstance(protocol, AllProtocol):
+            protocol_ = protocol.fep_protocol
+        else:
+            protocol_ = protocol
+
         print("#####################################################")
         print("# ------------------- FEP ---------------------------")
         print("#####################################################")
-        
+        r_fep = FEPResults()
         list_of_lambda_values = np.linspace(0, 1, 2)  # lambda values
         # from reference to target potential
-        if protocol.reference_samples is not None:  # if reference samples are provided
+        if protocol_.reference_samples is not None:  # if reference samples are provided
             print("Performing FEP from reference to target potential")
             dEs, _, _ = perform_switching(
                 sim,
                 lambdas=list_of_lambda_values,
-                samples=protocol.reference_samples,
-                nr_of_switches=protocol.nr_of_switches,
+                samples=protocol_.reference_samples,
+                nr_of_switches=protocol_.nr_of_switches,
             )
             dE_reference_to_target = np.array(dEs / kBT)  # remove units
-            r.dE_reference_to_target = dE_reference_to_target
+            r_fep.dE_reference_to_target = dE_reference_to_target
 
         # from target to reference potential
-        if protocol.target_samples is not None:  # if target samples are provided
+        if protocol_.target_samples is not None:  # if target samples are provided
             print("Performing FEP from target to reference potential")
             dEs, _, _ = perform_switching(
                 sim,
@@ -205,15 +287,50 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
                 nr_of_switches=protocol.nr_of_switches,
             )
             dE_target_to_reference = np.array(dEs / kBT)  # remove units
-            r.dE_target_to_reference = dE_target_to_reference
+            r_fep.dE_target_to_reference = dE_target_to_reference
+        r.fep_results = r_fep
 
-    if protocol.method.upper() == "NEQ" or protocol.method.upper() == "ALL":
+    if isinstance(protocol, AllProtocol) or isinstance(protocol, SMCProtocol):
+        print(f"Performing endstate correction using SMC")
+        if isinstance(protocol, AllProtocol):
+            protocol_ = protocol.smc_protocol
+        else:
+            protocol_ = protocol
+        print("#####################################################")
+        print("# ------------------- SMC ---------------------------")
+        print("#####################################################")
+        r_smc = SMCResults()
+        if protocol_.reference_samples is not None:  # if reference samples are provided
+            print("Performing SMC from reference to target potential")
+            smc_sampler = SMC(sim=sim, samples=protocol_.reference_samples)
+            (
+                Ws,
+                endstates_reference_to_target,
+                trajs_reference_to_target,
+            ) = smc_sampler.perform_SMC(
+                nr_of_steps=protocol_.nr_of_resampling_steps,
+                nr_of_walkers=protocol_.nr_of_walkers,
+            )
+
+            Ws_reference_to_target = np.array(Ws / kBT)  # remove units
+            r_smc.W_reference_to_target = Ws_reference_to_target
+            r_smc.endstate_samples_reference_to_target = endstates_reference_to_target
+            r_smc.switching_traj_reference_to_target = trajs_reference_to_target
+        r.smc_results = r_smc
+
+    if isinstance(protocol, AllProtocol) or isinstance(protocol, NEQProtocol):
+        print(f"Performing endstate correction using NEQ")
+        if isinstance(protocol, AllProtocol):
+            protocol_ = protocol.neq_protocol
+        else:
+            protocol_ = protocol
         print("#####################################################")
         print("# ------------------- NEQ ---------------------------")
         print("#####################################################")
-        list_of_lambda_values = np.linspace(0, 1, protocol.neq_switching_length)
+        r_neq = NEQResults()
+        list_of_lambda_values = np.linspace(0, 1, protocol_.switching_length)
         # from reference to target potential
-        if protocol.reference_samples is not None:
+        if protocol_.reference_samples is not None:
             print("Performing NEQ from reference to target potential")
             (
                 Ws,
@@ -222,15 +339,15 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
             ) = perform_switching(
                 sim,
                 lambdas=list_of_lambda_values,
-                samples=protocol.reference_samples,
-                nr_of_switches=protocol.nr_of_switches,
-                save_endstates=protocol.save_endstates,
-                save_trajs=protocol.save_trajs,
+                samples=protocol_.reference_samples,
+                nr_of_switches=protocol_.nr_of_switches,
+                save_endstates=protocol_.save_endstates,
+                save_trajs=protocol_.save_trajs,
             )
             Ws_reference_to_target = np.array(Ws / kBT)  # remove units
-            r.W_reference_to_target = Ws_reference_to_target
-            r.endstate_samples_reference_to_target = endstates_reference_to_target
-            r.switching_traj_reference_to_target = trajs_reference_to_target
+            r_neq.W_reference_to_target = Ws_reference_to_target
+            r_neq.endstate_samples_reference_to_target = endstates_reference_to_target
+            r_neq.switching_traj_reference_to_target = trajs_reference_to_target
 
         # from target to reference potential
         if protocol.target_samples is not None:
@@ -250,8 +367,9 @@ def perform_endstate_correction(protocol: Protocol) -> Results:
                 save_trajs=protocol.save_trajs,
             )
             Ws_target_to_reference = np.array(Ws / kBT)
-            r.W_target_to_reference = Ws_target_to_reference
-            r.endstate_samples_target_to_reference = endstates_target_to_reference
-            r.switching_traj_target_to_reference = trajs_target_to_reference
+            r_neq.W_target_to_reference = Ws_target_to_reference
+            r_neq.endstate_samples_target_to_reference = endstates_target_to_reference
+            r_neq.switching_traj_target_to_reference = trajs_target_to_reference
+        r.neq_results = r_neq
 
     return r

@@ -3,8 +3,20 @@ import pytest
 from importlib_resources import files
 
 import endstate_correction
-from endstate_correction.protocol import BSSProtocol, Results
-from endstate_correction.protocol import perform_endstate_correction, Protocol
+from endstate_correction.protocol import (
+    BSSProtocol,
+    FEPResults,
+    NEQResults,
+    SMCResults,
+    EquResults,
+)
+from endstate_correction.protocol import (
+    perform_endstate_correction,
+    AllProtocol,
+    FEPProtocol,
+    NEQProtocol,
+    SMCProtocol,
+)
 from endstate_correction.simulation import (
     EndstateCorrectionAMBER,
 )
