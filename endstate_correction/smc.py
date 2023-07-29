@@ -8,18 +8,18 @@ from mdtraj import Trajectory
 from openmm.app import Simulation
 from scipy.special import logsumexp
 from tqdm import tqdm
-from itertools import accumulate
+
 from endstate_correction.constant import kBT, temperature
 
 logger = logging.getLogger(__name__)
 
 
 class Resampler:
-    def __init__(self):
-        pass
 
-    def stratified_resampling(self, samples: List, weights: List[float]) -> List:
-        """Stratified resampling of the walkers based on the weights
+    @staticmethod
+    def stratified_resampling(samples: List, weights: List[float]) -> List:
+        """
+        Stratified resampling of the walkers based on the weights
         Implementation is taken and slightly modified from @msuruzhon's openmmslicer package
         https://github.com/openmmslicer/openmmslicer/blob/main/openmmslicer/resampling_methods.py
 
@@ -35,7 +35,6 @@ class Resampler:
         # stratified resampling
         cdf = np.array([0] + list(np.cumsum(weights)))
         random_numbers = np.random.uniform(size=n_walkers) / n_walkers
-        self.random_numbers = random_numbers
         rational_weights = np.linspace(0, 1, endpoint=False, num=n_walkers)
         all_cdf_points = random_numbers + rational_weights
 
@@ -43,7 +42,10 @@ class Resampler:
             np.histogram(cdf_points, bins=cdf)[0] for cdf_points in all_cdf_points
         ]
         all_samples = [
-            sum([i * [x] for i, x in zip(int_weight, samples)], [])
+            sum(
+                [i * [x] for i, x in zip(int_weight, samples)],
+                [],
+            )
             for int_weight in int_weights
         ]
         # return resampled walkers
@@ -56,7 +58,8 @@ class SMC:
         sim: Simulation,
         samples: Trajectory,
     ) -> None:
-        """Initialize the SMC class
+        """
+        Initialize the SMC class
 
         Args:
             sim (Simulation): simulation instance
@@ -68,34 +71,30 @@ class SMC:
         self.logZ = 0.0
         self.resampler = Resampler()
 
-    @staticmethod
-    def _calculate_potential_E_for_particles(
-        lamb: float, walkers, sim: Simulation
-    ) -> np.ndarray:
+    def _calculate_potential_E_for_particles(self, lamb: float, walkers) -> np.ndarray:
         # set lambda parameter
-        sim.context.setParameter("lambda_interpolate", lamb)
+        self.sim.context.setParameter("lambda_interpolate", lamb)
 
         u_intermediate = np.zeros(len(walkers))
         # for each particle calculate the intermediate potential in kBT
         for p_idx, p in enumerate(walkers):
-            sim.context.setPositions(p)
-            e_pot = sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
+            self.sim.context.setPositions(p)
+            e_pot = self.sim.context.getState(getEnergy=True).getPotentialEnergy() / kBT
             u_intermediate[p_idx] = e_pot
-
         return u_intermediate
 
-    @staticmethod
-    def _propagate_walkers(walkers, sim: Simulation, nr_of_steps: int = 1_000):
-        _intermediate_walkers = []
-        for p in walkers:
-            sim.context.setPositions(p)
-            sim.context.setVelocitiesToTemperature(temperature)
-            sim.step(nr_of_steps)
-            _intermediate_walkers.append(
-                sim.context.getState(getPositions=True).getPositions(asNumpy=True)
-            )
+    def propagate_single_walker(self, walker, nr_of_steps) -> np.ndarray:
+        self.sim.context.setPositions(walker)
+        self.sim.context.setVelocitiesToTemperature(temperature)
+        self.sim.step(nr_of_steps)
+        return self.sim.context.getState(getPositions=True).getPositions(asNumpy=True)
+
+    def propagate_walkers(self, walkers, nr_of_steps: int = 1_000) -> List[np.ndarray]:
+        intermediate_walkers = [
+            self.propagate_single_walker(p, nr_of_steps) for p in walkers
+        ]
         # update particles
-        return _intermediate_walkers
+        return intermediate_walkers
 
     def _calculate_deltaEs(self, lamb_idx: int, walkers: list) -> np.ndarray:
         # calculate work
@@ -127,7 +126,7 @@ class SMC:
         logger.info(
             f"Effective Sample Size at lambda = {self.lambdas[lamb_idx]}: {ESS}"
         )
-        logger.info(current_weights)
+        return ESS
 
     def perform_SMC(
         self,
@@ -164,9 +163,7 @@ class SMC:
 
         # calculate the free energy estimate using the weights of each walker and the Zwanzig relation
 
-        # initialize weights
         self.weights = np.ones(nr_of_walkers) / nr_of_walkers
-        # initialize lambda values
         self.lambdas = np.linspace(0, 1, nr_of_steps)
 
         # select initial, equally spaced samples
@@ -178,19 +175,19 @@ class SMC:
         ]
 
         assert len(walkers) == nr_of_walkers
-        # start with switch
+
         for lamb_idx in tqdm(range(len(self.lambdas) - 1)):
-            # set lambda parameter
+            logger.debug(f"{lamb_idx=}")
             self.sim.context.setParameter("lambda_interpolate", self.lambdas[lamb_idx])
             # Propagate the walkers
-            walkers = self._propagate_walkers(walkers, self.sim)
+            walkers = self.propagate_walkers(walkers, self.sim)
+            # Calculate weights
             current_deltaEs = self._calculate_deltaEs(lamb_idx, walkers)
             current_weights = self._calculate_weights(current_deltaEs)
             # report effective sample size
             self._calculate_effective_sample_size(current_weights, lamb_idx)
             # add to accumulated logZ
             self.logZ += logsumexp(-current_deltaEs) - np.log(nr_of_walkers)
-
             # Resample the particles based on the weights
             walkers = self.resampler.stratified_resampling(walkers, current_weights)
         # reset lambda value
