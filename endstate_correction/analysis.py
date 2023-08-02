@@ -2,15 +2,13 @@
 
 import os
 from dataclasses import dataclass, fields
-from typing import List, Tuple, Union
+from typing import Tuple
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import mdtraj as md
 import numpy as np
 import seaborn as sns
-from matplotlib.offsetbox import (AnnotationBbox, DrawingArea, OffsetImage,
-                                  TextArea)
 from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
 

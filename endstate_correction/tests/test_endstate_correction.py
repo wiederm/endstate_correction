@@ -143,21 +143,22 @@ def test_SMC_protocol():
 
     # load samples
     sim, mm_samples, qml_samples = setup_ZINC00077329_system()
-
+    nr_of_walkers = 10
+    nr_of_resampling_steps = 10
     protocol = SMCProtocol(
         sim=sim,
         reference_samples=mm_samples,
         target_samples=qml_samples,
-        nr_of_walkers=10,
-        nr_of_resampling_steps=10,
+        nr_of_walkers=nr_of_walkers,
+        nr_of_resampling_steps=nr_of_resampling_steps,
     )
 
     r = perform_endstate_correction(protocol)
     r_smc = r.smc_results
-    assert len(r_smc.W_reference_to_target) == protocol.nr_of_switches
-    assert len(r_smc.W_target_to_reference) == protocol.nr_of_switches
-    assert np.all(r_smc.W_reference_to_target < 0)  # the dW_forw have negative values
-    assert np.all(r_smc.W_target_to_reference > 0)  # the dE_rev have positive values
+    assert len(r_smc.endstate_samples_reference_to_target) == protocol.nr_of_walkers
+    assert len(r_smc.effective_sample_size) == protocol.nr_of_resampling_steps -1
+    print(r_smc.effective_sample_size)
+    print(r_smc.logZ)
 
 
 @pytest.mark.skipif(

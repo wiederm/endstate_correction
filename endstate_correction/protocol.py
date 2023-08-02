@@ -204,20 +204,14 @@ class NEQResults(BaseResults):
 
 @dataclass
 class SMCResults(BaseResults):
-    W_reference_to_target: np.array = np.array([])  # W from reference to target
-    W_target_to_reference: np.array = np.array([])  # W from target to reference
+    logZ: float = 0.0  # free energy difference
+    effective_sample_size: list = field(default_factory=list)  # effective sample size
     endstate_samples_reference_to_target: np.array = np.array(
         []
     )  # endstate samples from reference to target
     endstate_samples_target_to_reference: np.array = np.array(
         []
     )  # endstate samples from target to reference
-    switching_traj_reference_to_target: np.array = np.array(
-        []
-    )  # switching traj from reference to target
-    switching_traj_target_to_reference: np.array = np.array(
-        []
-    )  # switching traj from target to reference
 
 
 @dataclass
@@ -303,19 +297,16 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
         if protocol_.reference_samples is not None:  # if reference samples are provided
             print("Performing SMC from reference to target potential")
             smc_sampler = SMC(sim=sim, samples=protocol_.reference_samples)
-            (
-                Ws,
-                endstates_reference_to_target,
-                trajs_reference_to_target,
-            ) = smc_sampler.perform_SMC(
+            smc_sampler.perform_SMC(
                 nr_of_steps=protocol_.nr_of_resampling_steps,
                 nr_of_walkers=protocol_.nr_of_walkers,
             )
 
-            Ws_reference_to_target = np.array(Ws / kBT)  # remove units
-            r_smc.W_reference_to_target = Ws_reference_to_target
-            r_smc.endstate_samples_reference_to_target = endstates_reference_to_target
-            r_smc.switching_traj_reference_to_target = trajs_reference_to_target
+            r_smc.logZ = smc_sampler.logZ
+            r_smc.effective_sample_size = smc_sampler.effective_sample_size
+            r_smc.endstate_samples_reference_to_target = (
+                smc_sampler.current_set_of_walkers
+            )
         r.smc_results = r_smc
 
     if isinstance(protocol, AllProtocol) or isinstance(protocol, NEQProtocol):

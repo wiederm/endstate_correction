@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 class Resampler:
-
     @staticmethod
     def stratified_resampling(samples: List, weights: List[float]) -> List:
         """
@@ -48,7 +47,10 @@ class Resampler:
             )
             for int_weight in int_weights
         ]
+        # flatten list
+        all_samples = [samples[0] for samples in all_samples]
         # return resampled walkers
+        logger.debug(all_samples)
         return all_samples
 
 
@@ -71,7 +73,9 @@ class SMC:
         self.logZ = 0.0
         self.resampler = Resampler()
 
-    def _calculate_potential_E_for_particles(self, lamb: float, walkers) -> np.ndarray:
+    def _calculate_potential_E_for_particles(
+        self, lamb: float, walkers: list
+    ) -> np.ndarray:
         # set lambda parameter
         self.sim.context.setParameter("lambda_interpolate", lamb)
 
@@ -83,7 +87,7 @@ class SMC:
             u_intermediate[p_idx] = e_pot
         return u_intermediate
 
-    def propagate_single_walker(self, walker, nr_of_steps) -> np.ndarray:
+    def propagate_single_walker(self, walker, nr_of_steps: int) -> np.ndarray:
         self.sim.context.setPositions(walker)
         self.sim.context.setVelocitiesToTemperature(temperature)
         self.sim.step(nr_of_steps)
@@ -101,11 +105,11 @@ class SMC:
         # evaluate U_(\lamb_(i+1))(x_i) -  U_(\lamb_(i))(x_i)
         # calculate U_(\lamb_(i))(x_i)
         u_now = self._calculate_potential_E_for_particles(
-            self.lambdas[lamb_idx], walkers, self.sim
+            self.lambdas[lamb_idx], walkers
         )
         # calculate U_(\lamb_(i+1))(x_i)
         u_future = self._calculate_potential_E_for_particles(
-            self.lambdas[lamb_idx + 1], walkers, self.sim
+            self.lambdas[lamb_idx + 1], walkers
         )
         # calculate weights (equation 2 in 10.1021/acs.jctc.1c01198)
         current_deltaEs = u_future - u_now  # calculate difference in energy
@@ -165,7 +169,6 @@ class SMC:
 
         self.weights = np.ones(nr_of_walkers) / nr_of_walkers
         self.lambdas = np.linspace(0, 1, nr_of_steps)
-
         # select initial, equally spaced samples
         equally_spaces_idx = np.linspace(
             0, len(self.samples.xyz) - 1, nr_of_walkers, dtype=int
@@ -173,22 +176,25 @@ class SMC:
         walkers = [
             self.samples.openmm_positions(frame_idx) for frame_idx in equally_spaces_idx
         ]
-
+        self.current_set_of_walkers = walkers
+        self.effective_sample_size = []
         assert len(walkers) == nr_of_walkers
 
         for lamb_idx in tqdm(range(len(self.lambdas) - 1)):
             logger.debug(f"{lamb_idx=}")
             self.sim.context.setParameter("lambda_interpolate", self.lambdas[lamb_idx])
             # Propagate the walkers
-            walkers = self.propagate_walkers(walkers, self.sim)
+            walkers = self.propagate_walkers(walkers, nr_of_steps)
             # Calculate weights
             current_deltaEs = self._calculate_deltaEs(lamb_idx, walkers)
             current_weights = self._calculate_weights(current_deltaEs)
             # report effective sample size
-            self._calculate_effective_sample_size(current_weights, lamb_idx)
+            ess = self._calculate_effective_sample_size(current_weights, lamb_idx)
+            self.effective_sample_size.append(ess)
             # add to accumulated logZ
             self.logZ += logsumexp(-current_deltaEs) - np.log(nr_of_walkers)
             # Resample the particles based on the weights
             walkers = self.resampler.stratified_resampling(walkers, current_weights)
+            self.current_set_of_walkers = walkers
         # reset lambda value
         self.sim.context.setParameter("lambda_interpolate", 0.0)
