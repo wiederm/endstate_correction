@@ -1,4 +1,4 @@
-Endstate correction from MM to QML potential
+Endstate correction from MM to NNP
 ==============================
 [//]: # (Badges)
 [![GitHub Actions Build Status](https://github.com/wiederm/endstate_correction/workflows/CI/badge.svg)](https://github.com/wiederm/endstate_correction/actions?query=workflow%3ACI)

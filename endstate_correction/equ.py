@@ -11,14 +11,17 @@ from endstate_correction.constant import kBT
 def _collect_equ_samples(
     trajs: list, every_nth_frame: int = 10
 ) -> Tuple[list, np.array]:
-    """
-    Given a list of k trajectories with n samples a dictionary with the number of samples per trajektory
-    and a list with all samples [n_1, n_2, ...] is generated
+    """Generate a dictionary with the number of samples per trajektory and 
+    a list with all samples [n_1, n_2, ...] given a list of k trajectories with n samples.
+
+    Args:
+        trajs (list): list of trajectories
+        every_nth_frame (int, optional): prune samples by taking only every nth sample. Defaults to 10.
 
     Returns:
-        Tuple(coordinates, N_k)
+        Tuple[list, np.array]: coordinates, N_k
     """
-
+    
     coordinates = []
     N_k = np.zeros(len(trajs))
 
@@ -46,6 +49,7 @@ def calculate_u_kn(
         trajs (list): list of trajectories
         sim (Simulation): simulation object
         every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.
+        
     Returns:
         np.ndarray: u_kn matrix
     """

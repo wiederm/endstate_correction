@@ -37,7 +37,7 @@ topology = molecule.to_topology()
 system = forcefield.create_openmm_system(topology)
 # define region that should be treated with the nnp
 ml_atoms = [atom.molecule_particle_index for atom in topology.atoms]
-print(ml_atoms)
+print(f"{ml_atoms=}")
 integrator = LangevinIntegrator(temperature, collision_rate, stepsize)
 platform = Platform.getPlatformByName("CUDA")
 topology = topology.to_openmm()

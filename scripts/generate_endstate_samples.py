@@ -43,7 +43,7 @@ molecule.generate_conformers(n_conformers=1)
 
 topology = molecule.to_topology()
 system = forcefield.create_openmm_system(topology)
-# define region that should be treated with the qml
+# define region that should be treated with the nnp
 ml_atoms = [atom.molecule_particle_index for atom in topology.atoms]
 integrator = LangevinIntegrator(temperature, collision_rate, stepsize)
 platform = Platform.getPlatformByName("CUDA")

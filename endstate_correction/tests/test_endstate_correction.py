@@ -15,13 +15,13 @@ def test_endstate_correction_imported():
     assert "endstate_correction" in sys.modules
 
 
-def save_pickle_results(sim, mm_samples, qml_samples, system_name):
+def save_pickle_results(sim, mm_samples, nnp_samples, system_name):
     # generate data for plotting tests
     protocol = Protocol(
         method="NEQ",
         sim=sim,
         target_samples=mm_samples,
-        reference_samples=qml_samples,
+        reference_samples=nnp_samples,
         nr_of_switches=100,
         neq_switching_length=100,
     )
@@ -55,7 +55,7 @@ def test_FEP_protocol():
     """Perform FEP uni- and bidirectional protocol"""
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
@@ -80,7 +80,7 @@ def test_FEP_protocol():
         sim=sim,
         method="FEP",
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=50,
     )
 
@@ -102,13 +102,13 @@ def test_NEQ_protocol():
     from endstate_correction.protocol import perform_endstate_correction, Protocol
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     protocol = Protocol(
         method="NEQ",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         neq_switching_length=50,
     )
@@ -142,11 +142,11 @@ def test_NEQ_protocol():
     reason="Skipping tests that take too long in github actions",
 )
 def test_ALL_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Perform FEP and NEQ uni- and bidirectional protocol"""
     from endstate_correction.protocol import Protocol, perform_endstate_correction
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------
@@ -156,7 +156,7 @@ def test_ALL_protocol():
         method="All",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         neq_switching_length=50,
     )
@@ -188,11 +188,11 @@ def test_ALL_protocol():
 
 
 def test_each_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Test FEP and NEQ uni-and bidirectional protocols separately"""
     from endstate_correction.protocol import perform_endstate_correction, Protocol
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
@@ -215,7 +215,7 @@ def test_each_protocol():
         method="FEP",
         sim=sim,
         target_samples=mm_samples,
-        reference_samples=qml_samples,
+        reference_samples=nnp_samples,
         nr_of_switches=10,
     )
 
@@ -233,7 +233,7 @@ def test_each_protocol():
         method="NEQ",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         neq_switching_length=50,
     )
@@ -271,7 +271,7 @@ def test_each_protocol():
         method="NEQ",
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         neq_switching_length=50,
         save_endstates=True,

@@ -124,6 +124,14 @@ def perform_switching(
 
 
 def _collect_work_values(file: str) -> list:
+    """Return a list of work values
+
+    Args:
+        file (str): pickle file containing work values
+
+    Returns:
+        list: list of work values in kJ/mol
+    """
     ws = pickle.load(open(file, "rb")).value_in_unit(unit.kilojoule_per_mole)
     number_of_samples = len(ws)
     print(f"Number of samples used: {number_of_samples}")

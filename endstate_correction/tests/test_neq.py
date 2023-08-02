@@ -15,18 +15,19 @@ def test_collect_work_values():
     from endstate_correction.neq import _collect_work_values
 
     nr_of_switches = 200
-    path = f"data/ZINC00077329/switching_charmmff/ZINC00077329_neq_ws_from_mm_to_qml_{nr_of_switches}_5001.pickle"
+    path = f"data/ZINC00077329/switching_charmmff/ZINC00077329_neq_ws_from_mm_to_nnp_{nr_of_switches}_5001.pickle"
     ws = _collect_work_values(path)
     assert len(ws) == nr_of_switches
 
 
 def test_switching():
+    """test return values of perform_switching function"""
 
     # load simulation and samples for ZINC00077329
-    sim, samples_mm, samples_qml = setup_ZINC00077329_system()
+    sim, samples_mm, samples_nnp = setup_ZINC00077329_system()
     # perform instantaneous switching with predetermined coordinate set
-    # here, we evaluate dU_forw = dU(x)_qml - dU(x)_mm and make sure that it is the same as
-    # dU_rev = dU(x)_mm - dU(x)_qml
+    # here, we evaluate dU_forw = dU(x)_nnp - dU(x)_mm and make sure that it is the same as
+    # dU_rev = dU(x)_mm - dU(x)_nnp
     lambs = np.linspace(0, 1, 2)
     print(lambs)
     dE_list, _, _ = perform_switching(
