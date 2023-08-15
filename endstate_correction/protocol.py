@@ -152,16 +152,19 @@ class SMCProtocol(BaseProtocol):
         super().__post_init__()  # Call base class's post-init
 
 
-class AllProtocol:
+@dataclass
+class AllProtocol():
     """Dataclass for running all protocols"""
 
-    fep_protocol: FEPProtocol
-    neq_protocol: NEQProtocol
-    smc_protocol: SMCProtocol
+    fep_protocol: Union[None, FEPProtocol] = None
+    neq_protocol: Union[None, NEQProtocol] = None
+    smc_protocol: Union[None, SMCProtocol] = None
 
+    # check if reference or target samples are provided
     def __post_init__(self):
-        self.fep_protocol.__post_init__()  # check if reference and target samples are provided
-
+        self.fep_protocol.__post_init__()  
+        self.neq_protocol.__post_init__()
+        self.smc_protocol.__post_init__()
 
 class BaseResults:
     """Base class for all protocol results"""
@@ -215,7 +218,7 @@ class SMCResults(BaseResults):
 
 
 @dataclass
-class AllResults:
+class AllResults():
     """Dataclass for combined results of all protocols"""
 
     equ_results: Union[None, EquResults] = None
@@ -224,26 +227,19 @@ class AllResults:
     smc_results: Union[None, SMCResults] = None
 
 
-def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
+def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> AllResults:
     """Perform endstate correction using the provided protocol.
 
     Args:
-        protocol (Protocol): defines the endstatte correction
-
-    Raises:
-        NotImplementedError: raised if the reweighting method is not supported
-        AttributeError: raised if the direction is not supported
-        RuntimeError: raised if the direction is not supported
-        RuntimeError: raised if the direction is not supported
+        protocol (Union[BaseProtocol, AllProtocol]): defines the endstate correction. 
+            Either a specific protocol or a collection of protocols.
 
     Returns:
-        Results: results generated using the passed protocol
+        BaseResults: results generated using the passed protocol
     """
-
     from endstate_correction.constant import kBT
     from endstate_correction.neq import perform_switching
 
-    sim = protocol.sim
     r = AllResults()
     if isinstance(protocol, AllProtocol) or isinstance(protocol, FEPProtocol):
         print(f"Performing endstate correction using FEP")
@@ -255,6 +251,7 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
         print("#####################################################")
         print("# ------------------- FEP ---------------------------")
         print("#####################################################")
+        sim = protocol_.sim
         r_fep = FEPResults()
         list_of_lambda_values = np.linspace(0, 1, 2)  # lambda values
         # from reference to target potential
@@ -277,8 +274,8 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
                 lambdas=np.flip(
                     list_of_lambda_values
                 ),  # NOTE: we reverse the list of provided lamba values to indicate switching from the target to the reference potential
-                samples=protocol.target_samples,
-                nr_of_switches=protocol.nr_of_switches,
+                samples=protocol_.target_samples,
+                nr_of_switches=protocol_.nr_of_switches,
             )
             dE_target_to_reference = np.array(dEs / kBT)  # remove units
             r_fep.dE_target_to_reference = dE_target_to_reference
@@ -293,6 +290,7 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
         print("#####################################################")
         print("# ------------------- SMC ---------------------------")
         print("#####################################################")
+        sim = protocol_.sim
         r_smc = SMCResults()
         if protocol_.reference_samples is not None:  # if reference samples are provided
             print("Performing SMC from reference to target potential")
@@ -318,6 +316,7 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
         print("#####################################################")
         print("# ------------------- NEQ ---------------------------")
         print("#####################################################")
+        sim = protocol_.sim
         r_neq = NEQResults()
         list_of_lambda_values = np.linspace(0, 1, protocol_.switching_length)
         # from reference to target potential
@@ -341,7 +340,7 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
             r_neq.switching_traj_reference_to_target = trajs_reference_to_target
 
         # from target to reference potential
-        if protocol.target_samples is not None:
+        if protocol_.target_samples is not None:
             print("Performing NEQ from target to reference potential")
             (
                 Ws,
@@ -352,10 +351,10 @@ def perform_endstate_correction(protocol: BaseProtocol) -> BaseResults:
                 lambdas=np.flip(
                     list_of_lambda_values
                 ),  # NOTE: we reverse the list of provided lamba values to indicate switching from the target to the reference potential
-                samples=protocol.target_samples,
-                nr_of_switches=protocol.nr_of_switches,
-                save_endstates=protocol.save_endstates,
-                save_trajs=protocol.save_trajs,
+                samples=protocol_.target_samples,
+                nr_of_switches=protocol_.nr_of_switches,
+                save_endstates=protocol_.save_endstates,
+                save_trajs=protocol_.save_trajs,
             )
             Ws_target_to_reference = np.array(Ws / kBT)
             r_neq.W_target_to_reference = Ws_target_to_reference

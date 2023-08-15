@@ -59,7 +59,8 @@ def test_plot_results_for_FEP_protocol():
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    from endstate_correction.protocol import Protocol, perform_endstate_correction
+    #from endstate_correction.analysis import return_endstate_correction
+    from endstate_correction.protocol import FEPProtocol, perform_endstate_correction
 
     from .test_system import setup_ZINC00077329_system
 
@@ -67,8 +68,7 @@ def test_plot_results_for_FEP_protocol():
     # start with FEP
     sim, mm_samples, qml_samples = setup_ZINC00077329_system()
 
-    fep_protocol = Protocol(
-        method="FEP",
+    fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
         target_samples=qml_samples,
@@ -80,8 +80,7 @@ def test_plot_results_for_FEP_protocol():
         system_name, r, f"{system_name}_results_fep_bidirectional.png"
     )
     # test return_endstate_correction
-    df, ddf = return_endstate_correction(r, method="FEP", direction="forw")
-    df, ddf = return_endstate_correction(r, method="FEP", direction="rev")
+    df, ddf = return_endstate_correction(r, method= "FEP", direction="forw")
     df, ddf = return_endstate_correction(r, method="FEP", direction="bid")
 
 
@@ -93,14 +92,14 @@ def test_plot_results_for_NEQ_protocol():
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    from endstate_correction.protocol import Protocol
+    #from endstate_correction.protocol import Protocol
 
     system_name = "ZINC00079729"
 
     # load pregenerated data
     r = pickle.load(
         open(
-            f"data/{system_name}/switching_charmmff/{system_name}_neq_bid.pickle", "rb"
+            f"data/{system_name}/switching_charmmff/{system_name}_neq_bid_new.pickle", "rb"
         )
     )
     plot_endstate_correction_results(
@@ -122,7 +121,7 @@ def test_plot_results_for_all_protocol():
     import pickle
 
     from endstate_correction.analysis import plot_endstate_correction_results
-    from endstate_correction.protocol import Protocol
+    from endstate_correction.protocol import AllProtocol, FEPProtocol, NEQProtocol, SMCProtocol
 
     from .test_system import setup_ZINC00077329_system
 
@@ -134,18 +133,17 @@ def test_plot_results_for_all_protocol():
     # ---------------- All corrections -----------------
     ####################################################
 
-    fep_protocol = Protocol(
-        method="All",
-        sim=sim,
-        reference_samples=mm_samples,
-        target_samples=qml_samples,
-        nr_of_switches=100,
-    )
+    # fep_protocol = FEPProtocol(
+    #     sim=sim,
+    #     reference_samples=mm_samples,
+    #     target_samples=qml_samples,
+    #     nr_of_switches=100,
+    # )
 
     # load data
     r = pickle.load(
         open(
-            f"data/{system_name}/switching_charmmff/{system_name}_all_corrections.pickle",
+            f"data/{system_name}/switching_charmmff/{system_name}_all_corrections_new.pickle",
             "rb",
         )
     )

@@ -166,8 +166,8 @@ def test_SMC_protocol():
     reason="Skipping tests that take too long in github actions",
 )
 def test_ALL_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
-    from endstate_correction.protocol import perform_endstate_correction, AllProtocol
+    """Perform uni- and bidirectional FEP and NEQ & SMC protocol"""
+    from endstate_correction.protocol import perform_endstate_correction, AllProtocol, FEPProtocol, NEQProtocol, SMCProtocol, AllResults
 
     # load samples
     sim, mm_samples, qml_samples = setup_ZINC00077329_system()
@@ -175,44 +175,61 @@ def test_ALL_protocol():
     ####################################################
     # ---------------- All corrections -----------------
     ####################################################
-    protocol = AllProtocol()
-    protocol = NEQProtocol(
+    fep_protocol = FEPProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
+        nr_of_switches=50,
+        )
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
         target_samples=qml_samples,
         nr_of_switches=10,
-        neq_switching_length=50,
+        switching_length=50,
     )
+    smc_protocol = SMCProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=qml_samples,
+        nr_of_walkers=10,
+        nr_of_resampling_steps=10,
+    )
+    protocol = AllProtocol(
+        fep_protocol=fep_protocol, 
+        neq_protocol=neq_protocol, 
+        smc_protocol=smc_protocol)
 
     r = perform_endstate_correction(protocol)
-    assert len(r.dE_reference_to_target) == protocol.nr_of_switches
-    assert len(r.dE_target_to_reference) == protocol.nr_of_switches
-    assert len(r.W_reference_to_target) == protocol.nr_of_switches
-    assert len(r.W_target_to_reference) == protocol.nr_of_switches
+
+    assert len(r.fep_results.dE_reference_to_target) == fep_protocol.nr_of_switches
+    assert len(r.fep_results.dE_target_to_reference) == fep_protocol.nr_of_switches
+    assert len(r.neq_results.W_reference_to_target) == neq_protocol.nr_of_switches
+    assert len(r.neq_results.W_target_to_reference) == neq_protocol.nr_of_switches
 
     assert not np.isclose(
-        r.dE_reference_to_target[0], r.dE_target_to_reference[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0], r.fep_results.dE_target_to_reference[0], rtol=1e-8
     )
     assert not np.isclose(
-        r.dE_reference_to_target[0], r.W_reference_to_target[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0], r.neq_results.W_reference_to_target[0], rtol=1e-8
     )
     assert not np.isclose(
-        r.dE_reference_to_target[0], r.W_target_to_reference[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0], r.neq_results.W_target_to_reference[0], rtol=1e-8
     )
 
     assert not np.isclose(
-        r.W_target_to_reference[0], r.W_reference_to_target[0], rtol=1e-8
+        r.neq_results.W_target_to_reference[0], r.neq_results.W_reference_to_target[0], rtol=1e-8
     )
 
-    assert np.all(r.W_reference_to_target < 0)  # the dE_forw have negative values
-    assert np.all(r.W_target_to_reference > 0)  # the dE_rev have positive values
-    assert np.all(r.dE_reference_to_target < 0)  # the dE_forw have negative values
-    assert np.all(r.dE_target_to_reference > 0)  # the dE_rev have positive values
+    assert np.all(r.neq_results.W_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.neq_results.W_target_to_reference > 0)  # the dE_rev have positive values
+    assert np.all(r.fep_results.dE_reference_to_target < 0)  # the dE_forw have negative values
+    assert np.all(r.fep_results.dE_target_to_reference > 0)  # the dE_rev have positive values
 
 
 def test_each_protocol():
     """Perform FEP uni- and bidirectional protocol"""
-    from endstate_correction.protocol import perform_endstate_correction, Protocol
+    from endstate_correction.protocol import perform_endstate_correction, FEPProtocol, NEQProtocol
 
     # load samples
     sim, mm_samples, qml_samples = setup_ZINC00077329_system()
@@ -221,21 +238,20 @@ def test_each_protocol():
     # ----------------------- FEP ----------------------
     ####################################################
 
-    fep_protocol = Protocol(
-        method="FEP",
+    fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
         nr_of_switches=10,
     )
 
     r = perform_endstate_correction(fep_protocol)
-    assert len(r.dE_reference_to_target) == fep_protocol.nr_of_switches
-    assert len(r.dE_target_to_reference) == 0
-    assert len(r.W_reference_to_target) == 0
-    assert len(r.W_target_to_reference) == 0
 
-    fep_protocol = Protocol(
-        method="FEP",
+    assert r.equ_results == None
+    assert len(r.fep_results.dE_reference_to_target) == fep_protocol.nr_of_switches
+    assert len(r.fep_results.dE_target_to_reference) == 0
+    assert r.neq_results == None
+
+    fep_protocol = FEPProtocol(
         sim=sim,
         target_samples=mm_samples,
         reference_samples=qml_samples,
@@ -243,72 +259,71 @@ def test_each_protocol():
     )
 
     r = perform_endstate_correction(fep_protocol)
-    assert len(r.dE_reference_to_target) == fep_protocol.nr_of_switches
-    assert len(r.dE_target_to_reference) == fep_protocol.nr_of_switches
-    assert len(r.W_reference_to_target) == 0
-    assert len(r.W_target_to_reference) == 0
+
+    assert r.equ_results == None
+    assert len(r.fep_results.dE_reference_to_target) == fep_protocol.nr_of_switches
+    assert len(r.fep_results.dE_target_to_reference) == fep_protocol.nr_of_switches
+    assert r.neq_results == None
 
     ####################################################
     # ----------------------- NEQ ----------------------
     ####################################################
 
-    neq_protocol = Protocol(
-        method="NEQ",
+    neq_protocol = NEQProtocol(
+            sim=sim,
+            reference_samples=mm_samples,
+            nr_of_switches=10,
+            switching_length=50,
+        )
+
+    r = perform_endstate_correction(neq_protocol)
+    assert r.equ_results == None
+    assert r.fep_results == None
+    assert len(r.neq_results.W_reference_to_target) == neq_protocol.nr_of_switches
+    assert len(r.neq_results.W_target_to_reference) == 0
+    assert len(r.neq_results.endstate_samples_reference_to_target) == 0
+    assert len(r.neq_results.endstate_samples_reference_to_target) == 0
+    assert len(r.neq_results.switching_traj_reference_to_target) == 0
+    assert len(r.neq_results.switching_traj_target_to_reference) == 0
+    assert r.equ_results == None
+
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
         target_samples=qml_samples,
         nr_of_switches=10,
-        neq_switching_length=50,
+        switching_length=50,
     )
 
     r = perform_endstate_correction(neq_protocol)
-    assert len(r.dE_reference_to_target) == 0
-    assert len(r.dE_target_to_reference) == 0
-    assert len(r.W_reference_to_target) == neq_protocol.nr_of_switches
-    assert len(r.W_target_to_reference) == neq_protocol.nr_of_switches
-    assert len(r.endstate_samples_reference_to_target) == 0
-    assert len(r.endstate_samples_reference_to_target) == 0
-    assert len(r.switching_traj_reference_to_target) == 0
-    assert len(r.switching_traj_target_to_reference) == 0
+    assert r.fep_results == None
+    assert len(r.neq_results.W_reference_to_target) == neq_protocol.nr_of_switches
+    assert len(r.neq_results.W_target_to_reference) == neq_protocol.nr_of_switches
+    assert len(r.neq_results.endstate_samples_reference_to_target) == 0
+    assert len(r.neq_results.endstate_samples_reference_to_target) == 0
+    assert len(r.neq_results.switching_traj_reference_to_target) == 0
+    assert len(r.neq_results.switching_traj_target_to_reference) == 0
+    assert r.equ_results == None
 
-    neq_protocol = Protocol(
-        method="NEQ",
-        sim=sim,
-        reference_samples=mm_samples,
-        nr_of_switches=10,
-        neq_switching_length=50,
-    )
-
-    r = perform_endstate_correction(neq_protocol)
-    assert len(r.dE_reference_to_target) == 0
-    assert len(r.dE_target_to_reference) == 0
-    assert len(r.W_reference_to_target) == neq_protocol.nr_of_switches
-    assert len(r.W_target_to_reference) == 0
-    assert len(r.endstate_samples_reference_to_target) == 0
-    assert len(r.endstate_samples_reference_to_target) == 0
-    assert len(r.switching_traj_reference_to_target) == 0
-    assert len(r.switching_traj_target_to_reference) == 0
-
+    
     # test saving endstates and saving trajectory option
-    protocol = Protocol(
-        method="NEQ",
+    protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
         target_samples=qml_samples,
         nr_of_switches=10,
-        neq_switching_length=50,
+        switching_length=50,
         save_endstates=True,
         save_trajs=True,
     )
 
     r = perform_endstate_correction(protocol)
-    assert len(r.dE_reference_to_target) == 0
-    assert len(r.dE_target_to_reference) == 0
-    assert len(r.W_reference_to_target) == protocol.nr_of_switches
-    assert len(r.W_target_to_reference) == protocol.nr_of_switches
-    assert len(r.endstate_samples_reference_to_target) == protocol.nr_of_switches
-    assert len(r.endstate_samples_reference_to_target) == protocol.nr_of_switches
-    assert len(r.switching_traj_reference_to_target) == protocol.nr_of_switches
-    assert len(r.switching_traj_target_to_reference) == protocol.nr_of_switches
-    assert len(r.switching_traj_reference_to_target[0]) == protocol.neq_switching_length
-    assert len(r.switching_traj_target_to_reference[0]) == protocol.neq_switching_length
+    assert r.equ_results == None
+    assert len(r.neq_results.W_reference_to_target) == protocol.nr_of_switches
+    assert len(r.neq_results.W_target_to_reference) == protocol.nr_of_switches
+    assert len(r.neq_results.endstate_samples_reference_to_target) == protocol.nr_of_switches
+    assert len(r.neq_results.endstate_samples_reference_to_target) == protocol.nr_of_switches
+    assert len(r.neq_results.switching_traj_reference_to_target) == protocol.nr_of_switches
+    assert len(r.neq_results.switching_traj_target_to_reference) == protocol.nr_of_switches
+    assert len(r.neq_results.switching_traj_reference_to_target[0]) == protocol.switching_length
+    assert len(r.neq_results.switching_traj_target_to_reference[0]) == protocol.switching_length

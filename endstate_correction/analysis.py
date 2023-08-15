@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass, fields
-from typing import Tuple
+from typing import Tuple, Union
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
 
 from endstate_correction.constant import zinc_systems
-from endstate_correction.protocol import Results
+from endstate_correction.protocol import BaseResults, AllResults, FEPResults, NEQResults, SMCResults
 
 
 def plot_overlap_for_equilibrium_free_energy(
@@ -86,110 +86,121 @@ def plot_results_for_equilibrium_free_energy(
     plt.show()
     plt.close()
 
+def return_endstate_correction(results: AllResults, method:str, direction: str) -> Tuple[float, float]:
+    """eturn the endstate correction for a given method and direction.
 
-def return_endstate_correction(
-    results: Results, method: str = "NEQ", direction: str = "forw"
-) -> Tuple[float, float]:
-    # generate docstring
-    """Return the endstate correction for a given method and direction.
     Args:
-        results (Results): instance of the Results class
-        method (str): NEQ or FEP
+        results (AllResults): instance of the AllRestults class
+        method (str): FEP or NEQ
         direction (str): forw, rev or bid
+
+    Raises:
+        ValueError: if method or direction is not supported
+
     Returns:
-        float: endstate correction delta_f
-        float: endstate correction error
+        Tuple[float, float]: endstate correction delta_f, endstate correction error
     """
-    assert type(results) == Results
+
+    assert isinstance(results, AllResults)
     assert method in ["NEQ", "FEP"]
     print(f"method: {method}, direction: {direction}")
 
     if method == "FEP" and direction == "forw":
-        print(f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}")
-        est = exp(results.dE_reference_to_target)
-        return est["Delta_f"], est["dDelta_f"]
+        assert results.fep_results.dE_reference_to_target.size
+        print(f"FEP(forw): {exp(results.fep_results.dE_reference_to_target)['Delta_f']}")
+        est = exp(results.fep_results.dE_reference_to_target)
+        return est["Delta_f"], est["dDelta_f"]   
     elif method == "FEP" and direction == "rev":
-        print(f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}")
-        est = exp(results.dE_target_to_reference)
-        return est["Delta_f"], est["dDelta_f"]
+        assert results.fep_results.dE_target_to_reference.size
+        print(f"FEP(rev): {exp(results.fep_results.dE_target_to_reference)['Delta_f']}")
+        est = exp(results.fep_results.dE_target_to_reference)
+        return est["Delta_f"], est["dDelta_f"] 
     elif method == "FEP" and direction == "bid":
+        assert results.fep_results.dE_reference_to_target.size and results.fep_results.dE_target_to_reference.size
         print(
-            f"FEP(bid): {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
+        f"FEP(bid): {bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)['Delta_f']}"
         )
-        est = bar(results.dE_reference_to_target, results.dE_target_to_reference)
+        est = bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "forw":
-        print(f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}")
-        est = exp(results.W_reference_to_target)
+        assert results.neq_results.W_reference_to_target.size
+        print(f"NEQ(forw): {exp(results.neq_results.W_reference_to_target)['Delta_f']}")
+        est = exp(results.neq_results.W_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "rev":
-        print(f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}")
-        est = exp(results.W_target_to_reference)
+        assert results.neq_results.W_target_to_reference.size
+        print(f"NEQ(rev): {exp(results.neq_results.W_target_to_reference)['Delta_f']}")
+        est = exp(results.neq_results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     elif method == "NEQ" and direction == "bid":
+        assert results.neq_results.W_reference_to_target.size and results.neq_results.W_target_to_reference.size
         print(
-            f"NEQ(bid): {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
+            f"NEQ(bid): {bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)['Delta_f']}"
         )
-        est = bar(results.W_reference_to_target, results.W_target_to_reference)
+        est = bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     else:
         raise ValueError("method and direction combination not supported")
 
 
-def summarize_endstate_correction_results(results: Results):
+def summarize_endstate_correction_results(results: AllResults):
     """Summarize the results of the endstate correction analysis.
 
     Args:
-        results (Results): instance of the Results class
+        results (AllResults): instance of the AllResults class
     """
 
-    assert type(results) == Results
+    assert type(results) == AllResults
     print("#--------------- SUMMARY ---------------#")
-
-    if results.dE_reference_to_target.size:
-        print(
-            f"Zwanzig's equation (from mm to qml): {exp(results.dE_reference_to_target)['Delta_f']}"
-        )
-    if results.dE_target_to_reference.size:
-        print(
-            f"Zwanzig's equation (from qml to mm): {exp(results.dE_target_to_reference)['Delta_f']}"
-        )
-    if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
-        print(
-            f"Zwanzig's equation bidirectional: {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
-        )
-    if results.W_reference_to_target.size:
-        print(
-            f"Jarzynski's equation (from mm to qml): {exp(results.W_reference_to_target)['Delta_f']}"
-        )
-    if results.W_target_to_reference.size:
-        print(
-            f"Jarzynski's equation (from qml to mm): {exp(results.W_target_to_reference)['Delta_f']}"
-        )
-    if results.W_reference_to_target.size and results.W_target_to_reference.size:
-        print(
-            f"Crooks' equation: {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
-        )
-    if results.equ_mbar:
-        ddG_equ = np.average(
-            [
-                r.compute_free_energy_differences()["Delta_f"][0][-1]
-                for r in results.equ_mbar
-            ]
-        )
-        dddG_equ = np.average(
-            [
-                r.compute_free_energy_differences()["dDelta_f"][0][-1]
-                for r in results.equ_mbar
-            ]
-        )
-        print(f"Equilibrium free energy: {ddG_equ}+/-{dddG_equ}")
+    
+    if results.fep_results:
+        if results.fep_results.dE_reference_to_target.size:
+            print(
+                f"Zwanzig's equation (from mm to qml): {exp(results.fep_results.dE_reference_to_target)['Delta_f']}"
+            )
+        if results.fep_results.dE_target_to_reference.size:
+            print(
+                f"Zwanzig's equation (from qml to mm): {exp(results.fep_results.dE_target_to_reference)['Delta_f']}"
+            )
+        if results.fep_results.dE_reference_to_target.size and results.fep_results.dE_target_to_reference.size:
+            print(
+                f"Zwanzig's equation bidirectional: {bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)['Delta_f']}"
+            )
+    if results.neq_results:
+        if results.neq_results.W_reference_to_target.size:
+            print(
+                f"Jarzynski's equation (from mm to qml): {exp(results.neq_results.W_reference_to_target)['Delta_f']}"
+            )
+        if results.neq_results.W_target_to_reference.size:
+            print(
+                f"Jarzynski's equation (from qml to mm): {exp(results.neq_results.W_target_to_reference)['Delta_f']}"
+            )
+        if results.neq_results.W_reference_to_target.size and results.neq_results.W_target_to_reference.size:
+            print(
+                f"Crooks' equation: {bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)['Delta_f']}"
+            )
+    if results.equ_results:
+        if results.equ_results.equ_mbar:
+            ddG_equ = np.average(
+                [
+                    r.compute_free_energy_differences()["Delta_f"][0][-1]
+                    for r in results.equ_results.equ_mbar
+                ]
+            )
+            dddG_equ = np.average(
+                [
+                    r.compute_free_energy_differences()["dDelta_f"][0][-1]
+                    for r in results.equ_results.equ_mbar
+                ]
+            )
+            print(f"Equilibrium free energy: {ddG_equ}+/-{dddG_equ}")
+    #if results.smc_results:
 
 
 def plot_endstate_correction_results(
-    name: str, results: Results, filename: str = "plot.png"
+    name: str, results: AllResults, filename: str = "plot.png"
 ):
-    assert type(results) == Results
+    assert type(results) == AllResults
 
     ###########################################################
     # count how many results are available
@@ -232,49 +243,48 @@ def plot_endstate_correction_results(
         axis="x", style="sci", useOffset=True, scilimits=(0, 0)
     )
 
-    if results.W_reference_to_target.size:
-        sns.histplot(
-            ax=axs[ax_index],
-            alpha=0.5,
-            data=results.W_reference_to_target,
-            kde=True,
-            stat="density",
-            label=r"W(MM$\rightarrow$QML)",
-            color=c1,
-        )
-
-    if results.dE_reference_to_target.size:
-        sns.histplot(
-            ax=axs[ax_index],
-            alpha=0.5,
-            data=results.dE_reference_to_target,
-            kde=True,
-            stat="density",
-            label=r"$\Delta$E(MM$\rightarrow$QML)",
-            color=c2,
-        )
-
-    if results.W_target_to_reference.size:
-        sns.histplot(
-            ax=axs[ax_index],
-            alpha=0.5,
-            data=results.W_target_to_reference * -1,
-            kde=True,
-            stat="density",
-            label=r"W(QML$\rightarrow$MM)",
-            color=c3,
-        )
-
-    if results.dE_target_to_reference.size:
-        sns.histplot(
-            ax=axs[ax_index],
-            alpha=0.5,
-            data=results.dE_target_to_reference * -1,
-            kde=True,
-            stat="density",
-            label=r"$\Delta$E(QML$\rightarrow$MM)",
-            color=c4,
-        )
+    if results.neq_results:
+        if results.neq_results.W_reference_to_target.size:
+            sns.histplot(
+                ax=axs[ax_index],
+                alpha=0.5,
+                data=results.neq_results.W_reference_to_target,
+                kde=True,
+                stat="density",
+                label=r"W(MM$\rightarrow$QML)",
+                color=c1,
+            )
+        if results.neq_results.W_target_to_reference.size:
+            sns.histplot(
+                ax=axs[ax_index],
+                alpha=0.5,
+                data=results.neq_results.W_target_to_reference * -1,
+                kde=True,
+                stat="density",
+                label=r"W(QML$\rightarrow$MM)",
+                color=c3,
+            )
+    if results.fep_results:
+        if results.fep_results.dE_reference_to_target.size:
+                sns.histplot(
+                    ax=axs[ax_index],
+                    alpha=0.5,
+                    data=results.fep_results.dE_reference_to_target,
+                    kde=True,
+                    stat="density",
+                    label=r"$\Delta$E(MM$\rightarrow$QML)",
+                    color=c2,
+                )
+        if results.fep_results.dE_target_to_reference.size:
+            sns.histplot(
+                ax=axs[ax_index],
+                alpha=0.5,
+                data=results.fep_results.dE_target_to_reference * -1,
+                kde=True,
+                stat="density",
+                label=r"$\Delta$E(QML$\rightarrow$MM)",
+                color=c4,
+            )
         axs[ax_index].legend()
 
     ###########################################################
@@ -284,43 +294,58 @@ def plot_endstate_correction_results(
         axs[ax_index].set_title(rf"{name} - offset $\Delta$G(MM$\rightarrow$QML)")
         ddG_list, dddG_list, names = [], [], []
 
-        if results.equ_mbar:
-            # Equilibrium free energy
-            ddG_list.append(ddG_equ)
-            dddG_list.append(dddG_equ)
-            names.append("Equilibrium")
-        if results.W_reference_to_target.size and results.W_target_to_reference.size:
-            # Crooks' equation
-            ddG, dddG = -1, -1
-            r = bar(results.W_reference_to_target, results.W_target_to_reference)
-            ddG, dddG = r["Delta_f"], r["dDelta_f"]
-            ddG_list.append(ddG)
-            dddG_list.append(dddG)
-            names.append("NEQ+Crooks")
-        if results.W_reference_to_target.size:
-            # Jarzynski's equation
-            ddG, dddG = -1, -1
-            r = exp(results.W_reference_to_target)
-            ddG, dddG = r["Delta_f"], r["dDelta_f"]
-            ddG_list.append(ddG)
-            dddG_list.append(dddG)
-            names.append("NEQ+Jazynski")
-        if results.dE_reference_to_target.size and results.dE_target_to_reference.size:
-            # FEP + bar
-            ddG, dddG = -1, -1
-            r = bar(results.dE_reference_to_target, results.dE_target_to_reference)
-            ddG, dddG = r["Delta_f"], r["dDelta_f"]
-            ddG_list.append(ddG)
-            dddG_list.append(dddG)
-            names.append("FEP+BAR")
-        if results.dE_reference_to_target.size:
-            # FEP + EXP
-            ddG, dddG = -1, -1
-            r = exp(results.dE_reference_to_target)
-            ddG, dddG = r["Delta_f"], r["dDelta_f"]
-            ddG_list.append(ddG)
-            dddG_list.append(dddG)
-            names.append("FEP+EXP")
+        if results.equ_results:
+            if results.equ_results.equ_mbar:
+                # Equilibrium free energy
+                ddG_equ = np.average(
+                [
+                    r.compute_free_energy_differences()["Delta_f"][0][-1]
+                    for r in results.equ_results.equ_mbar
+                ]
+                )
+                dddG_equ = np.average(
+                    [
+                        r.compute_free_energy_differences()["dDelta_f"][0][-1]
+                        for r in results.equ_results.equ_mbar
+                    ]
+                )
+                ddG_list.append(ddG_equ)
+                dddG_list.append(dddG_equ)
+                names.append("Equilibrium")
+        if results.neq_results:
+            if results.neq_results.W_reference_to_target.size and results.neq_results.W_target_to_reference.size:
+                # Crooks' equation
+                ddG, dddG = -1, -1
+                r = bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)
+                ddG, dddG = r["Delta_f"], r["dDelta_f"]
+                ddG_list.append(ddG)
+                dddG_list.append(dddG)
+                names.append("NEQ+Crooks")
+            if results.neq_results.W_reference_to_target.size:
+                # Jarzynski's equation (reference to target)
+                ddG, dddG = -1, -1
+                r = exp(results.neq_results.W_reference_to_target)
+                ddG, dddG = r["Delta_f"], r["dDelta_f"]
+                ddG_list.append(ddG)
+                dddG_list.append(dddG)
+                names.append("NEQ+Jazynski")
+        if results.fep_results:
+            if results.fep_results.dE_reference_to_target.size and results.fep_results.dE_target_to_reference.size:
+                # FEP + bar
+                ddG, dddG = -1, -1
+                r = bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)
+                ddG, dddG = r["Delta_f"], r["dDelta_f"]
+                ddG_list.append(ddG)
+                dddG_list.append(dddG)
+                names.append("FEP+BAR")
+            if results.fep_results.dE_reference_to_target.size:
+                # FEP + EXP
+                ddG, dddG = -1, -1
+                r = exp(results.fep_results.dE_reference_to_target)
+                ddG, dddG = r["Delta_f"], r["dDelta_f"]
+                ddG_list.append(ddG)
+                dddG_list.append(dddG)
+                names.append("FEP+EXP")
 
         print("#################")
         print(ddG_list)
@@ -344,59 +369,59 @@ def plot_endstate_correction_results(
     ax_index += 1
     axs[ax_index].set_title(rf"{name} - cumulative stddev of W and $\Delta$E")
 
-    if results.W_reference_to_target.size:
-        cum_stddev_ws_from_mm_to_qml = [
-            results.W_reference_to_target[:x].std()
-            for x in range(1, len(results.W_reference_to_target) + 1)
-        ]
-        axs[ax_index].plot(
-            cum_stddev_ws_from_mm_to_qml,
-            label=r"stddev W(MM$\rightarrow$QML)",
-            color=c1,
-        )
-
-    if results.W_target_to_reference.size:
-        cum_stddev_ws_from_qml_to_mm = [
-            results.W_target_to_reference[:x].std()
-            for x in range(1, len(results.W_target_to_reference) + 1)
-        ]
-        axs[ax_index].plot(
-            cum_stddev_ws_from_qml_to_mm,
-            label=r"stddev W(QML$\rightarrow$MM)",
-            color=c3,
-        )
-
-    if results.dE_reference_to_target.size:
-        if results.W_reference_to_target.size or results.W_target_to_reference.size:
-            size = max(
-                results.W_reference_to_target.size, results.W_target_to_reference.size
+    if results.neq_results:
+        if results.neq_results.W_reference_to_target.size:
+            cum_stddev_ws_from_mm_to_qml = [
+                results.neq_results.W_reference_to_target[:x].std()
+                for x in range(1, len(results.neq_results.W_reference_to_target) + 1)
+            ]
+            axs[ax_index].plot(
+                cum_stddev_ws_from_mm_to_qml,
+                label=r"stddev W(MM$\rightarrow$QML)",
+                color=c1,
             )
-        else:
-            size = results.dE_reference_to_target.size
-        cum_stddev_dEs_from_mm_to_qml = [
-            results.dE_reference_to_target[:x].std() for x in range(1, size + 1)
-        ]
-        axs[ax_index].plot(
-            cum_stddev_dEs_from_mm_to_qml,
-            label=r"stddev $\Delta$E(MM$\rightarrow$QML)",
-            color=c2,
-        )
-
-    if results.dE_target_to_reference.size:
-        if results.W_reference_to_target.size or results.W_target_to_reference.size:
-            size = max(
-                results.W_reference_to_target.size, results.W_target_to_reference.size
+        if results.neq_results.W_target_to_reference.size:
+            cum_stddev_ws_from_qml_to_mm = [
+                results.neq_results.W_target_to_reference[:x].std()
+                for x in range(1, len(results.neq_results.W_target_to_reference) + 1)
+            ]
+            axs[ax_index].plot(
+                cum_stddev_ws_from_qml_to_mm,
+                label=r"stddev W(QML$\rightarrow$MM)",
+                color=c3,
             )
-        else:
-            size = results.dE_reference_to_target.size
-        cum_stddev_dEs_from_qml_to_mm = [
-            results.dE_target_to_reference[:x].std() for x in range(1, size + 1)
-        ]
-        axs[ax_index].plot(
-            cum_stddev_dEs_from_qml_to_mm,
-            label=r"stddev $\Delta$E(QML$\rightarrow$MM)",
-            color=c4,
-        )
+
+    if results.fep_results:
+        if results.fep_results.dE_reference_to_target.size:
+            if results.neq_results:
+                size = max(
+                    results.neq_results.W_reference_to_target.size, results.neq_results.W_target_to_reference.size
+                )
+            else:
+                size = results.fep_results.dE_reference_to_target.size
+            cum_stddev_dEs_from_mm_to_qml = [
+                results.fep_results.dE_reference_to_target[:x].std() for x in range(1, size + 1)
+            ]
+            axs[ax_index].plot(
+                cum_stddev_dEs_from_mm_to_qml,
+                label=r"stddev $\Delta$E(MM$\rightarrow$QML)",
+                color=c2,
+            )
+        if results.fep_results.dE_target_to_reference.size:
+            if results.neq_results:
+                size = max(
+                    results.neq_results.W_reference_to_target.size, results.neq_results.W_target_to_reference.size
+                )
+            else:
+                size = results.fep_results.dE_reference_to_target.size
+            cum_stddev_dEs_from_qml_to_mm = [
+                results.fep_results.dE_target_to_reference[:x].std() for x in range(1, size + 1)
+            ]
+            axs[ax_index].plot(
+                cum_stddev_dEs_from_qml_to_mm,
+                label=r"stddev $\Delta$E(QML$\rightarrow$MM)",
+                color=c4,
+            )
     # plot 1 kT limit
     axs[ax_index].axhline(y=1.0, color=c7, linestyle=":")
     axs[ax_index].axhline(y=2.0, color=c5, linestyle=":")
