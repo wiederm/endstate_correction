@@ -9,9 +9,15 @@ from openmm.app import (
 
 
 def gen_box(psf: CharmmPsfFile, crd: CharmmCrdFile) -> CharmmPsfFile:
-    """
-    Function to create psf file containing information about the box used (only for waterbox or commplex simulations). Usful
-    when information about box size is not available (e.g. when using TF)
+    """Function to create psf file containing information about the box used (only for waterbox or commplex simulations). 
+    Usful when information about box size is not available (e.g. when using TF)
+
+    Args:
+        psf (CharmmPsfFile): topology instance
+        crd (CharmmCrdFile): coordinates
+
+    Returns:
+        CharmmPsfFile: topology instance containing information about the box
     """
     coords = crd.positions
 

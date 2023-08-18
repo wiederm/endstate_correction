@@ -186,7 +186,7 @@ texinfo_documents = [
         "endstate_correction Documentation",
         author,
         "endstate_correction",
-        "Endstate reweighting from MM to QML potential",
+        "Endstate reweighting from MM to NNP",
         "Miscellaneous",
     ),
 ]

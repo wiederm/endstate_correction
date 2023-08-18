@@ -24,7 +24,7 @@ def test_plotting_equilibrium_free_energy():
 
     from .test_equ import load_equ_samples
 
-    """test if we are able to plot overlap and """
+    """Test if we are able to plot overlap and equilibrium free energy results"""
 
     ########################################################
     ########################################################
@@ -66,12 +66,12 @@ def test_plot_results_for_FEP_protocol():
 
     system_name = "ZINC00079729"
     # start with FEP
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=100,
     )
 
@@ -85,7 +85,7 @@ def test_plot_results_for_FEP_protocol():
 
 
 def test_plot_results_for_NEQ_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Perform NEQ uni- and bidirectional protocol"""
     import pickle
 
     from endstate_correction.analysis import (
@@ -117,7 +117,7 @@ def test_plot_results_for_NEQ_protocol():
 
 
 def test_plot_results_for_all_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Perform FEP and NEQ uni- and bidirectional protocol"""
     import pickle
 
     from endstate_correction.analysis import plot_endstate_correction_results
@@ -127,18 +127,11 @@ def test_plot_results_for_all_protocol():
 
     system_name = "ZINC00079729"
     # start with NEQ
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------
     ####################################################
-
-    # fep_protocol = FEPProtocol(
-    #     sim=sim,
-    #     reference_samples=mm_samples,
-    #     target_samples=qml_samples,
-    #     nr_of_switches=100,
-    # )
 
     # load data
     r = pickle.load(

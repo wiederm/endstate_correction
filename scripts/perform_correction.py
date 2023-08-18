@@ -5,7 +5,7 @@ system_name = "test1"
 n_samples = 1_000
 n_steps_per_sample = 1_000
 run_id = 1
-traj_base = f"{system_name}/equilibrium_samples/run{run_id:0>2d}" # define directory containing MM and QML sampling data
+traj_base = f"{system_name}/equilibrium_samples/run{run_id:0>2d}" # define directory containing MM and NNP sampling data
 output_base = f"{system_name}/switching"
 # --------------------------------------------- #
 
@@ -35,9 +35,9 @@ molecule.generate_conformers(n_conformers=1)
 
 topology = molecule.to_topology()
 system = forcefield.create_openmm_system(topology)
-# define region that should be treated with the qml
+# define region that should be treated with the nnp
 ml_atoms = [atom.molecule_particle_index for atom in topology.atoms]
-print(ml_atoms)
+print(f"{ml_atoms=}")
 integrator = LangevinIntegrator(temperature, collision_rate, stepsize)
 platform = Platform.getPlatformByName("CUDA")
 topology = topology.to_openmm()
@@ -59,34 +59,36 @@ mm_samples = mdtraj.load_dcd(
 ]  # discart first 20% of the trajectory
 print(f"Initializing switch from {len(mm_samples)} MM samples")
 # --------------------------------------------- #
-# load QML samples
-qml_samples = []
+# load NNP samples
+nnp_samples = []
 base = f"{traj_base}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000_{env}"
-qml_samples = mdtraj.load_dcd(
+nnp_samples = mdtraj.load_dcd(
     f"{base}.dcd",
     top=f"{traj_base}/{system_name}.pdb",
 )[
     int((1_000 / 100) * 20) :
 ]  # discart first 20% of the trajectory
-print(f"Initializing switch from {len(qml_samples)} QML samples")
+print(f"Initializing switch from {len(nnp_samples)} NNP samples")
 # --------------------------------------------- #
 # ---------------- FEP protocol ---------------
 # --------------------------------------------- #
+# bidirectional
 fep_protocol = Protocol(
     method="FEP",
     sim=sim,
     reference_samples=mm_samples,
-    target_samples=qml_samples,
+    target_samples=nnp_samples,
     nr_of_switches=1_000,
 )
 # --------------------------------------------- #
 # ----------------- NEQ protocol --------------
 # --------------------------------------------- #
+# unidirectional (switching from reference to target)
 neq_protocol = Protocol(
     method="NEQ",
     sim=sim,
     reference_samples=mm_samples,
-    #target_samples=qml_samples,
+    #target_samples=nnp_samples,
     nr_of_switches=100,
     neq_switching_length=1_000,
     save_endstates=True,

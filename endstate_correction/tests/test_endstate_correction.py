@@ -22,12 +22,12 @@ def test_endstate_correction_imported():
     assert "endstate_correction" in sys.modules
 
 
-def save_pickle_results(sim, mm_samples, qml_samples, system_name):
+def save_pickle_results(sim, mm_samples, nnp_samples, system_name):
     # generate data for plotting tests
     protocol = NEQProtocol(
         sim=sim,
         target_samples=mm_samples,
-        reference_samples=qml_samples,
+        reference_samples=nnp_samples,
         nr_of_switches=100,
         switching_length=100,
     )
@@ -60,7 +60,7 @@ def test_FEP_protocol():
     """Perform FEP uni- and bidirectional protocol"""
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
@@ -81,7 +81,7 @@ def test_FEP_protocol():
     fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=50,
     )
 
@@ -102,12 +102,12 @@ def test_NEQ_protocol():
     from endstate_correction.protocol import perform_endstate_correction, NEQProtocol
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         switching_length=50,
     )
@@ -166,11 +166,12 @@ def test_SMC_protocol():
     reason="Skipping tests that take too long in github actions",
 )
 def test_ALL_protocol():
+
     """Perform uni- and bidirectional FEP and NEQ & SMC protocol"""
     from endstate_correction.protocol import perform_endstate_correction, AllProtocol, FEPProtocol, NEQProtocol, SMCProtocol, AllResults
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------
@@ -184,7 +185,7 @@ def test_ALL_protocol():
     neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         switching_length=50,
     )
@@ -228,11 +229,12 @@ def test_ALL_protocol():
 
 
 def test_each_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+
+    """Test FEP and NEQ uni- and bidirectional protocols separately"""
     from endstate_correction.protocol import perform_endstate_correction, FEPProtocol, NEQProtocol
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ----------------------- FEP ----------------------
@@ -254,7 +256,7 @@ def test_each_protocol():
     fep_protocol = FEPProtocol(
         sim=sim,
         target_samples=mm_samples,
-        reference_samples=qml_samples,
+        reference_samples=nnp_samples,
         nr_of_switches=10,
     )
 
@@ -269,12 +271,13 @@ def test_each_protocol():
     # ----------------------- NEQ ----------------------
     ####################################################
 
+
     neq_protocol = NEQProtocol(
-            sim=sim,
-            reference_samples=mm_samples,
-            nr_of_switches=10,
-            switching_length=50,
-        )
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_switches=10,
+        switching_length=50,
+    )
 
     r = perform_endstate_correction(neq_protocol)
     assert r.equ_results == None
@@ -310,7 +313,7 @@ def test_each_protocol():
     protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         switching_length=50,
         save_endstates=True,

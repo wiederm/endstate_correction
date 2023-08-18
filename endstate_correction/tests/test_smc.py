@@ -67,7 +67,7 @@ def test_SMC_algorithm():
 
 
 def test_SMC(_am_I_on_GH):
-    sim, samples_mm, samples_mm_qml = setup_ZINC00077329_system()
+    sim, samples_mm, samples_mm_nnp = setup_ZINC00077329_system()
     smc_sampler = SMC(sim=sim, samples=samples_mm)
     # perform SMC switching
     print("Performing SMC switching")

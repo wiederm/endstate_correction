@@ -25,6 +25,14 @@ jctc_testsystem = f"{path}/data/jctc_data"
 def load_endstate_system_and_samples(
     system_name: str,
 ) -> Tuple[Simulation, list, list]:
+    """Test if samples can be loaded and system can be created
+
+    Args:
+        system_name (str): name of the system
+
+    Returns:
+        Tuple[Simulation, list, list]: instance of Simulation class, MM samples, NNP samples
+    """
     # initialize simulation and load pre-generated samples
 
     from openmm.app import CharmmCrdFile, CharmmParameterSet, CharmmPsfFile
@@ -43,7 +51,7 @@ def load_endstate_system_and_samples(
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
+    # define region that should be treated with the nnp
     sim = setup_vacuum_simulation(psf=psf, params=params)
     sim.context.setPositions(crd.positions)
     n_samples = 5_000
@@ -55,13 +63,13 @@ def load_endstate_system_and_samples(
         top=pdb_file,
     )
 
-    qml_samples = []
-    qml_samples = md.load_dcd(
+    nnp_samples = []
+    nnp_samples = md.load_dcd(
         f"data/{system_name}/sampling_charmmff/run01/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000.dcd",
         top=pdb_file,
     )
 
-    return sim, mm_samples, qml_samples
+    return sim, mm_samples, nnp_samples
 
 
 def setup_ZINC00077329_system():
@@ -69,15 +77,24 @@ def setup_ZINC00077329_system():
     print(f"{system_name=}")
 
     # load simulation and samples for ZINC00077329
-    sim, samples_mm, samples_mm_qml = load_endstate_system_and_samples(
+    sim, samples_mm, samples_mm_nnp = load_endstate_system_and_samples(
         system_name=system_name,
     )
-    return sim, samples_mm, samples_mm_qml
+    return sim, samples_mm, samples_mm_nnp
 
 
 def setup_vacuum_simulation(
     psf: CharmmPsfFile, params: CharmmParameterSet
 ) -> Simulation:
+    """Test setup simulation in vacuum.
+
+    Args:
+        psf (CharmmPsfFile): topology instance
+        params (CharmmParameterSet): parameter
+
+    Returns:
+        Simulation: instance of Simulation class
+    """
     chains = list(psf.topology.chains())
     ml_atoms = [atom.index for atom in chains[0].atoms()]
     print(f"{ml_atoms=}")
@@ -96,6 +113,17 @@ def setup_waterbox_simulation(
     r_off: float = 1.2,
     r_on: float = 0.0,
 ) -> Simulation:
+    """Test setup simulation in waterbox.
+
+    Args:
+        psf (CharmmPsfFile): topology instance
+        params (CharmmParameterSet): parameter
+        r_off (float, optional): _description_. Defaults to 1.2.
+        r_on (float, optional): _description_. Defaults to 0.0.
+
+    Returns:
+        Simulation: instance of Simulation class
+    """
     chains = list(psf.topology.chains())
     ml_atoms = [atom.index for atom in chains[0].atoms()]
     print(f"{ml_atoms=}")
@@ -116,7 +144,7 @@ def setup_waterbox_simulation(
 
 
 def test_initializing_ZINC00077329_system():
-    sim, samples_mm, samples_mm_qml = setup_ZINC00077329_system()
+    sim, samples_mm, samples_mm_nnp = setup_ZINC00077329_system()
     assert len(samples_mm) == 5000
 
 
@@ -137,7 +165,7 @@ def test_generate_simulation_instances_with_charmmff():
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
+    # define region that should be treated with the nnp
     sim = setup_vacuum_simulation(psf, params)
     # set up system
     sim.context.setPositions(crd.positions)
@@ -155,11 +183,11 @@ def test_generate_simulation_instances_with_charmmff():
 
     ############################
     ############################
-    # at lambda=1.0 (qml endpoint)
+    # at lambda=1.0 (nnp endpoint)
     sim.context.setParameter("lambda_interpolate", 1.0)
-    e_sim_qml_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
-    print(e_sim_qml_endstate)
-    assert np.isclose(e_sim_qml_endstate, -5252411.066221259)
+    e_sim_nnp_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
+    print(e_sim_nnp_endstate)
+    assert np.isclose(e_sim_nnp_endstate, -5252411.066221259)
 
     ########################################################
     ########################################################
@@ -175,7 +203,7 @@ def test_generate_simulation_instances_with_charmmff():
         f"{jctc_testsystem}/toppar/par_all36_cgenff.prm",
         f"{jctc_testsystem}/toppar/toppar_water_ions.str",
     )
-    # define region that should be treated with the qml
+    # define region that should be treated with the nnp
     sim = setup_vacuum_simulation(psf, params)
     sim.context.setPositions(pdb.positions)
 
@@ -192,11 +220,11 @@ def test_generate_simulation_instances_with_charmmff():
 
     ############################
     ############################
-    # at lambda=1.0 (qml endpoint)
+    # at lambda=1.0 (nnp endpoint)
     sim.context.setParameter("lambda_interpolate", 1.0)
-    e_sim_qml_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
-    print(e_sim_qml_endstate)
-    assert np.isclose(e_sim_qml_endstate, -1025774.735780582)
+    e_sim_nnp_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
+    print(e_sim_nnp_endstate)
+    assert np.isclose(e_sim_nnp_endstate, -1025774.735780582)
 
     ########################################################
     ########################################################
@@ -231,11 +259,11 @@ def test_generate_simulation_instances_with_charmmff():
 
     ############################
     ############################
-    # at lambda=1.0 (qml endpoint)
+    # at lambda=1.0 (nnp endpoint)
     sim.context.setParameter("lambda_interpolate", 1.0)
-    e_sim_qml_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
-    print(e_sim_qml_endstate)
-    assert np.isclose(e_sim_qml_endstate, -1062775.8348574494)
+    e_sim_nnp_endstate = get_energy(sim).value_in_unit(unit.kilojoule_per_mole)
+    print(e_sim_nnp_endstate)
+    assert np.isclose(e_sim_nnp_endstate, -1062775.8348574494)
 
 
 def test_simulating():
