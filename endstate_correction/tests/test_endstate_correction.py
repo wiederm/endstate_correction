@@ -142,13 +142,13 @@ def test_SMC_protocol():
     from endstate_correction.protocol import perform_endstate_correction, SMCProtocol
 
     # load samples
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
     nr_of_walkers = 10
     nr_of_resampling_steps = 10
     protocol = SMCProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_walkers=nr_of_walkers,
         nr_of_resampling_steps=nr_of_resampling_steps,
     )
@@ -179,7 +179,7 @@ def test_ALL_protocol():
     fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=50,
         )
     neq_protocol = NEQProtocol(
@@ -192,7 +192,7 @@ def test_ALL_protocol():
     smc_protocol = SMCProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_walkers=10,
         nr_of_resampling_steps=10,
     )
@@ -293,7 +293,7 @@ def test_each_protocol():
     neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=10,
         switching_length=50,
     )

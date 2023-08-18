@@ -156,11 +156,11 @@ def summarize_endstate_correction_results(results: AllResults):
     if results.fep_results:
         if results.fep_results.dE_reference_to_target.size:
             print(
-                f"Zwanzig's equation (from mm to qml): {exp(results.fep_results.dE_reference_to_target)['Delta_f']}"
+                f"Zwanzig's equation (from mm to nnp): {exp(results.fep_results.dE_reference_to_target)['Delta_f']}"
             )
         if results.fep_results.dE_target_to_reference.size:
             print(
-                f"Zwanzig's equation (from qml to mm): {exp(results.fep_results.dE_target_to_reference)['Delta_f']}"
+                f"Zwanzig's equation (from nnp to mm): {exp(results.fep_results.dE_target_to_reference)['Delta_f']}"
             )
         if results.fep_results.dE_reference_to_target.size and results.fep_results.dE_target_to_reference.size:
             print(
@@ -169,11 +169,11 @@ def summarize_endstate_correction_results(results: AllResults):
     if results.neq_results:
         if results.neq_results.W_reference_to_target.size:
             print(
-                f"Jarzynski's equation (from mm to qml): {exp(results.neq_results.W_reference_to_target)['Delta_f']}"
+                f"Jarzynski's equation (from mm to nnp): {exp(results.neq_results.W_reference_to_target)['Delta_f']}"
             )
         if results.neq_results.W_target_to_reference.size:
             print(
-                f"Jarzynski's equation (from qml to mm): {exp(results.neq_results.W_target_to_reference)['Delta_f']}"
+                f"Jarzynski's equation (from nnp to mm): {exp(results.neq_results.W_target_to_reference)['Delta_f']}"
             )
         if results.neq_results.W_reference_to_target.size and results.neq_results.W_target_to_reference.size:
             print(
@@ -257,7 +257,7 @@ def plot_endstate_correction_results(
                 data=results.neq_results.W_reference_to_target,
                 kde=True,
                 stat="density",
-                label=r"W(MM$\rightarrow$QML)",
+                label=r"W(MM$\rightarrow$NNP)",
                 color=c1,
             )
         if results.neq_results.W_target_to_reference.size:
@@ -267,7 +267,7 @@ def plot_endstate_correction_results(
                 data=results.neq_results.W_target_to_reference * -1,
                 kde=True,
                 stat="density",
-                label=r"W(QML$\rightarrow$MM)",
+                label=r"W(NNP$\rightarrow$MM)",
                 color=c3,
             )
     if results.fep_results:
@@ -278,7 +278,7 @@ def plot_endstate_correction_results(
                     data=results.fep_results.dE_reference_to_target,
                     kde=True,
                     stat="density",
-                    label=r"$\Delta$E(MM$\rightarrow$QML)",
+                    label=r"$\Delta$E(MM$\rightarrow$NNP)",
                     color=c2,
                 )
         if results.fep_results.dE_target_to_reference.size:
@@ -288,7 +288,7 @@ def plot_endstate_correction_results(
                 data=results.fep_results.dE_target_to_reference * -1,
                 kde=True,
                 stat="density",
-                label=r"$\Delta$E(QML$\rightarrow$MM)",
+                label=r"$\Delta$E(NNP$\rightarrow$MM)",
                 color=c4,
             )
 
@@ -378,23 +378,23 @@ def plot_endstate_correction_results(
 
     if results.neq_results:
         if results.neq_results.W_reference_to_target.size:
-            cum_stddev_ws_from_mm_to_qml = [
+            cum_stddev_ws_from_mm_to_nnp = [
                 results.neq_results.W_reference_to_target[:x].std()
                 for x in range(1, len(results.neq_results.W_reference_to_target) + 1)
             ]
             axs[ax_index].plot(
-                cum_stddev_ws_from_mm_to_qml,
-                label=r"stddev W(MM$\rightarrow$QML)",
+                cum_stddev_ws_from_mm_to_nnp,
+                label=r"stddev W(MM$\rightarrow$NNP)",
                 color=c1,
             )
         if results.neq_results.W_target_to_reference.size:
-            cum_stddev_ws_from_qml_to_mm = [
+            cum_stddev_ws_from_nnp_to_mm = [
                 results.neq_results.W_target_to_reference[:x].std()
                 for x in range(1, len(results.neq_results.W_target_to_reference) + 1)
             ]
             axs[ax_index].plot(
-                cum_stddev_ws_from_qml_to_mm,
-                label=r"stddev W(QML$\rightarrow$MM)",
+                cum_stddev_ws_from_nnp_to_mm,
+                label=r"stddev W(NNP$\rightarrow$MM)",
                 color=c3,
             )
 
@@ -406,12 +406,12 @@ def plot_endstate_correction_results(
                 )
             else:
                 size = results.fep_results.dE_reference_to_target.size
-            cum_stddev_dEs_from_mm_to_qml = [
+            cum_stddev_dEs_from_mm_to_nnp = [
                 results.fep_results.dE_reference_to_target[:x].std() for x in range(1, size + 1)
             ]
             axs[ax_index].plot(
-                cum_stddev_dEs_from_mm_to_qml,
-                label=r"stddev $\Delta$E(MM$\rightarrow$QML)",
+                cum_stddev_dEs_from_mm_to_nnp,
+                label=r"stddev $\Delta$E(MM$\rightarrow$NNP)",
                 color=c2,
             )
         if results.fep_results.dE_target_to_reference.size:
@@ -421,12 +421,12 @@ def plot_endstate_correction_results(
                 )
             else:
                 size = results.fep_results.dE_reference_to_target.size
-            cum_stddev_dEs_from_qml_to_mm = [
+            cum_stddev_dEs_from_nnp_to_mm = [
                 results.fep_results.dE_target_to_reference[:x].std() for x in range(1, size + 1)
             ]
             axs[ax_index].plot(
-                cum_stddev_dEs_from_qml_to_mm,
-                label=r"stddev $\Delta$E(QML$\rightarrow$MM)",
+                cum_stddev_dEs_from_nnp_to_mm,
+                label=r"stddev $\Delta$E(NNP$\rightarrow$MM)",
                 color=c4,
             )
 
