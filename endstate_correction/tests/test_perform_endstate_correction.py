@@ -3,8 +3,21 @@ import pytest
 from importlib_resources import files
 
 import endstate_correction
-from endstate_correction.protocol import BSSProtocol, Results
-from endstate_correction.protocol import perform_endstate_correction, Protocol
+from endstate_correction.protocol import (
+    BSSProtocol,
+    FEPResults,
+    NEQResults,
+    SMCResults,
+    EquResults,
+    AllResults
+)
+from endstate_correction.protocol import (
+    perform_endstate_correction,
+    AllProtocol,
+    FEPProtocol,
+    NEQProtocol,
+    SMCProtocol,
+)
 from endstate_correction.simulation import (
     EndstateCorrectionAMBER,
 )
@@ -61,18 +74,17 @@ class TestPerformCorrection:
     def perform_correction(ec):
         sim = ec.get_simulation()
         traj = ec.get_trajectory()
-        fep_protocol = Protocol(
-            method="NEQ",
+        neq_protocol = NEQProtocol(
             sim=sim,
             reference_samples=traj,
             nr_of_switches=5,
-            neq_switching_length=10,
+            switching_length=10,
             save_endstates=False,
             save_trajs=False,
         )
 
-        r = perform_endstate_correction(fep_protocol)
+        r = perform_endstate_correction(neq_protocol)
         return r
 
     def test_sanity(self, perform_correction):
-        assert isinstance(perform_correction, Results)
+        assert isinstance(perform_correction, AllResults)

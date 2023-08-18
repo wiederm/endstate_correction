@@ -14,7 +14,7 @@ stepsize = 1 * time_unit
 collision_rate = 1 / unit.picosecond
 temperature = 300 * unit.kelvin
 
-kBT = kB * temperature # thermal energy
+kBT = kB * temperature  # thermal energy
 
 jctc_systems = [
     "1_octanol",
@@ -106,5 +106,3 @@ map_hp_to_zinc = {
     "hp21": "ZINC06568023",
     "hp22": "ZINC33381936",
 }
-
-
