@@ -188,32 +188,20 @@ class FEPResults(BaseResults):
 class NEQResults(BaseResults):
     """Provides a dataclass containing the results of a protocol"""
 
-    W_reference_to_target: np.array = np.array([])  # W from reference to target
-    W_target_to_reference: np.array = np.array([])  # W from target to reference
-    endstate_samples_reference_to_target: np.array = np.array(
-        []
-    )  # endstate samples from reference to target
-    endstate_samples_target_to_reference: np.array = np.array(
-        []
-    )  # endstate samples from target to reference
-    switching_traj_reference_to_target: np.array = np.array(
-        []
-    )  # switching traj from reference to target
-    switching_traj_target_to_reference: np.array = np.array(
-        []
-    )  # switching traj from target to reference
+    W_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # W from reference to target
+    W_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # W from target to reference
+    endstate_samples_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from reference to target
+    endstate_samples_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from target to reference
+    switching_traj_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # switching traj from reference to target
+    switching_traj_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # switching traj from target to reference
 
 
 @dataclass
 class SMCResults(BaseResults):
     logZ: float = 0.0  # free energy difference
     effective_sample_size: list = field(default_factory=list)  # effective sample size
-    endstate_samples_reference_to_target: np.array = np.array(
-        []
-    )  # endstate samples from reference to target
-    endstate_samples_target_to_reference: np.array = np.array(
-        []
-    )  # endstate samples from target to reference
+    endstate_samples_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from reference to target
+    endstate_samples_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from target to reference
 
 
 @dataclass
