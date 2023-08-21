@@ -181,9 +181,8 @@ class EquResults(BaseResults):
 class FEPResults(BaseResults):
     """FEP-specific results"""
 
-    dE_reference_to_target: np.array = np.array([])  # dE from reference to target
-    dE_target_to_reference: np.array = np.array([])  # dE from target to reference
-
+    dE_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # dE from reference to target
+    dE_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # dE from target to reference
 
 @dataclass
 class NEQResults(BaseResults):
