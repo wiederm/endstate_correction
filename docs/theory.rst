@@ -12,8 +12,6 @@ given sufficient overlap of its pdfs, a free energy can be estimated. This proto
 (it needs iid samples at each lambda state connecting the Boltzmann distribution at the endstates) 
 but also reliable and accureate (with low variance).
 
-.. figure:: images/equi.png
-
 
 
 Non-equilibrium (NEQ) work protocol 
