@@ -1,0 +1,30 @@
+endstate\_correction.protocol.EquResults
+========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: EquResults
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~EquResults.equ_mbar
+   
+   

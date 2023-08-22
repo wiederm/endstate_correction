@@ -80,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
-<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span>
+<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span><span class="p">,</span> <span class="n">setup_ZINC00077329_system</span>
 
 
 <div class="viewcode-block" id="test_collect_work_values"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_neq.test_collect_work_values.html#endstate_correction.tests.test_neq.test_collect_work_values">[docs]</a><span class="k">def</span> <span class="nf">test_collect_work_values</span><span class="p">():</span>
@@ -88,64 +88,19 @@
     <span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">_collect_work_values</span>
 
     <span class="n">nr_of_switches</span> <span class="o">=</span> <span class="mi">200</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/ZINC00077329/switching_charmmff/ZINC00077329_neq_ws_from_mm_to_qml_</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2">_5001.pickle&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/ZINC00077329/switching_charmmff/ZINC00077329_neq_ws_from_mm_to_nnp_</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2">_5001.pickle&quot;</span>
     <span class="n">ws</span> <span class="o">=</span> <span class="n">_collect_work_values</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">==</span> <span class="n">nr_of_switches</span></div>
 
 
-<div class="viewcode-block" id="load_endstate_system_and_samples"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_neq.load_endstate_system_and_samples.html#endstate_correction.tests.test_neq.load_endstate_system_and_samples">[docs]</a><span class="k">def</span> <span class="nf">load_endstate_system_and_samples</span><span class="p">(</span>
-    <span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Simulation</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-    <span class="c1"># initialize simulation and load pre-generated samples</span>
-
-    <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">CharmmCrdFile</span><span class="p">,</span> <span class="n">CharmmParameterSet</span><span class="p">,</span> <span class="n">CharmmPsfFile</span>
-
-    <span class="c1">########################################################</span>
-    <span class="c1">########################################################</span>
-    <span class="c1"># ----------------- vacuum -----------------------------</span>
-    <span class="c1"># get all relevant files</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">endstate_correction</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
-    <span class="n">hipen_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/hipen_data&quot;</span>
-
-    <span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.psf&quot;</span><span class="p">)</span>
-    <span class="n">crd</span> <span class="o">=</span> <span class="n">CharmmCrdFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.crd&quot;</span><span class="p">)</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/top_all36_cgenff.rtf&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
-    <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5_000</span>
-    <span class="n">n_steps_per_sample</span> <span class="o">=</span> <span class="mi">1_000</span>
-    <span class="c1">###########################################################################################</span>
-    <span class="n">pdb_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
-    <span class="n">mm_samples</span> <span class="o">=</span> <span class="n">mdtraj</span><span class="o">.</span><span class="n">load_dcd</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/sampling_charmmff/run01/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_samples_</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2">_steps_</span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">}</span><span class="s2">_lamb_0.0000.dcd&quot;</span><span class="p">,</span>
-        <span class="n">top</span><span class="o">=</span><span class="n">pdb_file</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">qml_samples</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">qml_samples</span> <span class="o">=</span> <span class="n">mdtraj</span><span class="o">.</span><span class="n">load_dcd</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/sampling_charmmff/run01/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_samples_</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2">_steps_</span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">}</span><span class="s2">_lamb_1.0000.dcd&quot;</span><span class="p">,</span>
-        <span class="n">top</span><span class="o">=</span><span class="n">pdb_file</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">qml_samples</span></div>
-
-
 <div class="viewcode-block" id="test_switching"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_neq.test_switching.html#endstate_correction.tests.test_neq.test_switching">[docs]</a><span class="k">def</span> <span class="nf">test_switching</span><span class="p">():</span>
-    <span class="n">system_name</span> <span class="o">=</span> <span class="s2">&quot;ZINC00077329&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;test return values of perform_switching function&quot;&quot;&quot;</span>
 
     <span class="c1"># load simulation and samples for ZINC00077329</span>
-    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_qml</span> <span class="o">=</span> <span class="n">load_endstate_system_and_samples</span><span class="p">(</span>
-        <span class="n">system_name</span><span class="o">=</span><span class="n">system_name</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_nnp</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
     <span class="c1"># perform instantaneous switching with predetermined coordinate set</span>
-    <span class="c1"># here, we evaluate dU_forw = dU(x)_qml - dU(x)_mm and make sure that it is the same as</span>
-    <span class="c1"># dU_rev = dU(x)_mm - dU(x)_qml</span>
+    <span class="c1"># here, we evaluate dU_forw = dU(x)_nnp - dU(x)_mm and make sure that it is the same as</span>
+    <span class="c1"># dU_rev = dU(x)_mm - dU(x)_nnp</span>
     <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">lambs</span><span class="p">)</span>
     <span class="n">dE_list</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>

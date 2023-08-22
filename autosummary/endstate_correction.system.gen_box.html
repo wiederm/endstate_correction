@@ -104,8 +104,15 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="endstate_correction.system.gen_box">
 <span class="sig-prename descclassname"><span class="pre">endstate_correction.system.</span></span><span class="sig-name descname"><span class="pre">gen_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmPsfFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CharmmCrdFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">CharmmPsfFile</span></span></span><a class="reference internal" href="../_modules/endstate_correction/system.html#gen_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.system.gen_box" title="Permalink to this definition"></a></dt>
-<dd><p>Function to create psf file containing information about the box used (only for waterbox or commplex simulations). Usful
-when information about box size is not available (e.g. when using TF)</p>
+<dd><p>Function to create psf file containing information about the box used (only for waterbox or commplex simulations).
+Usful when information about box size is not available (e.g. when using TF)</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>psf (CharmmPsfFile): topology instance
+crd (CharmmCrdFile): coordinates</p>
+</dd>
+<dt>Returns:</dt><dd><p>CharmmPsfFile: topology instance containing information about the box</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

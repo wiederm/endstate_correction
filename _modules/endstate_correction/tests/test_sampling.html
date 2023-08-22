@@ -106,7 +106,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
+    <span class="c1"># define region that should be treated with the nnp</span>
     <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
@@ -131,7 +131,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">psf</span> <span class="o">=</span> <span class="n">read_box</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/charmm-gui/input.config.dat&quot;</span><span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
+    <span class="c1"># define region that should be treated with the nnp</span>
     <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
     <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
     <span class="c1"># set up system</span>

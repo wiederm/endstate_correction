@@ -73,13 +73,58 @@
   <h1>Source code for endstate_correction.smc</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Perform SMC sampling for endstate correction</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">mdtraj</span> <span class="kn">import</span> <span class="n">Trajectory</span>
-<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">logsumexp</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">kBT</span><span class="p">,</span> <span class="n">temperature</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Resampler"><a class="viewcode-back" href="../../autosummary/endstate_correction.smc.Resampler.html#endstate_correction.smc.Resampler">[docs]</a><span class="k">class</span> <span class="nc">Resampler</span><span class="p">:</span>
+<div class="viewcode-block" id="Resampler.stratified_resampling"><a class="viewcode-back" href="../../autosummary/endstate_correction.smc.Resampler.html#endstate_correction.smc.Resampler.stratified_resampling">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">stratified_resampling</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stratified resampling of the walkers based on the weights</span>
+<span class="sd">        Implementation is taken and slightly modified from @msuruzhon&#39;s openmmslicer package</span>
+<span class="sd">        https://github.com/openmmslicer/openmmslicer/blob/main/openmmslicer/resampling_methods.py</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: resampled walkers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">n_walkers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">/=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+        <span class="c1"># stratified resampling</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
+        <span class="n">random_numbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_walkers</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_walkers</span>
+        <span class="n">rational_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">n_walkers</span><span class="p">)</span>
+        <span class="n">all_cdf_points</span> <span class="o">=</span> <span class="n">random_numbers</span> <span class="o">+</span> <span class="n">rational_weights</span>
+
+        <span class="n">int_weights</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">cdf_points</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">cdf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cdf_points</span> <span class="ow">in</span> <span class="n">all_cdf_points</span>
+        <span class="p">]</span>
+        <span class="n">all_samples</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sum</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">int_weight</span><span class="p">,</span> <span class="n">samples</span><span class="p">)],</span>
+                <span class="p">[],</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">int_weight</span> <span class="ow">in</span> <span class="n">int_weights</span>
+        <span class="p">]</span>
+        <span class="c1"># flatten list</span>
+        <span class="n">all_samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="n">all_samples</span><span class="p">]</span>
+        <span class="c1"># return resampled walkers</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">all_samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_samples</span></div></div>
 
 
 <div class="viewcode-block" id="SMC"><a class="viewcode-back" href="../../autosummary/endstate_correction.smc.SMC.html#endstate_correction.smc.SMC">[docs]</a><span class="k">class</span> <span class="nc">SMC</span><span class="p">:</span>
@@ -88,7 +133,8 @@
         <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span>
         <span class="n">samples</span><span class="p">:</span> <span class="n">Trajectory</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SMC class</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the SMC class</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            sim (Simulation): simulation instance</span>
@@ -97,41 +143,73 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logZ</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resampler</span> <span class="o">=</span> <span class="n">Resampler</span><span class="p">()</span>
 
-    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_calculate_potential_E_for_particles</span><span class="p">(</span>
-        <span class="n">lamb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">walkers</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">lamb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">walkers</span><span class="p">:</span> <span class="nb">list</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># set lambda parameter</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="n">lamb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="n">lamb</span><span class="p">)</span>
 
         <span class="n">u_intermediate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">walkers</span><span class="p">))</span>
         <span class="c1"># for each particle calculate the intermediate potential in kBT</span>
         <span class="k">for</span> <span class="n">p_idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">walkers</span><span class="p">):</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-            <span class="n">e_pot</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span> <span class="o">/</span> <span class="n">kBT</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">e_pot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getEnergy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPotentialEnergy</span><span class="p">()</span> <span class="o">/</span> <span class="n">kBT</span>
             <span class="n">u_intermediate</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">e_pot</span>
-
         <span class="k">return</span> <span class="n">u_intermediate</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_propagate_particles</span><span class="p">(</span><span class="n">walkers</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">):</span>
-        <span class="n">_intermediate_particles</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">walkers</span><span class="p">:</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-            <span class="n">_intermediate_particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getPositions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPositions</span><span class="p">(</span><span class="n">asNumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">propagate_single_walker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">walker</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setVelocitiesToTemperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">nr_of_steps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="n">getPositions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">getPositions</span><span class="p">(</span><span class="n">asNumpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">propagate_walkers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walkers</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">intermediate_walkers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">propagate_single_walker</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">walkers</span>
+        <span class="p">]</span>
         <span class="c1"># update particles</span>
-        <span class="k">return</span> <span class="n">_intermediate_particles</span>
+        <span class="k">return</span> <span class="n">intermediate_walkers</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_deltaEs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lamb_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">walkers</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="c1"># calculate work</span>
+        <span class="c1"># evaluate U_(\lamb_(i+1))(x_i) -  U_(\lamb_(i))(x_i)</span>
+        <span class="c1"># calculate U_(\lamb_(i))(x_i)</span>
+        <span class="n">u_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="n">lamb_idx</span><span class="p">],</span> <span class="n">walkers</span>
+        <span class="p">)</span>
+        <span class="c1"># calculate U_(\lamb_(i+1))(x_i)</span>
+        <span class="n">u_future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="n">lamb_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">walkers</span>
+        <span class="p">)</span>
+        <span class="c1"># calculate weights (equation 2 in 10.1021/acs.jctc.1c01198)</span>
+        <span class="n">current_deltaEs</span> <span class="o">=</span> <span class="n">u_future</span> <span class="o">-</span> <span class="n">u_now</span>  <span class="c1"># calculate difference in energy</span>
+        <span class="k">return</span> <span class="n">current_deltaEs</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_deltaEs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">current_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">current_deltaEs</span><span class="p">)</span> <span class="o">-</span> <span class="n">current_deltaEs</span>
+        <span class="p">)</span>  <span class="c1"># subtract minimum to avoid numerical issues</span>
+        <span class="n">current_weights</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">current_weights</span><span class="p">)</span>  <span class="c1"># normalize</span>
+        <span class="k">return</span> <span class="n">current_weights</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_effective_sample_size</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">current_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">lamb_idx</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="c1"># calculate ESS</span>
+        <span class="n">ESS</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">current_weights</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Effective Sample Size at lambda = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="n">lamb_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ESS</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ESS</span>
 
 <div class="viewcode-block" id="SMC.perform_SMC"><a class="viewcode-back" href="../../autosummary/endstate_correction.smc.SMC.html#endstate_correction.smc.SMC.perform_SMC">[docs]</a>    <span class="k">def</span> <span class="nf">perform_SMC</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nr_of_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform SMC sampling</span>
 
 <span class="sd">        Args:</span>
@@ -140,82 +218,59 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># ------------------------- #</span>
-        <span class="c1"># Outline of the algorithm:</span>
+        <span class="c1"># Outline of the basic Sequential Importance Sampling (SIS) algorithm as outlined in</span>
+        <span class="c1"># 10.1021/acs.jctc.1c01198</span>
         <span class="c1"># ------------------------- #</span>
-        <span class="c1"># select random subset of walkers from the samples</span>
+
+        <span class="c1"># Goal: Calculate free energy estimate between reference distribution \pi(\lamb=0; x) and</span>
+        <span class="c1"># target distribution \pi(\lamb=1; x) with resampling steps</span>
+
+        <span class="c1"># Motivation: SMC might help focus the non equilibrium sampling on the region of interest;</span>
+        <span class="c1"># might help with RBFE calculations in analogy to the work of 10.1101/2020.07.29.227959 and avoid sampling of the</span>
+        <span class="c1"># target distribution \pi(\lamb=1; x) for bidirectional NEQ protocols</span>
+
+        <span class="c1"># obtain IID samples from the reference distribution \pi(\lamb=0; x)</span>
         <span class="c1"># initialize weights to be uniform</span>
+        <span class="c1"># select random subset of walkers from the samples</span>
+        <span class="c1"># for each interpolation step i between \lamb=0 and \lamb=1</span>
+        <span class="c1">#   propagate the walkers for a fixed number of steps with u(x; \lamb=i) to generate pool of IID samples</span>
+        <span class="c1">#   for each walker j</span>
+        <span class="c1">#       calculate the unnormalized weights w = exp(u(x; \lamb=i+1) - u(x; \lamb=i))</span>
+        <span class="c1">#   resample the walkers according to the normalized weights</span>
 
-        <span class="c1"># FOR each lambda in a sequence from 0 to 1:</span>
-        <span class="c1">#     calculate the intermediate potential for each particle U = (1 - lamb) * U_ref + lamb * (U_target - U_ref)</span>
-        <span class="c1">#     calculate the intermediate gradient for each particle</span>
-        <span class="c1">#     calculate the weights based on the ratio of successive intermediate potentials</span>
-        <span class="c1">#     update the weights based on the ratio of successive intermediate potentials</span>
-        <span class="c1">#     normalize the weights</span>
+        <span class="c1"># calculate the free energy estimate using the weights of each walker and the Zwanzig relation</span>
 
-        <span class="c1"># resample the particles based on the weights</span>
-
-        <span class="c1"># FOR each particle:</span>
-        <span class="c1">#     initialize velocity from a Maxwell-Boltzmann distribution corresponding to the temperature</span>
-        <span class="c1">#     update the state using Langevin dynamics, combining the gradient, the velocity, and Gaussian noise</span>
-
-        <span class="c1"># After all steps are completed, calculate the free energy difference:</span>
-        <span class="c1">#     compute the reference and target potentials for the final particles</span>
-        <span class="c1">#     compute the unnormalized weights as the exponential of the difference between the reference and target potentials</span>
-        <span class="c1">#     estimate the free energy difference as the negative logarithm of the average unnormalized weight</span>
-        <span class="c1"># ------------------------- #</span>
-
-        <span class="c1"># initialize weights</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nr_of_walkers</span><span class="p">)</span> <span class="o">/</span> <span class="n">nr_of_walkers</span>
-        <span class="c1"># initialize lambda values</span>
-        <span class="n">lamb_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span>
-        <span class="c1"># initialize potential energy matrix</span>
-        <span class="n">pot_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nr_of_walkers</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">))</span>
-
-        <span class="c1"># select initial samples</span>
-        <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_walkers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nr_of_walkers</span><span class="p">)</span> <span class="o">/</span> <span class="n">nr_of_walkers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span>
+        <span class="c1"># select initial, equally spaced samples</span>
+        <span class="n">equally_spaces_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
         <span class="p">)</span>
         <span class="n">walkers</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">frame_idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_idx</span> <span class="ow">in</span> <span class="n">equally_spaces_idx</span>
         <span class="p">]</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_set_of_walkers</span> <span class="o">=</span> <span class="n">walkers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">walkers</span><span class="p">)</span> <span class="o">==</span> <span class="n">nr_of_walkers</span>
 
-        <span class="c1"># calculate the initial potential for each particle</span>
-        <span class="n">u_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">walkers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
-
-        <span class="c1"># for each lambda value calculate the intermediate potential for each particle</span>
-        <span class="c1"># and update the weights based on the ratio of successive intermediate potentials</span>
-        <span class="k">for</span> <span class="n">lamb</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">lamb_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>  <span class="c1"># exclude the first lambda value</span>
-            <span class="n">u_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_potential_E_for_particles</span><span class="p">(</span><span class="n">lamb</span><span class="p">,</span> <span class="n">walkers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
-            <span class="c1"># update the weights based on the ratio of successive intermediate potentials</span>
-            <span class="n">log_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">u_now</span> <span class="o">-</span> <span class="n">u_before</span><span class="p">)</span>
-            <span class="c1"># NOTE: unsure if this is actually ture (shouldn&#39;t it be log(u_now/u_before)?))</span>
-            <span class="c1"># will leave this for now but revisit later!</span>
-
-            <span class="n">log_weights</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">log_weights</span><span class="p">)</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_weights</span><span class="p">)</span>
-            <span class="n">weights</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-
+        <span class="k">for</span> <span class="n">lamb_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lamb_idx</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">[</span><span class="n">lamb_idx</span><span class="p">])</span>
+            <span class="c1"># Propagate the walkers</span>
+            <span class="n">walkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_walkers</span><span class="p">(</span><span class="n">walkers</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span>
+            <span class="c1"># Calculate weights</span>
+            <span class="n">current_deltaEs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_deltaEs</span><span class="p">(</span><span class="n">lamb_idx</span><span class="p">,</span> <span class="n">walkers</span><span class="p">)</span>
+            <span class="n">current_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_weights</span><span class="p">(</span><span class="n">current_deltaEs</span><span class="p">)</span>
+            <span class="c1"># report effective sample size</span>
+            <span class="n">ess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_effective_sample_size</span><span class="p">(</span><span class="n">current_weights</span><span class="p">,</span> <span class="n">lamb_idx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ess</span><span class="p">)</span>
+            <span class="c1"># add to accumulated logZ</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logZ</span> <span class="o">+=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="o">-</span><span class="n">current_deltaEs</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nr_of_walkers</span><span class="p">)</span>
             <span class="c1"># Resample the particles based on the weights</span>
-            <span class="n">random_frame_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-                <span class="n">nr_of_walkers</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nr_of_walkers</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span>
-            <span class="p">)</span>
-            <span class="n">walkers</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">walkers</span><span class="p">[</span><span class="n">random_frame_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">random_frame_idx</span> <span class="ow">in</span> <span class="n">random_frame_idxs</span>
-            <span class="p">]</span>
-
-            <span class="c1"># Propagate the particles</span>
-            <span class="n">walkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagate_particles</span><span class="p">(</span><span class="n">walkers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
-
-            <span class="c1"># Calculate the free energy difference</span>
-            <span class="n">free_energy_diff</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
-            <span class="c1"># update potential energy vector</span>
-            <span class="n">u_before</span> <span class="o">=</span> <span class="n">u_now</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">free_energy_diff</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="n">free_energy_diff</span><span class="p">,</span> <span class="n">pot_e</span><span class="p">)</span></div></div>
+            <span class="n">walkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resampler</span><span class="o">.</span><span class="n">stratified_resampling</span><span class="p">(</span><span class="n">walkers</span><span class="p">,</span> <span class="n">current_weights</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_set_of_walkers</span> <span class="o">=</span> <span class="n">walkers</span>
+        <span class="c1"># reset lambda value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

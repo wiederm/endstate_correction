@@ -55,9 +55,18 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.neq.html">endstate_correction.neq</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">endstate_correction.protocol</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.perform_endstate_correction.html">endstate_correction.protocol.perform_endstate_correction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.AllProtocol.html">endstate_correction.protocol.AllProtocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.AllResults.html">endstate_correction.protocol.AllResults</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.BSSProtocol.html">endstate_correction.protocol.BSSProtocol</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.Protocol.html">endstate_correction.protocol.Protocol</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.Results.html">endstate_correction.protocol.Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.BaseProtocol.html">endstate_correction.protocol.BaseProtocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.BaseResults.html">endstate_correction.protocol.BaseResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.EquResults.html">endstate_correction.protocol.EquResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.FEPProtocol.html">endstate_correction.protocol.FEPProtocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.FEPResults.html">endstate_correction.protocol.FEPResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.NEQProtocol.html">endstate_correction.protocol.NEQProtocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.NEQResults.html">endstate_correction.protocol.NEQResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.SMCProtocol.html">endstate_correction.protocol.SMCProtocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.protocol.SMCResults.html">endstate_correction.protocol.SMCResults</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.simulation.html">endstate_correction.simulation</a></li>
@@ -112,14 +121,41 @@
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.AllProtocol.html#endstate_correction.protocol.AllProtocol" title="endstate_correction.protocol.AllProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AllProtocol</span></code></a></p></td>
+<td><p>Dataclass for running all protocols</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.AllResults.html#endstate_correction.protocol.AllResults" title="endstate_correction.protocol.AllResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AllResults</span></code></a></p></td>
+<td><p>Dataclass for combined results of all protocols</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.BSSProtocol.html#endstate_correction.protocol.BSSProtocol" title="endstate_correction.protocol.BSSProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BSSProtocol</span></code></a></p></td>
 <td><p>This is a dataclass mimicking the BioSimSpace.Protocol.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.Protocol.html#endstate_correction.protocol.Protocol" title="endstate_correction.protocol.Protocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></a></p></td>
-<td><p>Defining the endstate correction protocol</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.BaseProtocol.html#endstate_correction.protocol.BaseProtocol" title="endstate_correction.protocol.BaseProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseProtocol</span></code></a></p></td>
+<td><p>Base class for all endstate correction protocols</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.Results.html#endstate_correction.protocol.Results" title="endstate_correction.protocol.Results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Results</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.BaseResults.html#endstate_correction.protocol.BaseResults" title="endstate_correction.protocol.BaseResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseResults</span></code></a></p></td>
+<td><p>Base class for all protocol results</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.EquResults.html#endstate_correction.protocol.EquResults" title="endstate_correction.protocol.EquResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquResults</span></code></a></p></td>
+<td><p>Equilibrium simulation-specific results</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.FEPProtocol.html#endstate_correction.protocol.FEPProtocol" title="endstate_correction.protocol.FEPProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FEPProtocol</span></code></a></p></td>
+<td><p>FEP-specific protocol</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.FEPResults.html#endstate_correction.protocol.FEPResults" title="endstate_correction.protocol.FEPResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FEPResults</span></code></a></p></td>
+<td><p>FEP-specific results</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.NEQProtocol.html#endstate_correction.protocol.NEQProtocol" title="endstate_correction.protocol.NEQProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEQProtocol</span></code></a></p></td>
+<td><p>NEQ-specific protocol</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.NEQResults.html#endstate_correction.protocol.NEQResults" title="endstate_correction.protocol.NEQResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEQResults</span></code></a></p></td>
 <td><p>Provides a dataclass containing the results of a protocol</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.protocol.SMCProtocol.html#endstate_correction.protocol.SMCProtocol" title="endstate_correction.protocol.SMCProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SMCProtocol</span></code></a></p></td>
+<td><p>SMC-specific protocol</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.protocol.SMCResults.html#endstate_correction.protocol.SMCResults" title="endstate_correction.protocol.SMCResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SMCResults</span></code></a></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>

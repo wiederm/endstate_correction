@@ -20,6 +20,7 @@ endstate\_correction.smc
       :template: custom-class-template.rst
       :nosignatures:
    
+      Resampler
       SMC
    
    

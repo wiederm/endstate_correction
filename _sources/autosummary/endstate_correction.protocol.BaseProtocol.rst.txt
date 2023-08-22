@@ -1,0 +1,32 @@
+endstate\_correction.protocol.BaseProtocol
+==========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: BaseProtocol
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseProtocol.reference_samples
+      ~BaseProtocol.target_samples
+      ~BaseProtocol.sim
+   
+   

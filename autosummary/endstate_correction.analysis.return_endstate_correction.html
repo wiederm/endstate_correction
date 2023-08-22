@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.analysis.save_mol_pic" href="endstate_correction.analysis.save_mol_pic.html" />
+    <link rel="next" title="endstate_correction.analysis.summarize_endstate_correction_results" href="endstate_correction.analysis.summarize_endstate_correction_results.html" />
     <link rel="prev" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html" /> 
 </head>
 
@@ -49,14 +49,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="endstate_correction.html">endstate_correction</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.analysis.html">endstate_correction.analysis</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.get_indices.html">endstate_correction.analysis.get_indices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_endstate_correction_results.html">endstate_correction.analysis.plot_endstate_correction_results</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html">endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html">endstate_correction.analysis.plot_results_for_equilibrium_free_energy</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.analysis.return_endstate_correction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.save_mol_pic.html">endstate_correction.analysis.save_mol_pic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.summarize_endstate_correction_results.html">endstate_correction.analysis.summarize_endstate_correction_results</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.visualize_torsion_profile.html">endstate_correction.analysis.visualize_torsion_profile</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.constant.html">endstate_correction.constant</a></li>
@@ -107,17 +104,16 @@
 <h1>endstate_correction.analysis.return_endstate_correction<a class="headerlink" href="#endstate-correction-analysis-return-endstate-correction" title="Permalink to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="endstate_correction.analysis.return_endstate_correction">
-<span class="sig-prename descclassname"><span class="pre">endstate_correction.analysis.</span></span><span class="sig-name descname"><span class="pre">return_endstate_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="endstate_correction.protocol.Results.html#endstate_correction.protocol.Results" title="endstate_correction.protocol.Results"><span class="pre">Results</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NEQ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'forw'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/endstate_correction/analysis.html#return_endstate_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.analysis.return_endstate_correction" title="Permalink to this definition"></a></dt>
-<dd><p>Return the endstate correction for a given method and direction.
-Args:</p>
-<blockquote>
-<div><p>results (Results): instance of the Results class
-method (str): NEQ or FEP
-direction (str): forw, rev or bid</p>
-</div></blockquote>
+<span class="sig-prename descclassname"><span class="pre">endstate_correction.analysis.</span></span><span class="sig-name descname"><span class="pre">return_endstate_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="endstate_correction.protocol.AllResults.html#endstate_correction.protocol.AllResults" title="endstate_correction.protocol.AllResults"><span class="pre">AllResults</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NEQ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'forw'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/endstate_correction/analysis.html#return_endstate_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.analysis.return_endstate_correction" title="Permalink to this definition"></a></dt>
+<dd><p>Return the endstate correction for a given method and direction.</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>float: endstate correction delta_f
-float: endstate correction error</p>
+<dt>Args:</dt><dd><p>results (AllResults): instance of the AllRestults class
+method (str): FEP or NEQ
+direction (str): forw, rev or bid</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: if method or direction is not supported</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[float, float]: endstate correction delta_f, endstate correction error</p>
 </dd>
 </dl>
 </dd></dl>
@@ -129,7 +125,7 @@ float: endstate correction error</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html" class="btn btn-neutral float-left" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.analysis.save_mol_pic.html" class="btn btn-neutral float-right" title="endstate_correction.analysis.save_mol_pic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.analysis.summarize_endstate_correction_results.html" class="btn btn-neutral float-right" title="endstate_correction.analysis.summarize_endstate_correction_results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

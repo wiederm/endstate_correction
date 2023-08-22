@@ -1,0 +1,33 @@
+endstate\_correction.protocol.AllResults
+========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: AllResults
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AllResults.equ_results
+      ~AllResults.fep_results
+      ~AllResults.neq_results
+      ~AllResults.smc_results
+   
+   

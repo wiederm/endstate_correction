@@ -28,9 +28,18 @@ endstate\_correction.protocol
       :template: custom-class-template.rst
       :nosignatures:
    
+      AllProtocol
+      AllResults
       BSSProtocol
-      Protocol
-      Results
+      BaseProtocol
+      BaseResults
+      EquResults
+      FEPProtocol
+      FEPResults
+      NEQProtocol
+      NEQResults
+      SMCProtocol
+      SMCResults
    
    
 

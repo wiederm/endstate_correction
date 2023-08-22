@@ -84,6 +84,15 @@
     <span class="n">dcd_output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">pdb_output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert pickle file trajectory to dcd file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pickle_file_path (str): path where pickle file is stored</span>
+<span class="sd">        path_to_psf (str): path where psf file is stored</span>
+<span class="sd">        path_to_crd (str): path where crd file is stored</span>
+<span class="sd">        dcd_output_path (str): path to save dcd file</span>
+<span class="sd">        pdb_output_path (str): path to save pdb file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># helper function that converts pickle trajectory file to dcd file</span>
 
     <span class="n">f</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pickle_file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>

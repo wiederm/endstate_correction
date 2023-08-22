@@ -16,6 +16,8 @@ endstate\_correction.tests.test\_smc
       :nosignatures:
    
       test_SMC
+      test_SMC_algorithm
+      test_SMC_stratified_resampling
    
    
 

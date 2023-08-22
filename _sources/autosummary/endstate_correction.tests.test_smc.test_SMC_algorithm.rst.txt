@@ -1,0 +1,6 @@
+endstate\_correction.tests.test\_smc.test\_SMC\_algorithm
+=========================================================
+
+.. currentmodule:: endstate_correction.tests.test_smc
+
+.. autofunction:: test_SMC_algorithm

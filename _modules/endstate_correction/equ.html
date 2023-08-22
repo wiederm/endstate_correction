@@ -74,24 +74,29 @@
 <span></span><span class="sd">&quot;&quot;&quot;Provide the functions for equilibrium sampling.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
 <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">kBT</span>
 
 
 <span class="k">def</span> <span class="nf">_collect_equ_samples</span><span class="p">(</span>
     <span class="n">trajs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">every_nth_frame</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given a list of k trajectories with n samples a dictionary with the number of samples per trajektory</span>
-<span class="sd">    and a list with all samples [n_1, n_2, ...] is generated</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a dictionary with the number of samples per trajektory and </span>
+<span class="sd">    a list with all samples [n_1, n_2, ...] given a list of k trajectories with n samples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        trajs (list): list of trajectories</span>
+<span class="sd">        every_nth_frame (int, optional): prune samples by taking only every nth sample. Defaults to 10.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Tuple(coordinates, N_k)</span>
+<span class="sd">        Tuple[list, np.array]: coordinates, N_k</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    
     <span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">N_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajs</span><span class="p">))</span>
 
@@ -119,6 +124,7 @@
 <span class="sd">        trajs (list): list of trajectories</span>
 <span class="sd">        sim (Simulation): simulation object</span>
 <span class="sd">        every_nth_frame (int, optional): prune the samples further by taking only every nth sample. Defaults to 2.</span>
+<span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: u_kn matrix</span>
 <span class="sd">    &quot;&quot;&quot;</span>

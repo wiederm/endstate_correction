@@ -17,6 +17,8 @@ endstate\_correction.smc.SMC
       :nosignatures:
    
       ~SMC.perform_SMC
+      ~SMC.propagate_single_walker
+      ~SMC.propagate_walkers
    
    
 

@@ -48,7 +48,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-use-this-package">How to use this package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#a-typical-neq-workflow">A typical NEQ workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-typical-non-equilibrium-neq-switching-workflow">A typical Non-equilibrium (NEQ) switching workflow</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#generate-the-equilibrium-distribution-pi-x-lambda-0">Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span></a></li>
@@ -99,10 +99,10 @@ This package can be installed using:
 <section id="how-to-use-this-package">
 <h2>How to use this package<a class="headerlink" href="#how-to-use-this-package" title="Permalink to this heading"></a></h2>
 <p>We have prepared two scripts that should help to use this package, both are located in <code class="code docutils literal notranslate"><span class="pre">endstate_correction/scripts</span></code>.
-We will start by describing the use of the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script and then discuss the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
+We will start by describing the use of the <code class="code docutils literal notranslate"><span class="pre">generate_endstate_samples.py</span></code> script and then discuss the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script.</p>
 </section>
-<section id="a-typical-neq-workflow">
-<h2>A typical NEQ workflow<a class="headerlink" href="#a-typical-neq-workflow" title="Permalink to this heading"></a></h2>
+<section id="a-typical-non-equilibrium-neq-switching-workflow">
+<h2>A typical Non-equilibrium (NEQ) switching workflow<a class="headerlink" href="#a-typical-non-equilibrium-neq-switching-workflow" title="Permalink to this heading"></a></h2>
 <section id="generate-the-equilibrium-distribution-pi-x-lambda-0">
 <h3>Generate the equilibrium distribution <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#generate-the-equilibrium-distribution-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>In order to perform a NEQ work protocol, we need samples drawn from the equilibrium distribution from which we initialize our annealing simulations.
@@ -136,7 +136,11 @@ If samples are not already available, the <code class="code docutils literal not
 </div>
 <p>If you want to perform bidirectional FEP or NEQ you need to sample at <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> <em>and</em> <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span>.
 This can be controlled by setting the number using the variable <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states</span></code>.
-The default value set in the <code class="code docutils literal notranslate"><span class="pre">sampling.py</span></code> script is <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states=2</span></code>, generating samples from both endstate equilibrium distributions.</p>
+The default value set in the <code class="code docutils literal notranslate"><span class="pre">generate_endstate_samples.py</span></code> script is <code class="code docutils literal notranslate"><span class="pre">nr_lambda_states=2</span></code>, generating samples from both endstate equilibrium distributions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nr_lambda_states</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># samples equilibrium distribution at both endstates</span>
+<span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_lambda_states</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="perform-unidirectional-neq-from-pi-x-lambda-0">
 <h3>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
@@ -152,14 +156,19 @@ with:</p>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+    <span class="n">save_endstates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_trajs</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.
 The particular code above defines unidirectional NEQ switching using 100 switches and a switching length of 1 ps.
 The direciton of the switching simulation is controlled by the sampels that are provided:
-if <cite>reference_samples</cite> are provided, switching is performed from the reference to the target level of theory, if <cite>target_samples</cite> are provided, switching is performed from the target level to the reference level.
-If both samples are provided, bidirectional NEQ switching is performed (for an example see below).</p>
+if <code class="code docutils literal notranslate"><span class="pre">reference_samples</span></code> are provided, switching is performed from the reference to the target level of theory, if <cite>target_samples</cite> are provided, switching is performed from the target level to the reference level.
+If both samples are provided, bidirectional NEQ switching is performed (for an example see below).
+There is the possibility to save the endstate of each switch if <code class="code docutils literal notranslate"><span class="pre">save_endstates</span></code> is set to <code class="code docutils literal notranslate"><span class="pre">True</span></code>.
+Additionally, the switching trajectory of each switch can be saved if <code class="code docutils literal notranslate"><span class="pre">save_trajs=True</span></code>.
+Both options only make sense for a NEQ protocol.</p>
 </section>
 <section id="perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">
 <h3>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h3>
@@ -168,7 +177,7 @@ If both samples are provided, bidirectional NEQ switching is performed (for an e
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
@@ -179,6 +188,14 @@ If both samples are provided, bidirectional NEQ switching is performed (for an e
 <section id="perform-unidirectional-fep-from-pi-x-lambda-0">
 <h3>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The protocol has to be adopted slightly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
@@ -188,25 +205,45 @@ If both samples are provided, bidirectional NEQ switching is performed (for an e
 </section>
 <section id="available-protocols">
 <h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
+<p>unidirectional NEQ protocol (reference to target)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>bidirectional NEQ protocol (save switching trajectory and endstate of each switch)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-    <span class="n">target_samples</span><span class="o">=</span><span class="n">qml_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">neq_switching_length</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
     <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">save_trajs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>unidirectional FEP protocol (reference to target)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>bidirectional FEP protocol</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
+    <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

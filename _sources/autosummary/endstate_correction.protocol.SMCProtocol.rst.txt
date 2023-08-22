@@ -1,0 +1,35 @@
+endstate\_correction.protocol.SMCProtocol
+=========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: SMCProtocol
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SMCProtocol.nr_of_resampling_steps
+      ~SMCProtocol.nr_of_walkers
+      ~SMCProtocol.reference_samples
+      ~SMCProtocol.save_endstates
+      ~SMCProtocol.target_samples
+      ~SMCProtocol.sim
+   
+   

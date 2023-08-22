@@ -1,0 +1,36 @@
+endstate\_correction.protocol.NEQProtocol
+=========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: NEQProtocol
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NEQProtocol.nr_of_switches
+      ~NEQProtocol.reference_samples
+      ~NEQProtocol.save_endstates
+      ~NEQProtocol.save_trajs
+      ~NEQProtocol.switching_length
+      ~NEQProtocol.target_samples
+      ~NEQProtocol.sim
+   
+   

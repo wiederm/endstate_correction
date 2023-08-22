@@ -19,6 +19,7 @@ endstate\_correction.tests.test\_endstate\_correction
       test_ALL_protocol
       test_FEP_protocol
       test_NEQ_protocol
+      test_SMC_protocol
       test_each_protocol
       test_endstate_correction_imported
    

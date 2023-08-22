@@ -15,9 +15,12 @@ endstate\_correction.tests.test\_system
       :toctree:
       :nosignatures:
    
+      load_endstate_system_and_samples
+      setup_ZINC00077329_system
       setup_vacuum_simulation
       setup_waterbox_simulation
       test_generate_simulation_instances_with_charmmff
+      test_initializing_ZINC00077329_system
       test_simulating
    
    

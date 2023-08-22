@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.analysis.get_indices" href="endstate_correction.analysis.get_indices.html" />
+    <link rel="next" title="endstate_correction.analysis.plot_endstate_correction_results" href="endstate_correction.analysis.plot_endstate_correction_results.html" />
     <link rel="prev" title="endstate_correction" href="endstate_correction.html" /> 
 </head>
 
@@ -49,14 +49,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="endstate_correction.html">endstate_correction</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">endstate_correction.analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.get_indices.html">endstate_correction.analysis.get_indices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_endstate_correction_results.html">endstate_correction.analysis.plot_endstate_correction_results</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html">endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html">endstate_correction.analysis.plot_results_for_equilibrium_free_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.return_endstate_correction.html">endstate_correction.analysis.return_endstate_correction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.save_mol_pic.html">endstate_correction.analysis.save_mol_pic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.summarize_endstate_correction_results.html">endstate_correction.analysis.summarize_endstate_correction_results</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.analysis.visualize_torsion_profile.html">endstate_correction.analysis.visualize_torsion_profile</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.constant.html">endstate_correction.constant</a></li>
@@ -108,29 +105,20 @@
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.get_indices.html#endstate_correction.analysis.get_indices" title="endstate_correction.analysis.get_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indices</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_endstate_correction_results.html#endstate_correction.analysis.plot_endstate_correction_results" title="endstate_correction.analysis.plot_endstate_correction_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_endstate_correction_results</span></code></a></p></td>
+<td><p>Plot endstate correction results.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_endstate_correction_results.html#endstate_correction.analysis.plot_endstate_correction_results" title="endstate_correction.analysis.plot_endstate_correction_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_endstate_correction_results</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy" title="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_overlap_for_equilibrium_free_energy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy" title="endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_overlap_for_equilibrium_free_energy</span></code></a></p></td>
 <td><p>Calculate the overlap for each state with each other state.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_results_for_equilibrium_free_energy" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_results_for_equilibrium_free_energy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.plot_results_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_results_for_equilibrium_free_energy" title="endstate_correction.analysis.plot_results_for_equilibrium_free_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_results_for_equilibrium_free_energy</span></code></a></p></td>
 <td><p>Calculate the accumulated free energy along the mutation progress.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.return_endstate_correction.html#endstate_correction.analysis.return_endstate_correction" title="endstate_correction.analysis.return_endstate_correction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_endstate_correction</span></code></a></p></td>
-<td><p>Return the endstate correction for a given method and direction. Args:     results (Results): instance of the Results class     method (str): NEQ or FEP     direction (str): forw, rev or bid Returns:     float: endstate correction delta_f     float: endstate correction error.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.save_mol_pic.html#endstate_correction.analysis.save_mol_pic" title="endstate_correction.analysis.save_mol_pic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_mol_pic</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.return_endstate_correction.html#endstate_correction.analysis.return_endstate_correction" title="endstate_correction.analysis.return_endstate_correction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_endstate_correction</span></code></a></p></td>
+<td><p>Return the endstate correction for a given method and direction.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.analysis.summarize_endstate_correction_results.html#endstate_correction.analysis.summarize_endstate_correction_results" title="endstate_correction.analysis.summarize_endstate_correction_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summarize_endstate_correction_results</span></code></a></p></td>
 <td><p>Summarize the results of the endstate correction analysis.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.analysis.visualize_torsion_profile.html#endstate_correction.analysis.visualize_torsion_profile" title="endstate_correction.analysis.visualize_torsion_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visualize_torsion_profile</span></code></a></p></td>
-<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -141,7 +129,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="endstate_correction.html" class="btn btn-neutral float-left" title="endstate_correction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.analysis.get_indices.html" class="btn btn-neutral float-right" title="endstate_correction.analysis.get_indices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.analysis.plot_endstate_correction_results.html" class="btn btn-neutral float-right" title="endstate_correction.analysis.plot_endstate_correction_results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -86,15 +86,88 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">LangevinIntegrator</span>
 <span class="kn">from</span> <span class="nn">openmmml</span> <span class="kn">import</span> <span class="n">MLPotential</span>
+<span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
 
 <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">endstate_correction</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">hipen_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/hipen_data&quot;</span>
 <span class="n">jctc_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/jctc_data&quot;</span>
 
 
+<div class="viewcode-block" id="load_endstate_system_and_samples"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.load_endstate_system_and_samples.html#endstate_correction.tests.test_system.load_endstate_system_and_samples">[docs]</a><span class="k">def</span> <span class="nf">load_endstate_system_and_samples</span><span class="p">(</span>
+    <span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Simulation</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if samples can be loaded and system can be created</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        system_name (str): name of the system</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[Simulation, list, list]: instance of Simulation class, MM samples, NNP samples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initialize simulation and load pre-generated samples</span>
+
+    <span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">CharmmCrdFile</span><span class="p">,</span> <span class="n">CharmmParameterSet</span><span class="p">,</span> <span class="n">CharmmPsfFile</span>
+
+    <span class="c1">########################################################</span>
+    <span class="c1">########################################################</span>
+    <span class="c1"># ----------------- vacuum -----------------------------</span>
+    <span class="c1"># get all relevant files</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">endstate_correction</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">hipen_testsystem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/data/hipen_data&quot;</span>
+
+    <span class="n">psf</span> <span class="o">=</span> <span class="n">CharmmPsfFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.psf&quot;</span><span class="p">)</span>
+    <span class="n">crd</span> <span class="o">=</span> <span class="n">CharmmCrdFile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.crd&quot;</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">CharmmParameterSet</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/top_all36_cgenff.rtf&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># define region that should be treated with the nnp</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">=</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5_000</span>
+    <span class="n">n_steps_per_sample</span> <span class="o">=</span> <span class="mi">1_000</span>
+    <span class="c1">###########################################################################################</span>
+    <span class="n">pdb_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
+    <span class="n">mm_samples</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load_dcd</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/sampling_charmmff/run01/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_samples_</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2">_steps_</span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">}</span><span class="s2">_lamb_0.0000.dcd&quot;</span><span class="p">,</span>
+        <span class="n">top</span><span class="o">=</span><span class="n">pdb_file</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">nnp_samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nnp_samples</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load_dcd</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;data/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/sampling_charmmff/run01/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">_samples_</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2">_steps_</span><span class="si">{</span><span class="n">n_steps_per_sample</span><span class="si">}</span><span class="s2">_lamb_1.0000.dcd&quot;</span><span class="p">,</span>
+        <span class="n">top</span><span class="o">=</span><span class="n">pdb_file</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">nnp_samples</span></div>
+
+
+<div class="viewcode-block" id="setup_ZINC00077329_system"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.setup_ZINC00077329_system.html#endstate_correction.tests.test_system.setup_ZINC00077329_system">[docs]</a><span class="k">def</span> <span class="nf">setup_ZINC00077329_system</span><span class="p">():</span>
+    <span class="n">system_name</span> <span class="o">=</span> <span class="s2">&quot;ZINC00077329&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">system_name</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># load simulation and samples for ZINC00077329</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_mm_nnp</span> <span class="o">=</span> <span class="n">load_endstate_system_and_samples</span><span class="p">(</span>
+        <span class="n">system_name</span><span class="o">=</span><span class="n">system_name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_mm_nnp</span></div>
+
+
 <div class="viewcode-block" id="setup_vacuum_simulation"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.setup_vacuum_simulation.html#endstate_correction.tests.test_system.setup_vacuum_simulation">[docs]</a><span class="k">def</span> <span class="nf">setup_vacuum_simulation</span><span class="p">(</span>
     <span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">CharmmParameterSet</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test setup simulation in vacuum.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        psf (CharmmPsfFile): topology instance</span>
+<span class="sd">        params (CharmmParameterSet): parameter</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Simulation: instance of Simulation class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
     <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -111,16 +184,27 @@
     <span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">CharmmParameterSet</span><span class="p">,</span>
     <span class="n">r_off</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
-    <span class="n">r_on</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
+    <span class="n">r_on</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Simulation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test setup simulation in waterbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        psf (CharmmPsfFile): topology instance</span>
+<span class="sd">        params (CharmmParameterSet): parameter</span>
+<span class="sd">        r_off (float, optional): _description_. Defaults to 1.2.</span>
+<span class="sd">        r_on (float, optional): _description_. Defaults to 0.0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Simulation: instance of Simulation class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">chains</span><span class="p">())</span>
     <span class="n">ml_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">()]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ml_atoms</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">mm_system</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">createSystem</span><span class="p">(</span>
         <span class="n">params</span><span class="p">,</span>
         <span class="n">nonbondedMethod</span><span class="o">=</span><span class="n">PME</span><span class="p">,</span>
-        <span class="c1">#nonbondedCutoff=r_off * unit.nanometers,</span>
-        <span class="c1">#switchDistance=r_on * unit.nanometers,</span>
+        <span class="c1"># nonbondedCutoff=r_off * unit.nanometers,</span>
+        <span class="c1"># switchDistance=r_on * unit.nanometers,</span>
     <span class="p">)</span>
 
     <span class="c1"># set up system</span>
@@ -130,6 +214,11 @@
         <span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">mm_system</span><span class="p">,</span> <span class="n">ml_atoms</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="n">ml_system</span><span class="p">,</span> <span class="n">LangevinIntegrator</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="test_initializing_ZINC00077329_system"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.test_initializing_ZINC00077329_system.html#endstate_correction.tests.test_system.test_initializing_ZINC00077329_system">[docs]</a><span class="k">def</span> <span class="nf">test_initializing_ZINC00077329_system</span><span class="p">():</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">samples_mm</span><span class="p">,</span> <span class="n">samples_mm_nnp</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples_mm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5000</span></div>
 
 
 <div class="viewcode-block" id="test_generate_simulation_instances_with_charmmff"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff.html#endstate_correction.tests.test_system.test_generate_simulation_instances_with_charmmff">[docs]</a><span class="k">def</span> <span class="nf">test_generate_simulation_instances_with_charmmff</span><span class="p">():</span>
@@ -149,7 +238,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hipen_testsystem</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="s2">.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
+    <span class="c1"># define region that should be treated with the nnp</span>
     <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="c1"># set up system</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">crd</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
@@ -167,11 +256,11 @@
 
     <span class="c1">############################</span>
     <span class="c1">############################</span>
-    <span class="c1"># at lambda=1.0 (qml endpoint)</span>
+    <span class="c1"># at lambda=1.0 (nnp endpoint)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">e_sim_qml_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">5252411.066221259</span><span class="p">)</span>
+    <span class="n">e_sim_nnp_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">5252411.066221259</span><span class="p">)</span>
 
     <span class="c1">########################################################</span>
     <span class="c1">########################################################</span>
@@ -187,7 +276,7 @@
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/toppar/par_all36_cgenff.prm&quot;</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jctc_testsystem</span><span class="si">}</span><span class="s2">/toppar/toppar_water_ions.str&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># define region that should be treated with the qml</span>
+    <span class="c1"># define region that should be treated with the nnp</span>
     <span class="n">sim</span> <span class="o">=</span> <span class="n">setup_vacuum_simulation</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
 
@@ -204,11 +293,11 @@
 
     <span class="c1">############################</span>
     <span class="c1">############################</span>
-    <span class="c1"># at lambda=1.0 (qml endpoint)</span>
+    <span class="c1"># at lambda=1.0 (nnp endpoint)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">e_sim_qml_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1025774.735780582</span><span class="p">)</span>
+    <span class="n">e_sim_nnp_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1025774.735780582</span><span class="p">)</span>
 
     <span class="c1">########################################################</span>
     <span class="c1">########################################################</span>
@@ -243,11 +332,11 @@
 
     <span class="c1">############################</span>
     <span class="c1">############################</span>
-    <span class="c1"># at lambda=1.0 (qml endpoint)</span>
+    <span class="c1"># at lambda=1.0 (nnp endpoint)</span>
     <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">e_sim_qml_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_qml_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1062775.8348574494</span><span class="p">)</span></div>
+    <span class="n">e_sim_nnp_endstate</span> <span class="o">=</span> <span class="n">get_energy</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">e_sim_nnp_endstate</span><span class="p">,</span> <span class="o">-</span><span class="mf">1062775.8348574494</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_simulating"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_system.test_simulating.html#endstate_correction.tests.test_system.test_simulating">[docs]</a><span class="k">def</span> <span class="nf">test_simulating</span><span class="p">():</span>

@@ -1,0 +1,35 @@
+endstate\_correction.protocol.NEQResults
+========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: NEQResults
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NEQResults.W_reference_to_target
+      ~NEQResults.W_target_to_reference
+      ~NEQResults.endstate_samples_reference_to_target
+      ~NEQResults.endstate_samples_target_to_reference
+      ~NEQResults.switching_traj_reference_to_target
+      ~NEQResults.switching_traj_target_to_reference
+   
+   

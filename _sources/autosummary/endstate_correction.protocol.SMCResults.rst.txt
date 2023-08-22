@@ -1,0 +1,33 @@
+endstate\_correction.protocol.SMCResults
+========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: SMCResults
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SMCResults.logZ
+      ~SMCResults.effective_sample_size
+      ~SMCResults.endstate_samples_reference_to_target
+      ~SMCResults.endstate_samples_target_to_reference
+   
+   

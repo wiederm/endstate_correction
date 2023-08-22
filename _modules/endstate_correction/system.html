@@ -82,9 +82,15 @@
 
 
 <div class="viewcode-block" id="gen_box"><a class="viewcode-back" href="../../autosummary/endstate_correction.system.gen_box.html#endstate_correction.system.gen_box">[docs]</a><span class="k">def</span> <span class="nf">gen_box</span><span class="p">(</span><span class="n">psf</span><span class="p">:</span> <span class="n">CharmmPsfFile</span><span class="p">,</span> <span class="n">crd</span><span class="p">:</span> <span class="n">CharmmCrdFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharmmPsfFile</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to create psf file containing information about the box used (only for waterbox or commplex simulations). Usful</span>
-<span class="sd">    when information about box size is not available (e.g. when using TF)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to create psf file containing information about the box used (only for waterbox or commplex simulations). </span>
+<span class="sd">    Usful when information about box size is not available (e.g. when using TF)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        psf (CharmmPsfFile): topology instance</span>
+<span class="sd">        crd (CharmmCrdFile): coordinates</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        CharmmPsfFile: topology instance containing information about the box</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">crd</span><span class="o">.</span><span class="n">positions</span>
 

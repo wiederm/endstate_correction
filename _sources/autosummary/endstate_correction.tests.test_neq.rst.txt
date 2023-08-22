@@ -15,7 +15,6 @@ endstate\_correction.tests.test\_neq
       :toctree:
       :nosignatures:
    
-      load_endstate_system_and_samples
       test_collect_work_values
       test_switching
    

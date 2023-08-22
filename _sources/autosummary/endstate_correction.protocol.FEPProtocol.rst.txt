@@ -1,0 +1,33 @@
+endstate\_correction.protocol.FEPProtocol
+=========================================
+
+.. currentmodule:: endstate_correction.protocol
+
+.. autoclass:: FEPProtocol
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FEPProtocol.nr_of_switches
+      ~FEPProtocol.reference_samples
+      ~FEPProtocol.target_samples
+      ~FEPProtocol.sim
+   
+   

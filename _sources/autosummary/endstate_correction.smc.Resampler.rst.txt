@@ -1,0 +1,25 @@
+endstate\_correction.smc.Resampler
+==================================
+
+.. currentmodule:: endstate_correction.smc
+
+.. autoclass:: Resampler
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Resampler.stratified_resampling
+   
+   
+
+   
+   
+   

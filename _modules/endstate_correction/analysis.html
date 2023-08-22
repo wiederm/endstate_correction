@@ -75,30 +75,28 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">matplotlib.offsetbox</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AnnotationBbox</span><span class="p">,</span> <span class="n">DrawingArea</span><span class="p">,</span> <span class="n">OffsetImage</span><span class="p">,</span>
-                                  <span class="n">TextArea</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">FormatStrFormatter</span>
 <span class="kn">from</span> <span class="nn">pymbar</span> <span class="kn">import</span> <span class="n">bar</span><span class="p">,</span> <span class="n">exp</span>
 
 <span class="kn">from</span> <span class="nn">endstate_correction.constant</span> <span class="kn">import</span> <span class="n">zinc_systems</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">BaseResults</span><span class="p">,</span> <span class="n">AllResults</span><span class="p">,</span> <span class="n">FEPResults</span><span class="p">,</span> <span class="n">NEQResults</span><span class="p">,</span> <span class="n">SMCResults</span>
 
 
 <div class="viewcode-block" id="plot_overlap_for_equilibrium_free_energy"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy.html#endstate_correction.analysis.plot_overlap_for_equilibrium_free_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_overlap_for_equilibrium_free_energy</span><span class="p">(</span>
     <span class="n">N_k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">u_kn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the overlap for each state with each other state. THe overlap is normalized to be 1 for each row.</span>
+<span class="sd">    Calculate the overlap for each state with each other state. The overlap is normalized to be 1 for each row.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        N_k (np.array): numnber of samples for each state k</span>
+<span class="sd">        N_k (np.array): number of samples for each state k</span>
 <span class="sd">        u_kn (np.ndarray): each of the potential energy functions `u` describing a state `k` are applied to each sample `n` from each of the states `k`</span>
 <span class="sd">        name (str): name of the system in the plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -118,7 +116,7 @@
         <span class="n">annot_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;small&quot;</span><span class="p">},</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Free energy estimate for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_equilibrium_free_energy.png&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_overlap_equilibrium_free_energy.png&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -129,9 +127,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the accumulated free energy along the mutation progress.</span>
 
-
 <span class="sd">    Args:</span>
-<span class="sd">        N_k (np.array): numnber of samples for each state k</span>
+<span class="sd">        N_k (np.array): number of samples for each state k</span>
 <span class="sd">        u_kn (np.ndarray): each of the potential energy functions `u` describing a state `k` are applied to each sample `n` from each of the states `k`</span>
 <span class="sd">        name (str): name of the system in the plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -157,123 +154,132 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Free energy estimate for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Free energy estimate in kT&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;lambda state (0 to 1)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_equilibrium_free_energy.png&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_results_equilibrium_free_energy.png&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="return_endstate_correction"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.return_endstate_correction.html#endstate_correction.analysis.return_endstate_correction">[docs]</a><span class="k">def</span> <span class="nf">return_endstate_correction</span><span class="p">(</span>
-    <span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forw&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="c1"># generate docstring</span>
+<div class="viewcode-block" id="return_endstate_correction"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.return_endstate_correction.html#endstate_correction.analysis.return_endstate_correction">[docs]</a><span class="k">def</span> <span class="nf">return_endstate_correction</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">AllResults</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forw&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the endstate correction for a given method and direction.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        results (Results): instance of the Results class</span>
-<span class="sd">        method (str): NEQ or FEP</span>
+<span class="sd">        results (AllResults): instance of the AllRestults class</span>
+<span class="sd">        method (str): FEP or NEQ</span>
 <span class="sd">        direction (str): forw, rev or bid</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if method or direction is not supported</span>
+
+
 <span class="sd">    Returns:</span>
-<span class="sd">        float: endstate correction delta_f</span>
-<span class="sd">        float: endstate correction error</span>
+<span class="sd">        Tuple[float, float]: endstate correction delta_f, endstate correction error</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">AllResults</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span> <span class="s2">&quot;FEP&quot;</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, direction: </span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;forw&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;FEP(forw): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FEP(forw): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>   
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;rev&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;FEP(rev): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FEP(rev): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span> 
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;FEP&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;bid&quot;</span><span class="p">:</span>
-        
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;FEP(bid): </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;FEP(bid): </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;NEQ&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;forw&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;NEQ(forw): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NEQ(forw): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;NEQ&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;rev&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;NEQ(rev): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NEQ(rev): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;NEQ&quot;</span> <span class="ow">and</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;bid&quot;</span><span class="p">:</span>
-        
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;NEQ(bid): </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;NEQ(bid): </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">est</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">est</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;method and direction combination not supported&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="summarize_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.summarize_endstate_correction_results.html#endstate_correction.analysis.summarize_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">summarize_endstate_correction_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">):</span>
+
+<div class="viewcode-block" id="summarize_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.summarize_endstate_correction_results.html#endstate_correction.analysis.summarize_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">summarize_endstate_correction_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">AllResults</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Summarize the results of the endstate correction analysis.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        results (Results): instance of the Results class</span>
+<span class="sd">        results (AllResults): instance of the AllResults class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">AllResults</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#--------------- SUMMARY ---------------#&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from mm to qml): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from qml to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation bidirectional: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from mm to qml): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from qml to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Crooks&#39; equation: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
-        <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">dddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equilibrium free energy: </span><span class="si">{</span><span class="n">ddG_equ</span><span class="si">}</span><span class="s2">+/-</span><span class="si">{</span><span class="n">dddG_equ</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
+    
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from mm to nnp): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation (from nnp to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Zwanzig&#39;s equation bidirectional: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from mm to nnp): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Jarzynski&#39;s equation (from nnp to mm): </span><span class="si">{</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Crooks&#39; equation: </span><span class="si">{</span><span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)[</span><span class="s1">&#39;Delta_f&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
+            <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">dddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equilibrium free energy: </span><span class="si">{</span><span class="n">ddG_equ</span><span class="si">}</span><span class="s2">+/-</span><span class="si">{</span><span class="n">dddG_equ</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="c1">#if results.smc_results:</span>
 
 <div class="viewcode-block" id="plot_endstate_correction_results"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.plot_endstate_correction_results.html#endstate_correction.analysis.plot_endstate_correction_results">[docs]</a><span class="k">def</span> <span class="nf">plot_endstate_correction_results</span><span class="p">(</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">Results</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plot.png&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">AllResults</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plot.png&quot;</span>
 <span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">Results</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot endstate correction results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): name of the system in the plot</span>
+<span class="sd">        results (Results): instance of the AllResults class</span>
+<span class="sd">        filename (str, optional): Defaults to &quot;plot.png&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="n">AllResults</span>
 
     <span class="c1">###########################################################</span>
     <span class="c1"># count how many results are available</span>
@@ -316,95 +322,110 @@
         <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;sci&quot;</span><span class="p">,</span> <span class="n">useOffset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span>
-            <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;W(MM$\rightarrow$QML)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span>
+                <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;W(MM$\rightarrow$NNP)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;W(NNP$\rightarrow$MM)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c3</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
+                    <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span>
+                    <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta$E(MM$\rightarrow$NNP)&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta$E(NNP$\rightarrow$MM)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c4</span><span class="p">,</span>
+            <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span>
-            <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta$E(MM$\rightarrow$QML)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;W(QML$\rightarrow$MM)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c3</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">],</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Delta$E(QML$\rightarrow$MM)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c4</span><span class="p">,</span>
-        <span class="p">)</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
     <span class="c1">###########################################################</span>
     <span class="c1"># ------------------- Plot results ------------------------</span>
     <span class="k">if</span> <span class="n">multiple_results</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">ax_index</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> - offset $\Delta$G(MM$\rightarrow$QML)&quot;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> - offset $\Delta$G(MM$\rightarrow$NNP)&quot;</span><span class="p">)</span>
         <span class="n">ddG_list</span><span class="p">,</span> <span class="n">dddG_list</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
-            <span class="c1"># Equilibrium free energy</span>
-            <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG_equ</span><span class="p">)</span>
-            <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG_equ</span><span class="p">)</span>
-            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Equilibrium&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="c1"># Crooks&#39; equation</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
-            <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
-            <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
-            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NEQ+Crooks&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="c1"># Jarzynski&#39;s equation</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
-            <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
-            <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
-            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NEQ+Jazynski&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="c1"># FEP + bar</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
-            <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
-            <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
-            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FEP+BAR&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="c1"># FEP + EXP</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)</span>
-            <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
-            <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
-            <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
-            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FEP+EXP&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span><span class="p">:</span>
+                <span class="c1"># Equilibrium free energy</span>
+                <span class="n">ddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span>
+                <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">dddG_equ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">r</span><span class="o">.</span><span class="n">compute_free_energy_differences</span><span class="p">()[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">equ_results</span><span class="o">.</span><span class="n">equ_mbar</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG_equ</span><span class="p">)</span>
+                <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG_equ</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Equilibrium&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="c1"># Crooks&#39; equation</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+                <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
+                <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NEQ+Crooks&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="c1"># Jarzynski&#39;s equation (reference to target)</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+                <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
+                <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NEQ+Jazynski&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="c1"># FEP + bar</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">)</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+                <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
+                <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FEP+BAR&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="c1"># FEP + EXP</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)</span>
+                <span class="n">ddG</span><span class="p">,</span> <span class="n">dddG</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Delta_f&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;dDelta_f&quot;</span><span class="p">]</span>
+                <span class="n">ddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ddG</span><span class="p">)</span>
+                <span class="n">dddG_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dddG</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FEP+EXP&quot;</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#################&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">ddG_list</span><span class="p">)</span>
@@ -428,59 +449,60 @@
     <span class="n">ax_index</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> - cumulative stddev of W and $\Delta$E&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">cum_stddev_ws_from_mm_to_qml</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">cum_stddev_ws_from_mm_to_qml</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev W(MM$\rightarrow$QML)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="n">cum_stddev_ws_from_qml_to_mm</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">cum_stddev_ws_from_qml_to_mm</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev W(QML$\rightarrow$MM)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c3</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">or</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">cum_stddev_ws_from_mm_to_nnp</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">cum_stddev_ws_from_mm_to_nnp</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev W(MM$\rightarrow$NNP)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span>
-        <span class="n">cum_stddev_dEs_from_mm_to_qml</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">cum_stddev_dEs_from_mm_to_qml</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev $\Delta$E(MM$\rightarrow$QML)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span> <span class="ow">or</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">cum_stddev_ws_from_nnp_to_mm</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">cum_stddev_ws_from_nnp_to_mm</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev W(NNP$\rightarrow$MM)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c3</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span>
-        <span class="n">cum_stddev_dEs_from_qml_to_mm</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">cum_stddev_dEs_from_qml_to_mm</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev $\Delta$E(QML$\rightarrow$MM)&quot;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">c4</span><span class="p">,</span>
-        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">cum_stddev_dEs_from_mm_to_nnp</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">cum_stddev_dEs_from_mm_to_nnp</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev $\Delta$E(MM$\rightarrow$NNP)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="o">.</span><span class="n">size</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">cum_stddev_dEs_from_nnp_to_mm</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">[:</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">cum_stddev_dEs_from_nnp_to_mm</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;stddev $\Delta$E(NNP$\rightarrow$MM)&quot;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c4</span><span class="p">,</span>
+            <span class="p">)</span>
+
     <span class="c1"># plot 1 kT limit</span>
     <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">c7</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
     <span class="n">axs</span><span class="p">[</span><span class="n">ax_index</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">c5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
@@ -492,322 +514,6 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
-
-
-<span class="c1"># plotting torsion profiles</span>
-<span class="c1">###########################################################################################################################################################################</span>
-
-
-<span class="c1"># generate molecule picture with atom indices</span>
-<div class="viewcode-block" id="save_mol_pic"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.save_mol_pic.html#endstate_correction.analysis.save_mol_pic">[docs]</a><span class="k">def</span> <span class="nf">save_mol_pic</span><span class="p">(</span><span class="n">zinc_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ff</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
-    <span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">AllChem</span><span class="p">,</span> <span class="n">Draw</span>
-    <span class="kn">from</span> <span class="nn">rdkit.Chem.Draw</span> <span class="kn">import</span> <span class="n">IPythonConsole</span>
-
-    <span class="n">IPythonConsole</span><span class="o">.</span><span class="n">drawOptions</span><span class="o">.</span><span class="n">addAtomIndices</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="kn">from</span> <span class="nn">rdkit.Chem.Draw</span> <span class="kn">import</span> <span class="n">rdMolDraw2D</span>
-
-    <span class="c1"># get name</span>
-    <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">zinc_systems</span><span class="p">[</span><span class="n">zinc_id</span><span class="p">]</span>
-    <span class="c1"># generate openff Molecule</span>
-    <span class="n">mol</span> <span class="o">=</span> <span class="n">generate_molecule</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="n">ff</span><span class="p">)</span>
-    <span class="c1"># convert openff object to rdkit mol object</span>
-    <span class="n">mol_rd</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">to_rdkit</span><span class="p">()</span>
-
-    <span class="c1"># remove explicit H atoms</span>
-    <span class="k">if</span> <span class="n">zinc_id</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="c1"># NOTE: FIXME: this is a temporary workaround to fix the wrong indexing in rdkit</span>
-        <span class="c1"># when using the RemoveHs() function</span>
-        <span class="n">mol_draw</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">(</span><span class="n">mol_rd</span><span class="p">)</span>
-        <span class="c1"># remove all explicit H atoms, except the ones on the ring and on N atoms (for correct indexing)</span>
-        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
-            <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">mol_draw</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
-            <span class="n">mol_draw</span><span class="o">.</span><span class="n">RemoveAtom</span><span class="p">(</span><span class="n">n_atoms</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># remove explicit H atoms</span>
-        <span class="n">mol_draw</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RemoveHs</span><span class="p">(</span><span class="n">mol_rd</span><span class="p">)</span>
-
-    <span class="c1"># get 2D representation</span>
-    <span class="n">AllChem</span><span class="o">.</span><span class="n">Compute2DCoords</span><span class="p">(</span><span class="n">mol_draw</span><span class="p">)</span>
-    <span class="c1"># formatting</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">rdMolDraw2D</span><span class="o">.</span><span class="n">MolDraw2DCairo</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">fixedFontSize</span> <span class="o">=</span> <span class="mi">90</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">fixedBondLength</span> <span class="o">=</span> <span class="mi">110</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">annotationFontScale</span> <span class="o">=</span> <span class="mf">0.7</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">addAtomIndices</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="n">d</span><span class="o">.</span><span class="n">DrawMolecule</span><span class="p">(</span><span class="n">mol_draw</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">FinishDrawing</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">WriteDrawingText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span></div>
-
-
-<span class="c1"># get indices of dihedral bonds</span>
-<div class="viewcode-block" id="get_indices"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.get_indices.html#endstate_correction.analysis.get_indices">[docs]</a><span class="k">def</span> <span class="nf">get_indices</span><span class="p">(</span><span class="n">rot_bond</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rot_bond_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">bonds</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;---------- Investigating bond nr </span><span class="si">{</span><span class="n">rot_bond</span><span class="si">}</span><span class="s2"> ----------&quot;</span><span class="p">)</span>
-
-    <span class="c1"># get indices of both atoms forming an rotatable bond</span>
-    <span class="n">atom_1_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">rot_bond_list</span><span class="p">[</span><span class="n">rot_bond</span><span class="p">])</span><span class="o">.</span><span class="n">atom1_index</span>
-    <span class="n">atom_2_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">rot_bond_list</span><span class="p">[</span><span class="n">rot_bond</span><span class="p">])</span><span class="o">.</span><span class="n">atom2_index</span>
-
-    <span class="c1"># create lists to collect neighbors of atom_1 and atom_2</span>
-    <span class="n">neighbors1</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">neighbors2</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># find neighbors of atoms forming the rotatable bond and add to index list (if heavy atom torsion)</span>
-    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
-        <span class="c1"># get neighbors of atom_1 (of rotatable bond)</span>
-        <span class="c1"># check, if atom_1 (of rotatable bond) is the first atom in the current bond</span>
-        <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span> <span class="o">==</span> <span class="n">atom_1_idx</span><span class="p">:</span>
-            <span class="c1"># make sure, that neighboring atom is not an hydrogen, nor atom_2</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;hydrogen&quot;</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span> <span class="o">==</span> <span class="n">atom_2_idx</span>
-            <span class="p">):</span>
-                <span class="n">neighbors1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span><span class="p">)</span>
-
-        <span class="c1"># check, if atom_1 (of rotatable bond) is the second atom in the current bond</span>
-        <span class="k">elif</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span> <span class="o">==</span> <span class="n">atom_1_idx</span><span class="p">:</span>
-            <span class="c1"># make sure, that neighboring atom is not an hydrogen, nor atom_2</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;hydrogen&quot;</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span> <span class="o">==</span> <span class="n">atom_2_idx</span>
-            <span class="p">):</span>
-                <span class="n">neighbors1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span><span class="p">)</span>
-
-        <span class="c1"># get neighbors of atom_2 (of rotatable bond)</span>
-        <span class="c1"># check, if atom_2 (of rotatable bond) is the first atom in the current bond</span>
-        <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span> <span class="o">==</span> <span class="n">atom_2_idx</span><span class="p">:</span>
-            <span class="c1"># make sure, that neighboring atom is not an hydrogen, nor atom_1</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;hydrogen&quot;</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span> <span class="o">==</span> <span class="n">atom_1_idx</span>
-            <span class="p">):</span>
-                <span class="n">neighbors2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span><span class="p">)</span>
-
-        <span class="c1"># check, if atom_2 (of rotatable bond) is the second atom in the current bond</span>
-        <span class="k">elif</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom2_index</span> <span class="o">==</span> <span class="n">atom_2_idx</span><span class="p">:</span>
-            <span class="c1"># make sure, that neighboring atom is not an hydrogen, nor atom_1</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;hydrogen&quot;</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span> <span class="o">==</span> <span class="n">atom_1_idx</span>
-            <span class="p">):</span>
-                <span class="n">neighbors2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom1_index</span><span class="p">)</span>
-
-    <span class="c1"># check, if both atoms forming the rotatable bond have neighbors</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># list for final atom indices defining torsion</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[[</span><span class="n">neighbors1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atom_1_idx</span><span class="p">,</span> <span class="n">atom_2_idx</span><span class="p">,</span> <span class="n">neighbors2</span><span class="p">[</span><span class="mi">0</span><span class="p">]]]</span>
-        <span class="k">return</span> <span class="n">indices</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No heavy atom torsions found for bond </span><span class="si">{</span><span class="n">rot_bond</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="n">indices</span></div>
-
-
-<span class="c1"># plot torsion profiles</span>
-<div class="viewcode-block" id="visualize_torsion_profile"><a class="viewcode-back" href="../../autosummary/endstate_correction.analysis.visualize_torsion_profile.html#endstate_correction.analysis.visualize_torsion_profile">[docs]</a><span class="k">def</span> <span class="nf">visualize_torsion_profile</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">trajectories</span><span class="p">:</span> <span class="n">dataclass</span><span class="p">):</span>
-    <span class="c1"># get all bonds</span>
-    <span class="n">bonds</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">bonds</span>
-    <span class="c1"># get all rotatable bonds</span>
-    <span class="n">rot_bond_list</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">find_rotatable_bonds</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rot_bond_list</span><span class="p">),</span> <span class="s2">&quot;rotatable bonds found.&quot;</span><span class="p">)</span>
-
-    <span class="c1">################################################## GET HEAVY ATOM TORSIONS ##########################################################################################</span>
-
-    <span class="c1"># list for collecting bond nr, which form a dihedral angle</span>
-    <span class="n">torsions</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># list for collecting all atom indices, which form a dihedral angle</span>
-    <span class="n">all_indices</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># lists for traj data</span>
-    <span class="n">torsions_mm</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">torsions_qml</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># lists for traj data after switching</span>
-    <span class="n">torsions_mm_switching</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">torsions_qml_switching</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># boolean which enables plotting, if data can be retrieved</span>
-    <span class="n">plotting</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">for</span> <span class="n">rot_bond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rot_bond_list</span><span class="p">)):</span>
-        <span class="c1"># get atom indices of current rotatable bond forming a torsion</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span>
-            <span class="n">rot_bond</span><span class="o">=</span><span class="n">rot_bond</span><span class="p">,</span> <span class="n">rot_bond_list</span><span class="o">=</span><span class="n">rot_bond_list</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span>
-        <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-
-        <span class="c1"># compute dihedrals only if heavy atom torsion was found for rotatable bond</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dihedrals are computed for bond nr </span><span class="si">{</span><span class="n">rot_bond</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="c1"># add bond nr to list</span>
-            <span class="n">torsions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot_bond</span><span class="p">)</span>
-            <span class="c1"># add corresponding atom indices to list</span>
-            <span class="n">all_indices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-
-            <span class="c1"># check if traj data can be retrieved</span>
-            <span class="n">traj_mm</span> <span class="o">=</span> <span class="n">trajectories</span><span class="o">.</span><span class="n">equilibrium_mm_trajectory</span>
-            <span class="n">traj_qml</span> <span class="o">=</span> <span class="n">trajectories</span><span class="o">.</span><span class="n">equilibrium_qml_trajectory</span>
-
-            <span class="c1"># if also &#39;post-switching&#39; data has to be plotted, check if it can be retrieved</span>
-
-            <span class="c1"># if both, mm and qml samples are found, compute dihedrals</span>
-            <span class="k">if</span> <span class="n">traj_mm</span> <span class="ow">and</span> <span class="n">traj_qml</span><span class="p">:</span>
-                <span class="n">torsions_mm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">md</span><span class="o">.</span><span class="n">compute_dihedrals</span><span class="p">(</span><span class="n">traj_mm</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="p">)</span>  <span class="c1"># * 180.0 / np.pi</span>
-                <span class="n">torsions_qml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">md</span><span class="o">.</span><span class="n">compute_dihedrals</span><span class="p">(</span><span class="n">traj_qml</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="p">)</span>  <span class="c1"># * 180.0 / np.pi</span>
-                <span class="n">plotting</span> <span class="o">=</span> <span class="kc">True</span>
-
-                <span class="c1"># additionally, compute dihedrals from &#39;post-switching&#39; data</span>
-                <span class="k">if</span> <span class="n">switching</span> <span class="ow">and</span> <span class="n">traj_mm_switching</span> <span class="ow">and</span> <span class="n">traj_qml_switching</span><span class="p">:</span>
-                    <span class="n">torsions_mm_switching</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">md</span><span class="o">.</span><span class="n">compute_dihedrals</span><span class="p">(</span>
-                            <span class="n">traj_mm_switching</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="kc">True</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>  <span class="c1"># * 180.0 / np.pi</span>
-                    <span class="n">torsions_qml_switching</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">md</span><span class="o">.</span><span class="n">compute_dihedrals</span><span class="p">(</span>
-                            <span class="n">traj_qml_switching</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="kc">True</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>  <span class="c1"># * 180.0 / np.pi</span>
-                <span class="k">elif</span> <span class="n">switching</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">traj_mm_switching</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">traj_qml_switching</span><span class="p">:</span>
-                    <span class="n">plotting</span> <span class="o">=</span> <span class="kc">False</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trajectory data cannot be found for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No dihedrals will be computed for bond nr </span><span class="si">{</span><span class="n">rot_bond</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1">################################################## PLOT TORSION PROFILES ##########################################################################################</span>
-
-    <span class="k">if</span> <span class="n">plotting</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">()</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;bright&quot;</span><span class="p">)</span>
-
-        <span class="c1"># generate molecule picture</span>
-        <span class="n">save_mol_pic</span><span class="p">(</span><span class="n">zinc_id</span><span class="o">=</span><span class="n">zinc_id</span><span class="p">,</span> <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">)</span>
-
-        <span class="c1"># create corresponding nr of subplots</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">torsions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
-        <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">torsions</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Torsion profile of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-
-        <span class="c1"># flip the image, so that it is displayed correctly</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mol_pics_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-
-        <span class="c1"># plot the molecule image on the first axis</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
-
-        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-
-        <span class="c1"># iterate over all torsions and plot results</span>
-        <span class="k">for</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">torsions</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="c1"># counter for atom indices</span>
-            <span class="n">idx_counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="c1"># plot only sampling data</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">switching</span><span class="p">:</span>
-                <span class="n">data_histplot</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;mm samples&quot;</span><span class="p">:</span> <span class="n">torsions_mm</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="s2">&quot;qml samples&quot;</span><span class="p">:</span> <span class="n">torsions_qml</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                <span class="p">}</span>
-
-            <span class="c1"># compare to data after switching</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">data_histplot</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;mm samples&quot;</span><span class="p">:</span> <span class="n">torsions_mm</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="s2">&quot;qml samples&quot;</span><span class="p">:</span> <span class="n">torsions_qml</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="sa">rf</span><span class="s2">&quot;qml$\rightarrow$mm endstate (</span><span class="si">{</span><span class="n">switching_length</span><span class="si">}</span><span class="s2">ps switch)&quot;</span><span class="p">:</span> <span class="n">torsions_mm_switching</span><span class="p">[</span>
-                        <span class="n">idx_counter</span>
-                    <span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="sa">rf</span><span class="s2">&quot;mm$\rightarrow$qml endstate (</span><span class="si">{</span><span class="n">switching_length</span><span class="si">}</span><span class="s2">ps switch)&quot;</span><span class="p">:</span> <span class="n">torsions_qml_switching</span><span class="p">[</span>
-                        <span class="n">idx_counter</span>
-                    <span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                <span class="p">}</span>
-
-                <span class="c1"># if needed, compute wasserstein distance</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;  # compute wasserstein distance</span>
-<span class="sd">                w_distance = wasserstein_distance(u_values = list(chain.from_iterable(torsions_mm[idx_counter])), v_values = list(chain.from_iterable(torsions_qml[idx_counter])))</span>
-<span class="sd">                w_distance_qml_switch_mm = wasserstein_distance(u_values = list(chain.from_iterable(torsions_qml[idx_counter])), v_values = list(chain.from_iterable(torsions_mm_switching[idx_counter])))</span>
-<span class="sd">                w_distance_mm_switch_qml = wasserstein_distance(u_values = list(chain.from_iterable(torsions_mm[idx_counter])), v_values = list(chain.from_iterable(torsions_qml_switching[idx_counter]))) &quot;&quot;&quot;</span>
-
-            <span class="n">ax_violin</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">counter</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span>
-                <span class="n">ax</span><span class="o">=</span><span class="n">ax_violin</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="p">[</span>
-                    <span class="n">torsions_mm</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="n">torsions_qml</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="n">torsions_mm_switching</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="n">torsions_qml_switching</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                <span class="p">],</span>
-                <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">,</span>
-                <span class="n">inner</span><span class="o">=</span><span class="s2">&quot;point&quot;</span><span class="p">,</span>
-                <span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;width&quot;</span><span class="p">,</span>
-                <span class="n">saturation</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">ax_kde</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">counter</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-            <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span>
-                <span class="n">ax</span><span class="o">=</span><span class="n">ax_kde</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">data_histplot</span><span class="p">,</span>
-                <span class="n">common_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">shade</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="c1"># kde=True,</span>
-                <span class="c1"># alpha=0.5,</span>
-                <span class="c1"># stat=&quot;density&quot;,</span>
-                <span class="c1"># common_norm=False,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># adjust axis labelling</span>
-            <span class="n">unit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ax_violin</span><span class="p">,</span> <span class="n">ax_kde</span><span class="p">]:</span>
-                <span class="c1"># add atom indices as subplot title</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Torsion </span><span class="si">{</span><span class="n">all_indices</span><span class="p">[</span><span class="n">idx_counter</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span>
-                    <span class="n">unit</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;-π&quot;</span><span class="p">,</span> <span class="s2">&quot;-3π/4&quot;</span><span class="p">,</span> <span class="s2">&quot;-π/2&quot;</span><span class="p">,</span> <span class="s2">&quot;-π/4&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;π/4&quot;</span><span class="p">,</span> <span class="s2">&quot;π/2&quot;</span><span class="p">,</span> <span class="s2">&quot;3π/4&quot;</span><span class="p">,</span> <span class="s2">&quot;π&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">FormatStrFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span><span class="p">))</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>  <span class="c1"># remove tick values on y axis</span>
-
-            <span class="c1"># if wasserstein distance is computed, it can be added as an annotation box next to the plot</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot; text_div = f&#39;Wasserstein distance\n\nmm (sampling) &amp; qml (sampling): {w_distance:.3f}\nmm (sampling) &amp; qml ({switching_length}ps switch): {w_distance_mm_switch_qml:.3f}\nqml (sampling) &amp; mm ({switching_length}ps switch): {w_distance_qml_switch_mm:.3f}&#39;</span>
-<span class="sd">            offsetbox = TextArea(text_div,</span>
-<span class="sd">                                 textprops=dict(ha=&#39;left&#39;, size = 13))</span>
-<span class="sd">            xy = (0,0)</span>
-<span class="sd">            if switching_length == 5:</span>
-<span class="sd">                x_box = 1.56</span>
-<span class="sd">            elif switching_length == 10 or switching_length == 20:</span>
-<span class="sd">                x_box = 1.575</span>
-<span class="sd">            ab = AnnotationBbox(offsetbox, xy,</span>
-<span class="sd">                    xybox=(x_box, 10),</span>
-<span class="sd">                    xycoords=&#39;axes points&#39;,</span>
-<span class="sd">                    boxcoords=(&quot;axes fraction&quot;, &quot;axes points&quot;),</span>
-<span class="sd">                    box_alignment=(1, 0.08))</span>
-<span class="sd">                    #arrowprops=dict(arrowstyle=&quot;-&gt;&quot;))</span>
-<span class="sd">            axs[counter][0].add_artist(ab) &quot;&quot;&quot;</span>
-
-        <span class="c1"># axs[-1][0].set_xlabel(&quot;Dihedral angle&quot;)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;torsion_profiles_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;torsion_profiles_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;torsion_profiles_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ff</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">switching_length</span><span class="si">}</span><span class="s2">ps.png&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No torsion profile can be generated for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

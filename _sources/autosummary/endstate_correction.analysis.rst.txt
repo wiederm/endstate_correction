@@ -15,14 +15,11 @@ endstate\_correction.analysis
       :toctree:
       :nosignatures:
    
-      get_indices
       plot_endstate_correction_results
       plot_overlap_for_equilibrium_free_energy
       plot_results_for_equilibrium_free_energy
       return_endstate_correction
-      save_mol_pic
       summarize_endstate_correction_results
-      visualize_torsion_profile
    
    
 
