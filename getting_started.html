@@ -53,6 +53,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-neq-from-pi-x-lambda-0">Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-fep-from-pi-x-lambda-0">Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perform-unidirectional-smc-from-pi-x-lambda-0">Perform unidirectional SMC from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perform-multiple-protocols">Perform multiple protocols</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#analyse-results-of-an-unidirection-neq-protocol">Analyse results of an unidirection NEQ protocol</a></li>
 </ul>
 </li>
@@ -89,7 +91,7 @@
              
   <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
-<p>This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is sued) and a neural network potential (ANI-2x).</p>
+<p>This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is used) and a neural network potential (ANI-2x).</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>We recommend setting up a new python conda environment with <code class="code docutils literal notranslate"><span class="pre">python=3.9</span></code> and installing the packages defined <a class="reference external" href="https://github.com/wiederm/endstate_correction/blob/main/devtools/conda-envs/test_env.yaml">here</a> using <code class="code docutils literal notranslate"><span class="pre">mamba</span></code>.
@@ -146,12 +148,11 @@ The default value set in the <code class="code docutils literal notranslate"><sp
 <h3>Perform unidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-neq-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code>.
 The script will calculate the free energy estimate using the samples generated with the <code class="code docutils literal notranslate"><span class="pre">generate_endstate_samples.py</span></code> script.
-Subsequently, the relevant section of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for for the testsystem without any modifications.</p>
+Subsequently, the relevant sections of the <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> script are explained — but they should work for for the testsystem without any modifications.</p>
 <p>To perform a specific endstate correction we need to define a protocol
-(some standard protocols are shown <span class="xref std std-ref">here</span>)
+(some standard protocols are shown <a class="reference internal" href="#available-protocols"><span class="std std-ref">here</span></a>)
 with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -164,7 +165,7 @@ with:</p>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(neq_protocol)</span></code>.
 The particular code above defines unidirectional NEQ switching using 100 switches and a switching length of 1 ps.
 The direciton of the switching simulation is controlled by the sampels that are provided:
-if <code class="code docutils literal notranslate"><span class="pre">reference_samples</span></code> are provided, switching is performed from the reference to the target level of theory, if <cite>target_samples</cite> are provided, switching is performed from the target level to the reference level.
+if <code class="code docutils literal notranslate"><span class="pre">reference_samples</span></code> are provided, switching is performed from the reference to the target level of theory, if <code class="code docutils literal notranslate"><span class="pre">target_samples</span></code> are provided, switching is performed from the target level to the reference level.
 If both samples are provided, bidirectional NEQ switching is performed (for an example see below).
 There is the possibility to save the endstate of each switch if <code class="code docutils literal notranslate"><span class="pre">save_endstates</span></code> is set to <code class="code docutils literal notranslate"><span class="pre">True</span></code>.
 Additionally, the switching trajectory of each switch can be saved if <code class="code docutils literal notranslate"><span class="pre">save_trajs=True</span></code>.
@@ -173,8 +174,7 @@ Both options only make sense for a NEQ protocol.</p>
 <section id="perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1">
 <h3>Perform bidirectional NEQ from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span> and <span class="math notranslate nohighlight">\(\pi(x, \lambda=1)\)</span><a class="headerlink" href="#perform-bidirectional-neq-from-pi-x-lambda-0-and-pi-x-lambda-1" title="Permalink to this heading"></a></h3>
 <p>The endstate correction can be performed using the script <code class="code docutils literal notranslate"><span class="pre">perform_correction.py</span></code> and the following protocol.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
@@ -188,8 +188,7 @@ Both options only make sense for a NEQ protocol.</p>
 <section id="perform-unidirectional-fep-from-pi-x-lambda-0">
 <h3>Perform unidirectional FEP from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-fep-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
 <p>The protocol has to be adopted slightly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">FEPProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
@@ -198,16 +197,41 @@ Both options only make sense for a NEQ protocol.</p>
 </div>
 <p>This protocol is then passed to the actual function performing the protocol: <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction(fep_protocol)</span></code>.</p>
 </section>
+<section id="perform-unidirectional-smc-from-pi-x-lambda-0">
+<h3>Perform unidirectional SMC from <span class="math notranslate nohighlight">\(\pi(x, \lambda=0)\)</span><a class="headerlink" href="#perform-unidirectional-smc-from-pi-x-lambda-0" title="Permalink to this heading"></a></h3>
+<p>To perform a unidirectional Sequential Monte-Carlo (SMC) protocol, the following adaptations have to be made:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">smc_protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="code docutils literal notranslate"><span class="pre">nr_of_walkers</span></code> indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (<code class="code docutils literal notranslate"><span class="pre">nr_of_resampling_steps</span></code>, i.e. 1000 interpolation/resampling steps).</p>
+</section>
+<section id="perform-multiple-protocols">
+<h3>Perform multiple protocols<a class="headerlink" href="#perform-multiple-protocols" title="Permalink to this heading"></a></h3>
+<p>It is possible to combine several protocols into one with <code class="code docutils literal notranslate"><span class="pre">AllProtocol</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">protocol</span> <span class="o">=</span> <span class="n">AllProtocol</span><span class="p">(</span>
+        <span class="n">fep_protocol</span><span class="o">=</span><span class="n">fep_protocol</span><span class="p">,</span>
+        <span class="n">neq_protocol</span><span class="o">=</span><span class="n">neq_protocol</span><span class="p">,</span>
+        <span class="n">smc_protocol</span><span class="o">=</span><span class="n">smc_protocol</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This <code class="code docutils literal notranslate"><span class="pre">protocol</span></code> is then passed to <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction()</span></code> to perform all endstate corrections.</p>
+</section>
 <section id="analyse-results-of-an-unidirection-neq-protocol">
 <h3>Analyse results of an unidirection NEQ protocol<a class="headerlink" href="#analyse-results-of-an-unidirection-neq-protocol" title="Permalink to this heading"></a></h3>
-<p>To analyse the results generated by <code class="code docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="code docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.</p>
+<p>To analyse the results generated by <code class="code docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">perform_endstate_correction()</span></code> pass the return value to <code class="code docutils literal notranslate"><span class="pre">plot_endstate_correction_results(system_name,</span> <span class="pre">r,</span> <span class="pre">&quot;results_neq_unidirectional.png&quot;)</span></code> and results will be plotted and printed.
+It should be noted, that <code class="code docutils literal notranslate"><span class="pre">perform_endstate_correction()</span></code> returns an instance of <code class="code docutils literal notranslate"><span class="pre">AllResults()</span></code>, which, depending on the passed protocol, contains results of an FEP, NEQ switching and SMC protocol.
+It is also possible to add equilibrium sampling results to the instance of <code class="code docutils literal notranslate"><span class="pre">AllResults()</span></code> retrospectively (<code class="code docutils literal notranslate"><span class="pre">r.equ_results</span></code>).</p>
 </section>
 </section>
 <section id="available-protocols">
-<h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
+<span id="id1"></span><h2>Available protocols<a class="headerlink" href="#available-protocols" title="Permalink to this heading"></a></h2>
 <p>unidirectional NEQ protocol (reference to target)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -216,8 +240,7 @@ Both options only make sense for a NEQ protocol.</p>
 </pre></div>
 </div>
 <p>bidirectional NEQ protocol (save switching trajectory and endstate of each switch)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NEQ&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
@@ -229,8 +252,7 @@ Both options only make sense for a NEQ protocol.</p>
 </pre></div>
 </div>
 <p>unidirectional FEP protocol (reference to target)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">FEPProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
@@ -238,12 +260,20 @@ Both options only make sense for a NEQ protocol.</p>
 </pre></div>
 </div>
 <p>bidirectional FEP protocol</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">Protocol</span><span class="p">(</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FEP&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">FEPProtocol</span><span class="p">(</span>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
     <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>unidirectional SMC protocol (reference to target)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">smc_protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
+    <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+    <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
