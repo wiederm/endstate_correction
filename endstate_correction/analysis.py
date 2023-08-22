@@ -85,61 +85,60 @@ def plot_results_for_equilibrium_free_energy(
     plt.show()
     plt.close()
 
-def return_endstate_correction(results: AllResults, method:str = "NEQ", direction: str = "forw") -> Tuple[float, float]:
+def return_endstate_correction(results: Union[FEPResults, NEQResults], direction: str = "forw") -> Tuple[float, float]:
     """Return the endstate correction for a given method and direction.
 
     Args:
-        results (AllResults): instance of the AllRestults class
-        method (str): FEP or NEQ
-        direction (str): forw, rev or bid
+        results (Union[FEPResults, NEQResults]): instance of the FEPResults or NEQResults class
+        direction (str, optional): forw, rev or bid. Defaults to "forw".
 
     Raises:
         ValueError: if method or direction is not supported
-
 
     Returns:
         Tuple[float, float]: endstate correction delta_f, endstate correction error
     """
 
-    assert isinstance(results, AllResults)
-    assert method in ["NEQ", "FEP"]
-    print(f"method: {method}, direction: {direction}")
+    assert isinstance(results, (FEPResults, NEQResults))
 
-    if method == "FEP" and direction == "forw":
-        assert results.fep_results.dE_reference_to_target.size
-        print(f"FEP(forw): {exp(results.fep_results.dE_reference_to_target)['Delta_f']}")
-        est = exp(results.fep_results.dE_reference_to_target)
+    print(f"method: {results.__class__.__name__}, direction: {direction}")
+
+    if isinstance(results, FEPResults) and direction == "forw":
+        assert results.dE_reference_to_target.size
+        print(f"FEP(forw): {exp(results.dE_reference_to_target)['Delta_f']}")
+        est = exp(results.dE_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]   
-    elif method == "FEP" and direction == "rev":
-        assert results.fep_results.dE_target_to_reference.size
-        print(f"FEP(rev): {exp(results.fep_results.dE_target_to_reference)['Delta_f']}")
-        est = exp(results.fep_results.dE_target_to_reference)
+    elif isinstance(results, FEPResults) and direction == "rev":
+        assert results.dE_target_to_reference.size
+        print(f"FEP(rev): {exp(results.dE_target_to_reference)['Delta_f']}")
+        est = exp(results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"] 
-    elif method == "FEP" and direction == "bid":
-        assert results.fep_results.dE_reference_to_target.size and results.fep_results.dE_target_to_reference.size
+    elif isinstance(results, FEPResults) and direction == "bid":
+        assert results.dE_reference_to_target.size and results.dE_target_to_reference.size
         print(
-        f"FEP(bid): {bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)['Delta_f']}"
+        f"FEP(bid): {bar(results.dE_reference_to_target, results.dE_target_to_reference)['Delta_f']}"
         )
-        est = bar(results.fep_results.dE_reference_to_target, results.fep_results.dE_target_to_reference)
+        est = bar(results.dE_reference_to_target, results.dE_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
-    elif method == "NEQ" and direction == "forw":
-        assert results.neq_results.W_reference_to_target.size
-        print(f"NEQ(forw): {exp(results.neq_results.W_reference_to_target)['Delta_f']}")
-        est = exp(results.neq_results.W_reference_to_target)
+    elif isinstance(results, NEQResults) and direction == "forw":
+        assert results.W_reference_to_target.size
+        print(f"NEQ(forw): {exp(results.W_reference_to_target)['Delta_f']}")
+        est = exp(results.W_reference_to_target)
         return est["Delta_f"], est["dDelta_f"]
-    elif method == "NEQ" and direction == "rev":
-        assert results.neq_results.W_target_to_reference.size
-        print(f"NEQ(rev): {exp(results.neq_results.W_target_to_reference)['Delta_f']}")
-        est = exp(results.neq_results.W_target_to_reference)
+    elif isinstance(results, NEQResults) and direction == "rev":
+        assert results.W_target_to_reference.size
+        print(f"NEQ(rev): {exp(results.W_target_to_reference)['Delta_f']}")
+        est = exp(results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
-    elif method == "NEQ" and direction == "bid":
-        assert results.neq_results.W_reference_to_target.size and results.neq_results.W_target_to_reference.size
+    elif isinstance(results, NEQResults) and direction == "bid":
+        assert results.W_reference_to_target.size and results.W_target_to_reference.size
         print(
-            f"NEQ(bid): {bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)['Delta_f']}"
+            f"NEQ(bid): {bar(results.W_reference_to_target, results.W_target_to_reference)['Delta_f']}"
         )
-        est = bar(results.neq_results.W_reference_to_target, results.neq_results.W_target_to_reference)
+        est = bar(results.W_reference_to_target, results.W_target_to_reference)
         return est["Delta_f"], est["dDelta_f"]
     else:
+        print(type(results))
         raise ValueError("method and direction combination not supported")
 
 
@@ -150,7 +149,7 @@ def summarize_endstate_correction_results(results: AllResults):
         results (AllResults): instance of the AllResults class
     """
 
-    assert type(results) == AllResults
+    assert isinstance(results, AllResults)
     print("#--------------- SUMMARY ---------------#")
     
     if results.fep_results:
@@ -194,7 +193,7 @@ def summarize_endstate_correction_results(results: AllResults):
                 ]
             )
             print(f"Equilibrium free energy: {ddG_equ}+/-{dddG_equ}")
-    #if results.smc_results:
+
 
 def plot_endstate_correction_results(
     name: str, results: AllResults, filename: str = "plot.png"
@@ -206,7 +205,7 @@ def plot_endstate_correction_results(
         results (Results): instance of the AllResults class
         filename (str, optional): Defaults to "plot.png".
     """
-    assert type(results) == AllResults
+    assert isinstance(results, AllResults)
 
     ###########################################################
     # count how many results are available

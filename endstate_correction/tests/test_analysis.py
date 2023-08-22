@@ -59,7 +59,6 @@ def test_plot_results_for_FEP_protocol():
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    #from endstate_correction.analysis import return_endstate_correction
     from endstate_correction.protocol import FEPProtocol, perform_endstate_correction
 
     from .test_system import setup_ZINC00077329_system
@@ -80,8 +79,8 @@ def test_plot_results_for_FEP_protocol():
         system_name, r, f"{system_name}_results_fep_bidirectional.png"
     )
     # test return_endstate_correction
-    df, ddf = return_endstate_correction(r, method= "FEP", direction="forw")
-    df, ddf = return_endstate_correction(r, method="FEP", direction="bid")
+    df, ddf = return_endstate_correction(r.fep_results, direction="forw")
+    df, ddf = return_endstate_correction(r.fep_results, direction="bid")
 
 
 def test_plot_results_for_NEQ_protocol():
@@ -107,11 +106,11 @@ def test_plot_results_for_NEQ_protocol():
     )
 
     # test return_endstate_correction
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="forw")
+    df, ddf = return_endstate_correction(r.neq_results, direction="forw")
     assert np.isclose(df, -2105813.1630223254)
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="rev")
+    df, ddf = return_endstate_correction(r.neq_results, direction="rev")
     assert np.isclose(df, -2105811.559385495)
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="bid")
+    df, ddf = return_endstate_correction(r.neq_results, direction="bid")
     # bidirectional test fails most likely due to missing overlap (and convergence)
     # assert np.isclose(df, -217063.7966900661)
 
