@@ -1,4 +1,4 @@
-# Perform SMC sampling for endstate correction
+"""Perform SMC sampling for endstate correction"""
 
 import logging
 from typing import List

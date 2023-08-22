@@ -1,3 +1,4 @@
+"""Provide function for visualizing equilibrium sampling or NEQ switching results"""
 import nglview as ng
 from endstate_correction.constant import zinc_systems
 import mdtraj as md
