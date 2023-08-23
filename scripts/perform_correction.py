@@ -14,7 +14,7 @@ from openmm.app import (
 )
 from openmm import Platform
 from endstate_correction.analysis import plot_endstate_correction_results
-from endstate_correction.protocol import perform_endstate_correction, Protocol
+from endstate_correction.protocol import perform_endstate_correction, FEPProtocol, NEQProtocol, SMCProtocol, AllProtocol
 import mdtraj
 from openmmml import MLPotential
 import pickle, sys, os
@@ -69,12 +69,13 @@ nnp_samples = mdtraj.load_dcd(
     int((1_000 / 100) * 20) :
 ]  # discart first 20% of the trajectory
 print(f"Initializing switch from {len(nnp_samples)} NNP samples")
+
+# define protocols
 # --------------------------------------------- #
 # ---------------- FEP protocol ---------------
 # --------------------------------------------- #
 # bidirectional
-fep_protocol = Protocol(
-    method="FEP",
+fep_protocol = FEPProtocol(
     sim=sim,
     reference_samples=mm_samples,
     target_samples=nnp_samples,
@@ -83,25 +84,41 @@ fep_protocol = Protocol(
 # --------------------------------------------- #
 # ----------------- NEQ protocol --------------
 # --------------------------------------------- #
-# unidirectional (switching from reference to target)
-neq_protocol = Protocol(
-    method="NEQ",
+# bidirectional
+neq_protocol = NEQProtocol(
     sim=sim,
     reference_samples=mm_samples,
-    #target_samples=nnp_samples,
+    target_samples=nnp_samples,
     nr_of_switches=100,
-    neq_switching_length=1_000,
+    switching_length=1_000,
     save_endstates=True,
     save_trajs=True,
 )
+# --------------------------------------------- #
+# ----------------- SMC protocol --------------
+# --------------------------------------------- #
+# unidirectional (from reference to target)
+smc_protocol = SMCProtocol(
+    sim=sim,
+    reference_samples=mm_samples,
+    nr_of_walkers=100,
+    nr_of_resampling_steps=1_000,
+)
 
-# perform correction
-r_fep = perform_endstate_correction(fep_protocol)
-r_neq = perform_endstate_correction(neq_protocol)
+# combine all protocols to one and perform correction
+all_protocol = AllProtocol(
+    fep_protocol=fep_protocol, 
+    neq_protocol=neq_protocol, 
+    smc_protocol=smc_protocol
+)
 
-# save fep and neq results in a pickle file
-pickle.dump((r_fep, r_neq), open(f"{output_base}/results.pickle", "wb"))
+r = perform_endstate_correction(all_protocol)
 
-# plot results
-plot_endstate_correction_results(system_name, r_fep, f"{output_base}/results_fep.png")
-plot_endstate_correction_results(system_name, r_neq, f"{output_base}/results_neq.png")
+# save results in a pickle file
+pickle.dump((r), open(f"{output_base}/results.pickle", "wb"))
+
+# plot fep and neq results
+plot_endstate_correction_results(system_name, r, f"{output_base}/results.png")
+
+# print SMC result
+print(r.smc_results.logZ)
