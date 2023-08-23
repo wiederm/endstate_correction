@@ -202,7 +202,7 @@ def plot_endstate_correction_results(
 
     Args:
         name (str): name of the system in the plot
-        results (Results): instance of the AllResults class
+        results (AllResults): instance of the AllResults class
         filename (str, optional): Defaults to "plot.png".
     """
     assert isinstance(results, AllResults)

@@ -91,7 +91,6 @@ def test_plot_results_for_NEQ_protocol():
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    #from endstate_correction.protocol import Protocol
 
     system_name = "ZINC00079729"
 
