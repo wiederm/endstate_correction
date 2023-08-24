@@ -145,8 +145,26 @@ class SMCProtocol(BaseProtocol):
     """SMC-specific protocol"""
 
     nr_of_walkers: int = -1  # number of walkers for SMC
-    nr_of_resampling_steps: int = 1_000  # number of resampling steps for SMC
+    protocol_length: int = 1_000 # length of the SMC protocol
+    nr_of_resampling_steps: int = 1_000 # number of times walkers are resampled
     save_endstates: bool = False
+    
+    def __setattr__(self, prop, val):
+        if prop == "protocol_length":
+            self._check_protocol_length(val)
+        if prop == "nr_of_resampling_steps":
+            self._check_nr_of_resampling_steps(val)
+        super().__setattr__(prop, val)
+
+    @staticmethod
+    def _check_protocol_length(protocol_length):
+        if protocol_length%10 != 0:
+            raise ValueError("Protocol length has to be a multiple factor of 10!")
+        
+    @staticmethod
+    def _check_nr_of_resampling_steps(nr_of_resampling_steps):
+        if nr_of_resampling_steps%10 != 0:
+            raise ValueError("Number of resampling steps has to be a multiple factor of 10!")
 
     def __post_init__(self):
         super().__post_init__()  # Call base class's post-init
@@ -283,15 +301,17 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
             print("Performing SMC from reference to target potential")
             smc_sampler = SMC(sim=sim, samples=protocol_.reference_samples)
             smc_sampler.perform_SMC(
-                nr_of_steps=protocol_.nr_of_resampling_steps,
                 nr_of_walkers=protocol_.nr_of_walkers,
+                protocol_length=protocol_.protocol_length,
+                nr_of_resampling_steps=protocol_.nr_of_resampling_steps
             )
 
             r_smc.logZ = smc_sampler.logZ
             r_smc.effective_sample_size = smc_sampler.effective_sample_size
-            r_smc.endstate_samples_reference_to_target = (
-                smc_sampler.current_set_of_walkers
-            )
+            if protocol_.save_endstates:
+                r_smc.endstate_samples_reference_to_target = (
+                    smc_sampler.current_set_of_walkers
+                )
         r.smc_results = r_smc
 
     if isinstance(protocol, AllProtocol) or isinstance(protocol, NEQProtocol):

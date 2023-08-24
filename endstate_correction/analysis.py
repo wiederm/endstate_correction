@@ -13,7 +13,7 @@ from matplotlib.ticker import FormatStrFormatter
 from pymbar import bar, exp
 
 from endstate_correction.constant import zinc_systems
-from endstate_correction.protocol import BaseResults, AllResults, FEPResults, NEQResults, SMCResults
+from endstate_correction.protocol import AllResults, FEPResults, NEQResults
 
 
 def plot_overlap_for_equilibrium_free_energy(

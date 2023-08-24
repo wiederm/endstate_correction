@@ -72,9 +72,9 @@ def test_SMC(_am_I_on_GH):
     # perform SMC switching
     print("Performing SMC switching")
     if _am_I_on_GH == True:
-        smc_sampler.perform_SMC(nr_of_steps=1, nr_of_walkers=2)
+        smc_sampler.perform_SMC(protocol_length=4, nr_of_resampling_steps=2, nr_of_walkers=2)
     else:
-        smc_sampler.perform_SMC(nr_of_steps=5, nr_of_walkers=100)
+        smc_sampler.perform_SMC(protocol_length=10, nr_of_resampling_steps=2, nr_of_walkers=100)
     print(smc_sampler.logZ)
 
 

@@ -144,19 +144,21 @@ def test_SMC_protocol():
     # load samples
     sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
     nr_of_walkers = 10
+    protocol_length = 10
     nr_of_resampling_steps = 10
     protocol = SMCProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=nnp_samples,
         nr_of_walkers=nr_of_walkers,
+        protocol_length=protocol_length,
         nr_of_resampling_steps=nr_of_resampling_steps,
+        save_endstates=True
     )
 
     r = perform_endstate_correction(protocol)
     r_smc = r.smc_results
     assert len(r_smc.endstate_samples_reference_to_target) == protocol.nr_of_walkers
-    assert len(r_smc.effective_sample_size) == protocol.nr_of_resampling_steps -1
+    assert len(r_smc.effective_sample_size) == protocol.nr_of_resampling_steps
     print(r_smc.effective_sample_size)
     print(r_smc.logZ)
 
@@ -192,8 +194,8 @@ def test_ALL_protocol():
     smc_protocol = SMCProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=nnp_samples,
         nr_of_walkers=10,
+        protocol_length=10,
         nr_of_resampling_steps=10,
     )
     protocol = AllProtocol(

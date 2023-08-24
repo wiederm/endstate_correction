@@ -135,14 +135,17 @@ class SMC:
     def perform_SMC(
         self,
         nr_of_walkers: int = 100,
-        nr_of_steps: int = 1_000,
+        protocol_length: int = 1_000, # length of SMC protocol
+        nr_of_resampling_steps: int = 100, # number of times walkers are resampled
     ) -> None:
         """Perform SMC sampling
 
         Args:
-            nr_of_walkers (int, optional): number of walkers. Defaults to 100.
-            nr_of_steps (int, optional): number of interpolation steps. Defaults to 1000.
+            nr_of_walkers (int, optional): Number of walkers selected from provided samples. Defaults to 100.
+            protocol_length (int, optional): Length of SMC protocol. Defaults to 1_000.
+            nr_of_resampling_steps (int, optional): Number of steps at which walkers are resampled. Defaults to 100.
         """
+
 
         # ------------------------- #
         # Outline of the basic Sequential Importance Sampling (SIS) algorithm as outlined in
@@ -168,7 +171,7 @@ class SMC:
         # calculate the free energy estimate using the weights of each walker and the Zwanzig relation
 
         self.weights = np.ones(nr_of_walkers) / nr_of_walkers
-        self.lambdas = np.linspace(0, 1, nr_of_steps)
+        self.lambdas = np.linspace(0, 1, nr_of_resampling_steps+1)
         # select initial, equally spaced samples
         equally_spaces_idx = np.linspace(
             0, len(self.samples.xyz) - 1, nr_of_walkers, dtype=int
@@ -179,6 +182,7 @@ class SMC:
         self.current_set_of_walkers = walkers
         self.effective_sample_size = []
         assert len(walkers) == nr_of_walkers
+        nr_of_steps = protocol_length // nr_of_resampling_steps # nr of steps between resampling
 
         for lamb_idx in tqdm(range(len(self.lambdas) - 1)):
             logger.debug(f"{lamb_idx=}")
