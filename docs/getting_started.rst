@@ -135,9 +135,13 @@ To perform a unidirectional Sequential Monte-Carlo (SMC) protocol, the following
         sim=sim,
         reference_samples=mm_samples,
         nr_of_walkers=100,
-        nr_of_resampling_steps=1_000,
+        protocol_length=1_000
+        nr_of_resampling_steps=100,
+        save_endstates=True
     )
-Here, :code:`nr_of_walkers` indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (:code:`nr_of_resampling_steps`, i.e. 1000 interpolation/resampling steps).
+Here, :code:`nr_of_walkers` indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (:code:`protocol_length`). 
+:code:`nr_of nr_of_resampling_steps` states that the walkers are resampled 100 times.
+With the option :code:`save_endstates` samples at the end of the protocol can be saved.
 
 Perform multiple protocols
 ~~~~~~~~~~~~~~~~~~~~~~
