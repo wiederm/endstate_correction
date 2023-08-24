@@ -208,14 +208,17 @@
 <div class="viewcode-block" id="SMC.perform_SMC"><a class="viewcode-back" href="../../autosummary/endstate_correction.smc.SMC.html#endstate_correction.smc.SMC.perform_SMC">[docs]</a>    <span class="k">def</span> <span class="nf">perform_SMC</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nr_of_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">nr_of_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
+        <span class="n">protocol_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> <span class="c1"># length of SMC protocol</span>
+        <span class="n">nr_of_resampling_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="c1"># number of times walkers are resampled</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform SMC sampling</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nr_of_walkers (int, optional): number of walkers. Defaults to 100.</span>
-<span class="sd">            nr_of_steps (int, optional): number of interpolation steps. Defaults to 1000.</span>
+<span class="sd">            nr_of_walkers (int, optional): Number of walkers selected from provided samples. Defaults to 100.</span>
+<span class="sd">            protocol_length (int, optional): Length of SMC protocol. Defaults to 1_000.</span>
+<span class="sd">            nr_of_resampling_steps (int, optional): Number of steps at which walkers are resampled. Defaults to 100.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
 
         <span class="c1"># ------------------------- #</span>
         <span class="c1"># Outline of the basic Sequential Importance Sampling (SIS) algorithm as outlined in</span>
@@ -241,7 +244,7 @@
         <span class="c1"># calculate the free energy estimate using the weights of each walker and the Zwanzig relation</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nr_of_walkers</span><span class="p">)</span> <span class="o">/</span> <span class="n">nr_of_walkers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_steps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_resampling_steps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># select initial, equally spaced samples</span>
         <span class="n">equally_spaces_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
@@ -252,6 +255,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">current_set_of_walkers</span> <span class="o">=</span> <span class="n">walkers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">walkers</span><span class="p">)</span> <span class="o">==</span> <span class="n">nr_of_walkers</span>
+        <span class="n">nr_of_steps</span> <span class="o">=</span> <span class="n">protocol_length</span> <span class="o">//</span> <span class="n">nr_of_resampling_steps</span> <span class="c1"># nr of steps between resampling</span>
 
         <span class="k">for</span> <span class="n">lamb_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lamb_idx</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>

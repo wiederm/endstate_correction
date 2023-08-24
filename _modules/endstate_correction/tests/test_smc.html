@@ -145,9 +145,9 @@
     <span class="c1"># perform SMC switching</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SMC switching&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_am_I_on_GH</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span><span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span><span class="n">protocol_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span><span class="n">nr_of_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span><span class="n">protocol_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">smc_sampler</span><span class="o">.</span><span class="n">logZ</span><span class="p">)</span></div>
 
 

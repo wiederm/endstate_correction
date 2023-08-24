@@ -218,8 +218,26 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SMC-specific protocol&quot;&quot;&quot;</span>
 
     <span class="n">nr_of_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># number of walkers for SMC</span>
-    <span class="n">nr_of_resampling_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span>  <span class="c1"># number of resampling steps for SMC</span>
+    <span class="n">protocol_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span> <span class="c1"># length of the SMC protocol</span>
+    <span class="n">nr_of_resampling_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span> <span class="c1"># number of times walkers are resampled</span>
     <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s2">&quot;protocol_length&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_protocol_length</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s2">&quot;nr_of_resampling_steps&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_nr_of_resampling_steps</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_protocol_length</span><span class="p">(</span><span class="n">protocol_length</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">protocol_length</span><span class="o">%</span><span class="mi">10</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Protocol length has to be a multiple factor of 10!&quot;</span><span class="p">)</span>
+        
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_nr_of_resampling_steps</span><span class="p">(</span><span class="n">nr_of_resampling_steps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nr_of_resampling_steps</span><span class="o">%</span><span class="mi">10</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of resampling steps has to be a multiple factor of 10!&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>  <span class="c1"># Call base class&#39;s post-init</span></div>
@@ -356,15 +374,17 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing SMC from reference to target potential&quot;</span><span class="p">)</span>
             <span class="n">smc_sampler</span> <span class="o">=</span> <span class="n">SMC</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">)</span>
             <span class="n">smc_sampler</span><span class="o">.</span><span class="n">perform_SMC</span><span class="p">(</span>
-                <span class="n">nr_of_steps</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">nr_of_resampling_steps</span><span class="p">,</span>
                 <span class="n">nr_of_walkers</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">nr_of_walkers</span><span class="p">,</span>
+                <span class="n">protocol_length</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">protocol_length</span><span class="p">,</span>
+                <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">nr_of_resampling_steps</span>
             <span class="p">)</span>
 
             <span class="n">r_smc</span><span class="o">.</span><span class="n">logZ</span> <span class="o">=</span> <span class="n">smc_sampler</span><span class="o">.</span><span class="n">logZ</span>
             <span class="n">r_smc</span><span class="o">.</span><span class="n">effective_sample_size</span> <span class="o">=</span> <span class="n">smc_sampler</span><span class="o">.</span><span class="n">effective_sample_size</span>
-            <span class="n">r_smc</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">smc_sampler</span><span class="o">.</span><span class="n">current_set_of_walkers</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">protocol_</span><span class="o">.</span><span class="n">save_endstates</span><span class="p">:</span>
+                <span class="n">r_smc</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">smc_sampler</span><span class="o">.</span><span class="n">current_set_of_walkers</span>
+                <span class="p">)</span>
         <span class="n">r</span><span class="o">.</span><span class="n">smc_results</span> <span class="o">=</span> <span class="n">r_smc</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">AllProtocol</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">NEQProtocol</span><span class="p">):</span>

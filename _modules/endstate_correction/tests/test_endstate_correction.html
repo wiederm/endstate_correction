@@ -217,19 +217,21 @@
     <span class="c1"># load samples</span>
     <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">nnp_samples</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
     <span class="n">nr_of_walkers</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">protocol_length</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">nr_of_resampling_steps</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-        <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
         <span class="n">nr_of_walkers</span><span class="o">=</span><span class="n">nr_of_walkers</span><span class="p">,</span>
+        <span class="n">protocol_length</span><span class="o">=</span><span class="n">protocol_length</span><span class="p">,</span>
         <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="n">nr_of_resampling_steps</span><span class="p">,</span>
+        <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
     <span class="n">r_smc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">smc_results</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_walkers</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_resampling_steps</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_resampling_steps</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">logZ</span><span class="p">)</span></div>
 
@@ -265,8 +267,8 @@
     <span class="n">smc_protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
-        <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
         <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">protocol_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">AllProtocol</span><span class="p">(</span>

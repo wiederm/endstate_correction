@@ -27,6 +27,7 @@ endstate\_correction.protocol.SMCProtocol
    
       ~SMCProtocol.nr_of_resampling_steps
       ~SMCProtocol.nr_of_walkers
+      ~SMCProtocol.protocol_length
       ~SMCProtocol.reference_samples
       ~SMCProtocol.save_endstates
       ~SMCProtocol.target_samples

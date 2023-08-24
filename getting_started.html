@@ -204,11 +204,15 @@ Both options only make sense for a NEQ protocol.</p>
     <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
     <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
     <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+    <span class="n">protocol_length</span><span class="o">=</span><span class="mi">1_000</span>
+    <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Here, <code class="code docutils literal notranslate"><span class="pre">nr_of_walkers</span></code> indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (<code class="code docutils literal notranslate"><span class="pre">nr_of_resampling_steps</span></code>, i.e. 1000 interpolation/resampling steps).</p>
+<p>Here, <code class="code docutils literal notranslate"><span class="pre">nr_of_walkers</span></code> indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (<code class="code docutils literal notranslate"><span class="pre">protocol_length</span></code>).
+<code class="code docutils literal notranslate"><span class="pre">nr_of</span> <span class="pre">nr_of_resampling_steps</span></code> states that the walkers are resampled 100 times.
+With the option <code class="code docutils literal notranslate"><span class="pre">save_endstates</span></code> samples at the end of the protocol can be saved.</p>
 </section>
 <section id="perform-multiple-protocols">
 <h3>Perform multiple protocols<a class="headerlink" href="#perform-multiple-protocols" title="Permalink to this heading"></a></h3>
