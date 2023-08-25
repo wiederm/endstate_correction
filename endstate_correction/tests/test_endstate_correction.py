@@ -163,6 +163,29 @@ def test_SMC_protocol():
     print(r_smc.logZ)
 
 
+def test_smc_arguments():
+    """Test if ValueError is raised when protocol length and number of resampling steps are not a multiple factor of 10"""
+
+    # load samples
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
+    with pytest.raises(ValueError):
+        protocol = SMCProtocol(
+            sim=sim,
+            reference_samples=mm_samples,
+            nr_of_walkers=10,
+            protocol_length=2,
+            nr_of_resampling_steps=10,
+        )
+    with pytest.raises(ValueError):
+        protocol = SMCProtocol(
+            sim=sim,
+            reference_samples=mm_samples,
+            nr_of_walkers=10,
+            protocol_length=10,
+            nr_of_resampling_steps=2,
+        )
+
+
 @pytest.mark.skipif(
     os.getenv("CI") == "true",
     reason="Skipping tests that take too long in github actions",
