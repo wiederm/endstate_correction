@@ -22,6 +22,7 @@ endstate\_correction.tests.test\_endstate\_correction
       test_SMC_protocol
       test_each_protocol
       test_endstate_correction_imported
+      test_smc_arguments
    
    
 

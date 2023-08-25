@@ -236,6 +236,29 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">r_smc</span><span class="o">.</span><span class="n">logZ</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="test_smc_arguments"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_endstate_correction.test_smc_arguments.html#endstate_correction.tests.test_endstate_correction.test_smc_arguments">[docs]</a><span class="k">def</span> <span class="nf">test_smc_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if ValueError is raised when protocol length and number of resampling steps are not a multiple factor of 10&quot;&quot;&quot;</span>
+
+    <span class="c1"># load samples</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">nnp_samples</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
+            <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+            <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+            <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">protocol_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">protocol</span> <span class="o">=</span> <span class="n">SMCProtocol</span><span class="p">(</span>
+            <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+            <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
+            <span class="n">nr_of_walkers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">protocol_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="test_ALL_protocol"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_endstate_correction.test_ALL_protocol.html#endstate_correction.tests.test_endstate_correction.test_ALL_protocol">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
     <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
     <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Skipping tests that take too long in github actions&quot;</span><span class="p">,</span>

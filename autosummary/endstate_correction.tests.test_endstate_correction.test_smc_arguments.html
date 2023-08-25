@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endstate_correction.tests.test_equ &mdash; endstate_correction  documentation</title>
+  <title>endstate_correction.tests.test_endstate_correction.test_smc_arguments &mdash; endstate_correction  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="endstate_correction.tests.test_equ.load_equ_samples" href="endstate_correction.tests.test_equ.load_equ_samples.html" />
-    <link rel="prev" title="endstate_correction.tests.test_endstate_correction.test_smc_arguments" href="endstate_correction.tests.test_endstate_correction.test_smc_arguments.html" /> 
+    <link rel="next" title="endstate_correction.tests.test_equ" href="endstate_correction.tests.test_equ.html" />
+    <link rel="prev" title="endstate_correction.tests.test_endstate_correction.test_endstate_correction_imported" href="endstate_correction.tests.test_endstate_correction.test_endstate_correction_imported.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,8 +59,8 @@
 <li class="toctree-l3"><a class="reference internal" href="endstate_correction.system.html">endstate_correction.system</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="endstate_correction.tests.html">endstate_correction.tests</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_analysis.html">endstate_correction.tests.test_analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">endstate_correction.tests.test_equ</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_equ.html">endstate_correction.tests.test_equ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_misc.html">endstate_correction.tests.test_misc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_neq.html">endstate_correction.tests.test_neq</a></li>
 <li class="toctree-l4"><a class="reference internal" href="endstate_correction.tests.test_perform_endstate_correction.html">endstate_correction.tests.test_perform_endstate_correction</a></li>
@@ -95,9 +95,10 @@
           <li class="breadcrumb-item"><a href="../api.html">API Documentation</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.html">endstate_correction</a></li>
           <li class="breadcrumb-item"><a href="endstate_correction.tests.html">endstate_correction.tests</a></li>
-      <li class="breadcrumb-item active">endstate_correction.tests.test_equ</li>
+          <li class="breadcrumb-item"><a href="endstate_correction.tests.test_endstate_correction.html">endstate_correction.tests.test_endstate_correction</a></li>
+      <li class="breadcrumb-item active">endstate_correction.tests.test_endstate_correction.test_smc_arguments</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/autosummary/endstate_correction.tests.test_equ.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/autosummary/endstate_correction.tests.test_endstate_correction.test_smc_arguments.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -105,30 +106,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-endstate_correction.tests.test_equ">
-<span id="endstate-correction-tests-test-equ"></span><h1>endstate_correction.tests.test_equ<a class="headerlink" href="#module-endstate_correction.tests.test_equ" title="Permalink to this heading"></a></h1>
-<p class="rubric">Functions</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.tests.test_equ.load_equ_samples.html#endstate_correction.tests.test_equ.load_equ_samples" title="endstate_correction.tests.test_equ.load_equ_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_equ_samples</span></code></a></p></td>
-<td><p>Helper function that loads trajectories from the test data</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="endstate_correction.tests.test_equ.test_collect_equ_samples.html#endstate_correction.tests.test_equ.test_collect_equ_samples" title="endstate_correction.tests.test_equ.test_collect_equ_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_collect_equ_samples</span></code></a></p></td>
-<td><p>test if we are able to collect samples as anticipated</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="endstate_correction.tests.test_equ.test_equilibrium_free_energy.html#endstate_correction.tests.test_equ.test_equilibrium_free_energy" title="endstate_correction.tests.test_equ.test_equilibrium_free_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_equilibrium_free_energy</span></code></a></p></td>
-<td><p>test that u_kn can be calculated and that results are consistent whether we reload mbar pickle or regernerate it</p></td>
-</tr>
-</tbody>
-</table>
+  <section id="endstate-correction-tests-test-endstate-correction-test-smc-arguments">
+<h1>endstate_correction.tests.test_endstate_correction.test_smc_arguments<a class="headerlink" href="#endstate-correction-tests-test-endstate-correction-test-smc-arguments" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="endstate_correction.tests.test_endstate_correction.test_smc_arguments">
+<span class="sig-prename descclassname"><span class="pre">endstate_correction.tests.test_endstate_correction.</span></span><span class="sig-name descname"><span class="pre">test_smc_arguments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endstate_correction/tests/test_endstate_correction.html#test_smc_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endstate_correction.tests.test_endstate_correction.test_smc_arguments" title="Permalink to this definition"></a></dt>
+<dd><p>Test if ValueError is raised when protocol length and number of resampling steps are not a multiple factor of 10</p>
+</dd></dl>
+
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="endstate_correction.tests.test_endstate_correction.test_smc_arguments.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_endstate_correction.test_smc_arguments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="endstate_correction.tests.test_equ.load_equ_samples.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_equ.load_equ_samples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="endstate_correction.tests.test_endstate_correction.test_endstate_correction_imported.html" class="btn btn-neutral float-left" title="endstate_correction.tests.test_endstate_correction.test_endstate_correction_imported" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endstate_correction.tests.test_equ.html" class="btn btn-neutral float-right" title="endstate_correction.tests.test_equ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
