@@ -1,4 +1,4 @@
-"""Endstate reweighting from MM to QML potential"""
+"""Endstate reweighting from MM to NNP"""
 
 # Add imports here
 from .endstate_correction import *

@@ -1,6 +1,6 @@
 Getting Started
 ===============
-This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is sued) and a neural network potential (ANI-2x).
+This page details how to perform free energy calculations between a molecular mechanics force field (in this case the open-forcefield is used) and a neural network potential (ANI-2x).
 
 Installation
 -----------------
@@ -12,9 +12,9 @@ This package can be installed using:
 How to use this package
 -----------------
 We have prepared two scripts that should help to use this package, both are located in :code:`endstate_correction/scripts`.
-We will start by describing the use of the :code:`sampling.py` script and then discuss the :code:`perform_correction.py` script.
+We will start by describing the use of the :code:`generate_endstate_samples.py` script and then discuss the :code:`perform_correction.py` script.
 
-A typical NEQ workflow
+A typical Non-equilibrium (NEQ) switching workflow
 -----------------
 Generate the equilibrium distribution :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -57,9 +57,10 @@ Note that we explicitly define the atoms that should be perturbed from the refer
 
 If you want to perform bidirectional FEP or NEQ you need to sample at :math:`\pi(x, \lambda=0)` *and* :math:`\pi(x, \lambda=1)`. 
 This can be controlled by setting the number using the variable :code:`nr_lambda_states`.
-The default value set in the :code:`sampling.py` script is :code:`nr_lambda_states=2`, generating samples from both endstate equilibrium distributions.
+The default value set in the :code:`generate_endstate_samples.py` script is :code:`nr_lambda_states=2`, generating samples from both endstate equilibrium distributions.
 
 .. code:: python
+
     nr_lambda_states = 2  # samples equilibrium distribution at both endstates
     lambs = np.linspace(0, 1, nr_lambda_states)
 
@@ -67,27 +68,31 @@ Perform unidirectional NEQ from :math:`\pi(x, \lambda=0)`
 ~~~~~~~~~~~~~~~~~~~~~~
 The endstate correction can be performed using the script :code:`perform_correction.py`.
 The script will calculate the free energy estimate using the samples generated with the :code:`generate_endstate_samples.py` script.
-Subsequently, the relevant section of the :code:`perform_correction.py` script are explained --- but they should work for for the testsystem without any modifications. 
+Subsequently, the relevant sections of the :code:`perform_correction.py` script are explained --- but they should work for for the testsystem without any modifications. 
 
 To perform a specific endstate correction we need to define a protocol 
-(some standard protocols are shown :ref:`here<Available protocols>`) 
+(some standard protocols are shown :ref:`here <available protocols>`) 
 with:
 
 .. code:: python
 
-    neq_protocol = Protocol(
-        method="NEQ",
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
         nr_of_switches=100,
         neq_switching_length=1_000,
+        save_endstates=False,
+        save_trajs=False
     )
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(neq_protocol)`.
 The particular code above defines unidirectional NEQ switching using 100 switches and a switching length of 1 ps.
 The direciton of the switching simulation is controlled by the sampels that are provided: 
-if `reference_samples` are provided, switching is performed from the reference to the target level of theory, if `target_samples` are provided, switching is performed from the target level to the reference level.
+if :code:`reference_samples` are provided, switching is performed from the reference to the target level of theory, if :code:`target_samples` are provided, switching is performed from the target level to the reference level.
 If both samples are provided, bidirectional NEQ switching is performed (for an example see below).
+There is the possibility to save the endstate of each switch if :code:`save_endstates` is set to :code:`True`. 
+Additionally, the switching trajectory of each switch can be saved if :code:`save_trajs=True`.
+Both options only make sense for a NEQ protocol.
 
 Perform bidirectional NEQ from :math:`\pi(x, \lambda=0)` and :math:`\pi(x, \lambda=1)`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -95,11 +100,10 @@ The endstate correction can be performed using the script :code:`perform_correct
 
 .. code:: python
 
-    neq_protocol = Protocol(
-        method="NEQ",
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=100,
         neq_switching_length=1_000,
     )
@@ -112,8 +116,8 @@ Perform unidirectional FEP from :math:`\pi(x, \lambda=0)`
 The protocol has to be adopted slightly:
 
 .. code:: python
-    fep_protocol = Protocol(
-        method="FEP",
+
+    fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
         nr_of_switches=1_000,
@@ -121,36 +125,101 @@ The protocol has to be adopted slightly:
 
 This protocol is then passed to the actual function performing the protocol: :code:`perform_endstate_correction(fep_protocol)`.
 
+Perform unidirectional SMC from :math:`\pi(x, \lambda=0)`
+~~~~~~~~~~~~~~~~~~~~~~
+To perform a unidirectional Sequential Monte-Carlo (SMC) protocol, the following adaptations have to be made:
+
+.. code:: python
+
+    smc_protocol = SMCProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_walkers=100,
+        protocol_length=1_000
+        nr_of_resampling_steps=100,
+        save_endstates=True
+    )
+Here, :code:`nr_of_walkers` indicates the number of walkers selected from the reference distribution, which are propagated for 1ps (:code:`protocol_length`). 
+:code:`nr_of nr_of_resampling_steps` states that the walkers are resampled 100 times.
+With the option :code:`save_endstates` samples at the end of the protocol can be saved.
+
+Perform multiple protocols
+~~~~~~~~~~~~~~~~~~~~~~
+It is possible to combine several protocols into one with :code:`AllProtocol`. 
+
+.. code:: python
+
+    protocol = AllProtocol(
+        fep_protocol=fep_protocol, 
+        neq_protocol=neq_protocol, 
+        smc_protocol=smc_protocol
+    )
+
+This :code:`protocol` is then passed to :code:`perform_endstate_correction()` to perform all endstate corrections.
 
 Analyse results of an unidirection NEQ protocol
 ~~~~~~~~~~~~~~~~~~~~~~
 To analyse the results generated by :code:`r = perform_endstate_correction()` pass the return value to :code:`plot_endstate_correction_results(system_name, r, "results_neq_unidirectional.png")` and results will be plotted and printed.
+It should be noted, that :code:`perform_endstate_correction()` returns an instance of :code:`AllResults()`, which, depending on the passed protocol, contains results of an FEP, NEQ switching and SMC protocol (instances of the :code:`FEPResults()`, :code:`NEQResults()` and :code:`SMCResults()` class, respectively).
+It is also possible to add equilibrium sampling results to the instance of :code:`AllResults()` retrospectively (:code:`EquResults()`).
 
-
+.. _available protocols:
 Available protocols
 -----------------
 
+unidirectional NEQ protocol (reference to target)
+
 .. code:: python
 
-    neq_protocol = Protocol(
-        method="NEQ",
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
         nr_of_switches=100,
         neq_switching_length=1_000,
     )
 
+bidirectional NEQ protocol (save switching trajectory and endstate of each switch)
+
 .. code:: python
 
-    neq_protocol = Protocol(
-        method="FEP",
+    neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=100,
         neq_switching_length=1_000,
         save_endstates=True,
         save_trajs=True,
     )
 
+unidirectional FEP protocol (reference to target)
+
+.. code:: python
+
+    fep_protocol = FEPProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_switches=1_000,
+    )
+
+bidirectional FEP protocol
+
+.. code:: python
+
+    fep_protocol = FEPProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        target_samples=nnp_samples,
+        nr_of_switches=1_000,
+    )
+
+unidirectional SMC protocol (reference to target)
+
+.. code:: python
+
+    smc_protocol = SMCProtocol(
+        sim=sim,
+        reference_samples=mm_samples,
+        nr_of_walkers=100,
+        nr_of_resampling_steps=1_000,
+    )

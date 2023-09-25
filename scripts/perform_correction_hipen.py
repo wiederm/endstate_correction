@@ -49,7 +49,7 @@ params = CharmmParameterSet(
 with open("temp.pdb", "w") as outfile:
     PDBFile.writeFile(psf.topology, crd.positions, outfile)
 
-# define region that should be treated with the qml
+# define region that should be treated with the nnp
 chains = list(psf.topology.chains())
 ml_atoms = [atom.index for atom in chains[0].atoms()]
 print(f"{ml_atoms=}")
@@ -66,7 +66,7 @@ sim = Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
 n_samples = 5_000
 n_steps_per_sample = 1_000
 
-# define directory containing MM and QML sampling data
+# define directory containing MM and NNP sampling data
 traj_base = f"/data/shared/projects/endstate_rew/{system_name}/sampling_charmmff/"
 
 # load MM samples
@@ -82,8 +82,8 @@ for i in range(1, 4):
     mm_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
 print(f"Initializing switch from {len(mm_samples)} MM samples")
 
-# load QML samples
-qml_samples = []
+# load NNP samples
+nnp_samples = []
 for i in range(1, 4):
     base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000"
     # if needed, convert pickle file to dcd
@@ -92,8 +92,8 @@ for i in range(1, 4):
         f"{base}.dcd",
         top=psf_file,
     )
-    qml_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
-print(f"Initializing switch from {len(mm_samples)} QML samples")
+    nnp_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
+print(f"Initializing switch from {len(mm_samples)} NNP samples")
 
 ########################################################
 ########################################################
@@ -110,7 +110,7 @@ fep_protocol = Protocol(
     method="FEP",
     direction="bidirectional",
     sim=sim,
-    trajectories=[mm_samples, qml_samples],
+    trajectories=[mm_samples, nnp_samples],
     nr_of_switches=10,  # 2_000,
 )
 
@@ -121,7 +121,7 @@ neq_protocol = Protocol(
     method="NEQ",
     direction="bidirectional",
     sim=sim,
-    trajectories=[mm_samples, qml_samples],
+    trajectories=[mm_samples, nnp_samples],
     nr_of_switches=3,  # 500,
     neq_switching_length=5,  # _000,
     save_endstates=True,

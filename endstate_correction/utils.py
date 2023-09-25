@@ -11,6 +11,15 @@ def convert_pickle_to_dcd_file(
     dcd_output_path: str,
     pdb_output_path: str,
 ):
+    """Convert pickle file trajectory to dcd file.
+
+    Args:
+        pickle_file_path (str): path where pickle file is stored
+        path_to_psf (str): path where psf file is stored
+        path_to_crd (str): path where crd file is stored
+        dcd_output_path (str): path to save dcd file
+        pdb_output_path (str): path to save pdb file
+    """
     # helper function that converts pickle trajectory file to dcd file
 
     f = pickle.load(open(pickle_file_path, "rb"))

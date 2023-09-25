@@ -1,12 +1,12 @@
 """
 endstate_correction
-Endstate reweighting from MM to QML potential
+Endstate correction from MM to NNP
 """
 import sys
 from setuptools import setup, find_packages
 import versioneer
 
-short_description = "Endstate reweighting from MM to QML potential".split("\n")[0]
+short_description = "Endstate reweighting from MM to NNP".split("\n")[0]
 
 # from https://github.com/pytest-dev/pytest-runner#conditional-requirement
 needs_pytest = {"pytest", "test", "ptr"}.intersection(sys.argv)

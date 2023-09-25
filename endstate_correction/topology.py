@@ -1,3 +1,4 @@
+"""Dataclass for AMBER and CHARMM topology"""
 from dataclasses import dataclass
 from typing import List
 

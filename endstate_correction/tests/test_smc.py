@@ -67,14 +67,14 @@ def test_SMC_algorithm():
 
 
 def test_SMC(_am_I_on_GH):
-    sim, samples_mm, samples_mm_qml = setup_ZINC00077329_system()
+    sim, samples_mm, samples_mm_nnp = setup_ZINC00077329_system()
     smc_sampler = SMC(sim=sim, samples=samples_mm)
     # perform SMC switching
     print("Performing SMC switching")
     if _am_I_on_GH == True:
-        smc_sampler.perform_SMC(nr_of_steps=1, nr_of_walkers=2)
+        smc_sampler.perform_SMC(protocol_length=4, nr_of_resampling_steps=2, nr_of_walkers=2)
     else:
-        smc_sampler.perform_SMC(nr_of_steps=5, nr_of_walkers=100)
+        smc_sampler.perform_SMC(protocol_length=10, nr_of_resampling_steps=2, nr_of_walkers=100)
     print(smc_sampler.logZ)
 
 
@@ -92,11 +92,37 @@ def test_SMC_stratified_resampling():
     resampled_samples = resampler.stratified_resampling(samples, weights)
 
     assert len(resampled_samples) == len(samples)
+    # test sampling with uniform weights
     resampled_samples_with_uniform_weights_try1 = resampler.stratified_resampling(
         samples, 0.1 * np.ones(N_samples)
     )
     resampled_samples_with_uniform_weights_try2 = resampler.stratified_resampling(
         samples, 0.5 * np.ones(N_samples)
     )
-    
-    assert np.allclose(resampled_samples_with_uniform_weights_try1, resampled_samples_with_uniform_weights_try2)
+
+    assert np.allclose(
+        resampled_samples_with_uniform_weights_try1,
+        resampled_samples_with_uniform_weights_try2,
+    )
+
+    # test sampling with weights that are not uniform
+    weights_for_first_ten_samples = np.ones(10)
+    weights_for_N_minus_ten_samples = np.zeros(N_samples - 10)
+    weights = np.concatenate(
+        (weights_for_first_ten_samples, weights_for_N_minus_ten_samples)
+    )
+
+    assert len(weights) == N_samples
+
+    resampled_samples_with_uniform_weights_try3 = resampler.stratified_resampling(
+        samples, weights
+    )
+    # first 10% of samples should only contain first sample
+    print(resampled_samples_with_uniform_weights_try3[: int(N_samples / 10)])
+    assert np.all(
+        np.array(
+            resampled_samples_with_uniform_weights_try3[: int(N_samples / 10)],
+            dtype=int,
+        ).flatten()
+        == 0
+    )

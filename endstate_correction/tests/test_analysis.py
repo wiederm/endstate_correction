@@ -24,7 +24,7 @@ def test_plotting_equilibrium_free_energy():
 
     from .test_equ import load_equ_samples
 
-    """test if we are able to plot overlap and """
+    """Test if we are able to plot overlap and equilibrium free energy results"""
 
     ########################################################
     ########################################################
@@ -59,19 +59,18 @@ def test_plot_results_for_FEP_protocol():
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    from endstate_correction.protocol import Protocol, perform_endstate_correction
+    from endstate_correction.protocol import FEPProtocol, perform_endstate_correction
 
     from .test_system import setup_ZINC00077329_system
 
     system_name = "ZINC00079729"
     # start with FEP
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
-    fep_protocol = Protocol(
-        method="FEP",
+    fep_protocol = FEPProtocol(
         sim=sim,
         reference_samples=mm_samples,
-        target_samples=qml_samples,
+        target_samples=nnp_samples,
         nr_of_switches=100,
     )
 
@@ -80,27 +79,25 @@ def test_plot_results_for_FEP_protocol():
         system_name, r, f"{system_name}_results_fep_bidirectional.png"
     )
     # test return_endstate_correction
-    df, ddf = return_endstate_correction(r, method="FEP", direction="forw")
-    df, ddf = return_endstate_correction(r, method="FEP", direction="rev")
-    df, ddf = return_endstate_correction(r, method="FEP", direction="bid")
+    df, ddf = return_endstate_correction(r.fep_results, direction="forw")
+    df, ddf = return_endstate_correction(r.fep_results, direction="bid")
 
 
 def test_plot_results_for_NEQ_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Perform NEQ uni- and bidirectional protocol"""
     import pickle
 
     from endstate_correction.analysis import (
         plot_endstate_correction_results,
         return_endstate_correction,
     )
-    from endstate_correction.protocol import Protocol
 
     system_name = "ZINC00079729"
 
     # load pregenerated data
     r = pickle.load(
         open(
-            f"data/{system_name}/switching_charmmff/{system_name}_neq_bid.pickle", "rb"
+            f"data/{system_name}/switching_charmmff/{system_name}_neq_bid_new.pickle", "rb"
         )
     )
     plot_endstate_correction_results(
@@ -108,44 +105,36 @@ def test_plot_results_for_NEQ_protocol():
     )
 
     # test return_endstate_correction
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="forw")
+    df, ddf = return_endstate_correction(r.neq_results, direction="forw")
     assert np.isclose(df, -2105813.1630223254)
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="rev")
+    df, ddf = return_endstate_correction(r.neq_results, direction="rev")
     assert np.isclose(df, -2105811.559385495)
-    df, ddf = return_endstate_correction(r, method="NEQ", direction="bid")
+    df, ddf = return_endstate_correction(r.neq_results, direction="bid")
     # bidirectional test fails most likely due to missing overlap (and convergence)
     # assert np.isclose(df, -217063.7966900661)
 
 
 def test_plot_results_for_all_protocol():
-    """Perform FEP uni- and bidirectional protocol"""
+    """Perform FEP and NEQ uni- and bidirectional protocol"""
     import pickle
 
     from endstate_correction.analysis import plot_endstate_correction_results
-    from endstate_correction.protocol import Protocol
+    from endstate_correction.protocol import AllProtocol, FEPProtocol, NEQProtocol, SMCProtocol
 
     from .test_system import setup_ZINC00077329_system
 
     system_name = "ZINC00079729"
     # start with NEQ
-    sim, mm_samples, qml_samples = setup_ZINC00077329_system()
+    sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
 
     ####################################################
     # ---------------- All corrections -----------------
     ####################################################
 
-    fep_protocol = Protocol(
-        method="All",
-        sim=sim,
-        reference_samples=mm_samples,
-        target_samples=qml_samples,
-        nr_of_switches=100,
-    )
-
     # load data
     r = pickle.load(
         open(
-            f"data/{system_name}/switching_charmmff/{system_name}_all_corrections.pickle",
+            f"data/{system_name}/switching_charmmff/{system_name}_all_corrections_new.pickle",
             "rb",
         )
     )

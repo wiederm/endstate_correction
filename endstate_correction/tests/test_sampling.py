@@ -33,7 +33,7 @@ def test_sampling():
         f"{hipen_testsystem}/par_all36_cgenff.prm",
         f"{hipen_testsystem}/{system_name}/{system_name}.str",
     )
-    # define region that should be treated with the qml
+    # define region that should be treated with the nnp
     sim = setup_vacuum_simulation(psf, params)
     sim.context.setPositions(crd.positions)
     sim.context.setVelocitiesToTemperature(300)
@@ -58,7 +58,7 @@ def test_sampling():
         f"{jctc_testsystem}/toppar/toppar_water_ions.str",
     )
     psf = read_box(psf, f"{jctc_testsystem}/{system_name}/charmm-gui/input.config.dat")
-    # define region that should be treated with the qml
+    # define region that should be treated with the nnp
     chains = list(psf.topology.chains())
     ml_atoms = [atom.index for atom in chains[0].atoms()]
     # set up system
