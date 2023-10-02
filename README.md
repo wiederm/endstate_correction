@@ -28,6 +28,44 @@ This package can be installed using:
 ### Contributors
 
 <!-- readme: collaborators,contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/xiki-tempula">
+            <img src="https://avatars.githubusercontent.com/u/6242032?v=4" width="100;" alt="xiki-tempula"/>
+            <br />
+            <sub><b>Zhiyi Wu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/wiederm">
+            <img src="https://avatars.githubusercontent.com/u/31651017?v=4" width="100;" alt="wiederm"/>
+            <br />
+            <sub><b>Marcus Wieder</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/msuruzhon">
+            <img src="https://avatars.githubusercontent.com/u/36005076?v=4" width="100;" alt="msuruzhon"/>
+            <br />
+            <sub><b>Miroslav Suruzhon</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/saratk1">
+            <img src="https://avatars.githubusercontent.com/u/64199149?v=4" width="100;" alt="saratk1"/>
+            <br />
+            <sub><b>Sara Tkaczyk</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JohannesKarwou">
+            <img src="https://avatars.githubusercontent.com/u/72743318?v=4" width="100;" alt="JohannesKarwou"/>
+            <br />
+            <sub><b>Johannes Karwounopoulos</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: collaborators,contributors -end -->
 
 
