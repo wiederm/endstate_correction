@@ -65,6 +65,7 @@ class TestPerformCorrection:
             protocol=bss_protocol,
             name=system_name,
             work_dir=str(output_base),
+            implementation="torchani",
         )
         simulation.set_trajectory(str(parameter_base / f"{system_name}.h5"))
         return simulation
