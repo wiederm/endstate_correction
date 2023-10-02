@@ -25,6 +25,12 @@ We recommend setting up a new python environment with `python=3.9` and installin
 This package can be installed using:
 `pip install git+https://github.com/wiederm/endstate_correction.git`.
 
+### Contributors
+
+<!-- readme: collaborators,contributors -start -->
+<!-- readme: collaborators,contributors -end -->
+
+
 ### Copyright
 
 Copyright (c) 2022, Sara Tkaczyk, Johannes Karwounopoulos & Marcus Wieder
