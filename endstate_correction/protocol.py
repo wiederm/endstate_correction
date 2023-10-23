@@ -1,12 +1,10 @@
 """Provide functions for the endstate correction workflow."""
-
-
+import os
 from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 import mdtraj as md
 import numpy as np
-import pandas as pd
 from openmm import unit
 from openmm.app import Simulation
 from pymbar import MBAR
@@ -145,10 +143,10 @@ class SMCProtocol(BaseProtocol):
     """SMC-specific protocol"""
 
     nr_of_walkers: int = -1  # number of walkers for SMC
-    protocol_length: int = 1_000 # length of the SMC protocol
-    nr_of_resampling_steps: int = 1_000 # number of times walkers are resampled
+    protocol_length: int = 1_000  # length of the SMC protocol
+    nr_of_resampling_steps: int = 1_000  # number of times walkers are resampled
     save_endstates: bool = False
-    
+
     def __setattr__(self, prop, val):
         if prop == "protocol_length":
             self._check_protocol_length(val)
@@ -158,20 +156,22 @@ class SMCProtocol(BaseProtocol):
 
     @staticmethod
     def _check_protocol_length(protocol_length):
-        if protocol_length%10 != 0:
+        if protocol_length % 10 != 0:
             raise ValueError("Protocol length has to be a multiple factor of 10!")
-        
+
     @staticmethod
     def _check_nr_of_resampling_steps(nr_of_resampling_steps):
-        if nr_of_resampling_steps%10 != 0:
-            raise ValueError("Number of resampling steps has to be a multiple factor of 10!")
+        if nr_of_resampling_steps % 10 != 0:
+            raise ValueError(
+                "Number of resampling steps has to be a multiple factor of 10!"
+            )
 
     def __post_init__(self):
         super().__post_init__()  # Call base class's post-init
 
 
 @dataclass
-class AllProtocol():
+class AllProtocol:
     """Dataclass for running all protocols"""
 
     fep_protocol: Union[None, FEPProtocol] = None
@@ -180,9 +180,10 @@ class AllProtocol():
 
     # check if reference or target samples are provided
     def __post_init__(self):
-        self.fep_protocol.__post_init__()  
+        self.fep_protocol.__post_init__()
         self.neq_protocol.__post_init__()
         self.smc_protocol.__post_init__()
+
 
 class BaseResults:
     """Base class for all protocol results"""
@@ -199,31 +200,52 @@ class EquResults(BaseResults):
 class FEPResults(BaseResults):
     """FEP-specific results"""
 
-    dE_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # dE from reference to target
-    dE_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # dE from target to reference
+    dE_reference_to_target: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # dE from reference to target
+    dE_target_to_reference: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # dE from target to reference
+
 
 @dataclass
 class NEQResults(BaseResults):
     """Provides a dataclass containing the results of a protocol"""
 
-    W_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # W from reference to target
-    W_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # W from target to reference
-    endstate_samples_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from reference to target
-    endstate_samples_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from target to reference
-    switching_traj_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # switching traj from reference to target
-    switching_traj_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # switching traj from target to reference
+    W_reference_to_target: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # W from reference to target
+    W_target_to_reference: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # W from target to reference
+    endstate_samples_reference_to_target: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # endstate samples from reference to target
+    endstate_samples_target_to_reference: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # endstate samples from target to reference
+    switching_traj_reference_to_target: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # switching traj from reference to target
+    switching_traj_target_to_reference: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # switching traj from target to reference
 
 
 @dataclass
 class SMCResults(BaseResults):
     logZ: float = 0.0  # free energy difference
     effective_sample_size: list = field(default_factory=list)  # effective sample size
-    endstate_samples_reference_to_target: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from reference to target
-    endstate_samples_target_to_reference: np.array = field(default_factory=lambda: np.array([]))  # endstate samples from target to reference
+    endstate_samples_reference_to_target: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # endstate samples from reference to target
+    endstate_samples_target_to_reference: np.array = field(
+        default_factory=lambda: np.array([])
+    )  # endstate samples from target to reference
 
 
 @dataclass
-class AllResults():
+class AllResults:
     """Dataclass for combined results of all protocols"""
 
     equ_results: Union[None, EquResults] = None
@@ -232,18 +254,23 @@ class AllResults():
     smc_results: Union[None, SMCResults] = None
 
 
-def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> AllResults:
+def perform_endstate_correction(
+    protocol: Union[BaseProtocol, AllProtocol], workdir: str = "."
+) -> AllResults:
     """Perform endstate correction using the provided protocol.
 
     Args:
-        protocol (Union[BaseProtocol, AllProtocol]): defines the endstate correction. 
+        protocol (Union[BaseProtocol, AllProtocol]): defines the endstate correction.
             Either a specific protocol or a collection of protocols.
+        workdir: The working directory to save the output.
 
     Returns:
         BaseResults: results generated using the passed protocol
     """
     from endstate_correction.constant import kBT
     from endstate_correction.neq import perform_switching
+
+    os.makedirs(workdir, exist_ok=True)
 
     r = AllResults()
     if isinstance(protocol, AllProtocol) or isinstance(protocol, FEPProtocol):
@@ -303,7 +330,7 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
             smc_sampler.perform_SMC(
                 nr_of_walkers=protocol_.nr_of_walkers,
                 protocol_length=protocol_.protocol_length,
-                nr_of_resampling_steps=protocol_.nr_of_resampling_steps
+                nr_of_resampling_steps=protocol_.nr_of_resampling_steps,
             )
 
             r_smc.logZ = smc_sampler.logZ
@@ -332,7 +359,6 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
             (
                 Ws,
                 endstates_reference_to_target,
-                trajs_reference_to_target,
             ) = perform_switching(
                 sim,
                 lambdas=list_of_lambda_values,
@@ -340,11 +366,11 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
                 nr_of_switches=protocol_.nr_of_switches,
                 save_endstates=protocol_.save_endstates,
                 save_trajs=protocol_.save_trajs,
+                workdir=f"{workdir}/reference_to_target",
             )
             Ws_reference_to_target = np.array(Ws / kBT)  # remove units
             r_neq.W_reference_to_target = Ws_reference_to_target
             r_neq.endstate_samples_reference_to_target = endstates_reference_to_target
-            r_neq.switching_traj_reference_to_target = trajs_reference_to_target
 
         # from target to reference potential
         if protocol_.target_samples is not None:
@@ -352,7 +378,6 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
             (
                 Ws,
                 endstates_target_to_reference,
-                trajs_target_to_reference,
             ) = perform_switching(
                 sim,
                 lambdas=np.flip(
@@ -362,11 +387,11 @@ def perform_endstate_correction(protocol: Union[BaseProtocol, AllProtocol]) -> A
                 nr_of_switches=protocol_.nr_of_switches,
                 save_endstates=protocol_.save_endstates,
                 save_trajs=protocol_.save_trajs,
+                workdir=f"{workdir}/target_to_reference",
             )
             Ws_target_to_reference = np.array(Ws / kBT)
             r_neq.W_target_to_reference = Ws_target_to_reference
             r_neq.endstate_samples_target_to_reference = endstates_target_to_reference
-            r_neq.switching_traj_target_to_reference = trajs_target_to_reference
         r.neq_results = r_neq
 
     return r
