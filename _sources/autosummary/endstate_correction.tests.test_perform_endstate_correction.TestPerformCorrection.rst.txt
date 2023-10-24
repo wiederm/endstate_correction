@@ -20,8 +20,6 @@ endstate\_correction.tests.test\_perform\_endstate\_correction.TestPerformCorrec
       ~TestPerformCorrection.ec
       ~TestPerformCorrection.perform_correction
       ~TestPerformCorrection.test_sanity
-      ~TestPerformCorrection.test_traj_length
-      ~TestPerformCorrection.test_traj_num
    
    
 
