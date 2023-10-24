@@ -1,13 +1,8 @@
-import pathlib
-from typing import Tuple
-
-import endstate_correction
-import mdtraj
 import numpy as np
-from endstate_correction.neq import perform_switching
 from openmm import unit
-from openmm.app import Simulation
-from .test_system import setup_vacuum_simulation, setup_ZINC00077329_system
+
+from endstate_correction.neq import perform_switching
+from .test_system import setup_ZINC00077329_system
 
 
 def test_collect_work_values():
@@ -30,7 +25,7 @@ def test_switching():
     # dU_rev = dU(x)_mm - dU(x)_nnp
     lambs = np.linspace(0, 1, 2)
     print(lambs)
-    dE_list, _, _ = perform_switching(
+    dE_list, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     assert np.isclose(
@@ -38,7 +33,7 @@ def test_switching():
     )
     lambs = np.linspace(1, 0, 2)
 
-    dE_list, _, _ = perform_switching(
+    dE_list, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     print(dE_list)
