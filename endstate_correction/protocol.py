@@ -289,7 +289,7 @@ def perform_endstate_correction(
         # from reference to target potential
         if protocol_.reference_samples is not None:  # if reference samples are provided
             print("Performing FEP from reference to target potential")
-            dEs, _, _ = perform_switching(
+            dEs, _ = perform_switching(
                 sim,
                 lambdas=list_of_lambda_values,
                 samples=protocol_.reference_samples,
@@ -301,7 +301,7 @@ def perform_endstate_correction(
         # from target to reference potential
         if protocol_.target_samples is not None:  # if target samples are provided
             print("Performing FEP from target to reference potential")
-            dEs, _, _ = perform_switching(
+            dEs, _ = perform_switching(
                 sim,
                 lambdas=np.flip(
                     list_of_lambda_values
