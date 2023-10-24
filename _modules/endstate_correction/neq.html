@@ -72,8 +72,7 @@
              
   <h1>Source code for endstate_correction.neq</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Provide the functions for non-equilibrium switching.&quot;&quot;&quot;</span>
-
-
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
@@ -95,7 +94,8 @@
     <span class="n">nr_of_switches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
     <span class="n">save_trajs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+    <span class="n">workdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform NEQ switching using the provided lambda schema on the passed simulation instance.</span>
 
 <span class="sd">    Args:</span>
@@ -110,9 +110,9 @@
 <span class="sd">        RuntimeError: if the number of lambda states is less than 2</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Tuple[list, list, list]: work values, endstate samples, switching trajectories</span>
+<span class="sd">        Tuple[list, list]: work values, endstate samples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">save_endstates</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Endstate of each switch will be saved.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
@@ -135,7 +135,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NEQ switching: dW will be calculated&quot;</span><span class="p">)</span>
 
     <span class="c1"># start with switch</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_of_switches</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">switch_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_of_switches</span><span class="p">)):</span>
         <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
             <span class="c1"># if switching trajectories need to be saved, create an empty list at the beginning</span>
             <span class="c1"># of each switch for saving conformations</span>
@@ -164,7 +164,9 @@
             <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">idx_lamb</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
                 <span class="c1"># save conformation at the beginning of each switch</span>
-                <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
+                <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="c1"># test if neq or instantaneous swithching: if neq, perform integration step</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">inst_switching</span><span class="p">:</span>
                 <span class="c1"># perform 1 simulation step</span>
@@ -181,9 +183,25 @@
             <span class="c1"># TODO: expand to reduced potential</span>
         <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
             <span class="c1"># at the end of each switch save the last conformation</span>
-            <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
-            <span class="c1"># collect all switching trajectories as a list of lists</span>
-            <span class="n">all_switching_trajectories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">switching_trajectory</span><span class="p">)</span>
+            <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">topology</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">topology</span>
+            <span class="n">unitcell_lengths</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unitcell_lengths</span>
+            <span class="n">unitcell_angles</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unitcell_lengths</span>
+            <span class="n">switching_trajectory_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">switching_trajectory</span><span class="p">)</span>
+            <span class="n">switching_trajectory</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="p">(</span>
+                <span class="n">topology</span><span class="o">=</span><span class="n">topology</span><span class="p">,</span>
+                <span class="n">xyz</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">switching_trajectory</span><span class="p">),</span>
+                <span class="n">unitcell_lengths</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">switching_trajectory_length</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">unitcell_lengths</span><span class="p">,</span>
+                <span class="n">unitcell_angles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">switching_trajectory_length</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">unitcell_angles</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">workdir</span><span class="si">}</span><span class="s2">/switching_trajectory_</span><span class="si">{</span><span class="n">switch_index</span><span class="si">}</span><span class="s2">.dcd&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">save_endstates</span><span class="p">:</span>
             <span class="c1"># save the endstate conformation</span>
             <span class="n">endstate_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
@@ -192,7 +210,6 @@
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">,</span>
         <span class="n">endstate_samples</span><span class="p">,</span>
-        <span class="n">all_switching_trajectories</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 

@@ -72,12 +72,10 @@
              
   <h1>Source code for endstate_correction.tests.test_simulation</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">importlib_resources</span> <span class="kn">import</span> <span class="n">files</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">importlib_resources</span> <span class="kn">import</span> <span class="n">files</span>
 <span class="kn">from</span> <span class="nn">mdtraj.core.trajectory</span> <span class="kn">import</span> <span class="n">Trajectory</span> <span class="k">as</span> <span class="n">mdtraj_trajectory</span>
-<span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
 
 <span class="kn">import</span> <span class="nn">endstate_correction</span>
 <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">BSSProtocol</span>
@@ -142,8 +140,9 @@
             <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
             <span class="n">ml_atoms</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">27</span><span class="p">)),</span>
             <span class="n">protocol</span><span class="o">=</span><span class="n">bss_protocol</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;openMM&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;openMM&quot;</span><span class="p">,</span>
             <span class="n">work_dir</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">output_base</span><span class="p">),</span>
+            <span class="n">implementation</span><span class="o">=</span><span class="s2">&quot;torchani&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">simulation</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">simulation</span>
