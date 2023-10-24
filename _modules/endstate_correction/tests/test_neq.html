@@ -71,16 +71,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for endstate_correction.tests.test_neq</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pathlib</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-
-<span class="kn">import</span> <span class="nn">endstate_correction</span>
-<span class="kn">import</span> <span class="nn">mdtraj</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">unit</span>
-<span class="kn">from</span> <span class="nn">openmm.app</span> <span class="kn">import</span> <span class="n">Simulation</span>
-<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_vacuum_simulation</span><span class="p">,</span> <span class="n">setup_ZINC00077329_system</span>
+
+<span class="kn">from</span> <span class="nn">endstate_correction.neq</span> <span class="kn">import</span> <span class="n">perform_switching</span>
+<span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_ZINC00077329_system</span>
 
 
 <div class="viewcode-block" id="test_collect_work_values"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_neq.test_collect_work_values.html#endstate_correction.tests.test_neq.test_collect_work_values">[docs]</a><span class="k">def</span> <span class="nf">test_collect_work_values</span><span class="p">():</span>
@@ -103,7 +98,7 @@
     <span class="c1"># dU_rev = dU(x)_mm - dU(x)_nnp</span>
     <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">lambs</span><span class="p">)</span>
-    <span class="n">dE_list</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+    <span class="n">dE_list</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
         <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambs</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
@@ -111,7 +106,7 @@
     <span class="p">)</span>
     <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="n">dE_list</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+    <span class="n">dE_list</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
         <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambs</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">dE_list</span><span class="p">)</span>
