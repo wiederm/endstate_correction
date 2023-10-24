@@ -44,7 +44,7 @@ def test_switching():
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 21)
-    dW_forw, _, _ = perform_switching(
+    dW_forw, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
@@ -52,7 +52,7 @@ def test_switching():
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 101)
-    dW_forw, _, _ = perform_switching(
+    dW_forw, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
