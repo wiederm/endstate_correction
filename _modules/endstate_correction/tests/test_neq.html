@@ -117,7 +117,7 @@
 
     <span class="c1"># perform NEQ switching</span>
     <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
-    <span class="n">dW_forw</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+    <span class="n">dW_forw</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
         <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambs</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">2</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">dW_forw</span><span class="p">)</span>
@@ -125,7 +125,7 @@
 
     <span class="c1"># perform NEQ switching</span>
     <span class="n">lambs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
-    <span class="n">dW_forw</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+    <span class="n">dW_forw</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
         <span class="n">sim</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambs</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples_mm</span><span class="p">,</span> <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">2</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">dW_forw</span><span class="p">)</span>
