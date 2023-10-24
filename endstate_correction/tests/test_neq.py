@@ -60,7 +60,7 @@ def test_switching():
 
     # check return values
     lambs = np.linspace(0, 1, 3)
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -68,9 +68,9 @@ def test_switching():
         save_endstates=False,
         save_trajs=False,
     )
-    assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 0
+    assert len(list_1) == 1 and len(list_2) == 0
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -79,14 +79,9 @@ def test_switching():
         save_trajs=True,
     )
 
-    assert (
-        len(list_1) == 1
-        and len(list_2) == 0
-        and len(list_3) == 1
-        and len(list_3[0]) == 3
-    )
+    assert len(list_1) == 1 and len(list_2) == 0
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -94,9 +89,9 @@ def test_switching():
         save_endstates=True,
         save_trajs=False,
     )
-    assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 0
+    assert len(list_1) == 1 and len(list_2) == 1
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -104,9 +99,4 @@ def test_switching():
         save_endstates=True,
         save_trajs=True,
     )
-    assert (
-        len(list_1) == 1
-        and len(list_2) == 1
-        and len(list_3) == 1
-        and len(list_3[0]) == 3
-    )
+    assert len(list_1) == 1 and len(list_2) == 1
