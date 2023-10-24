@@ -362,7 +362,7 @@
         <span class="c1"># from reference to target potential</span>
         <span class="k">if</span> <span class="n">protocol_</span><span class="o">.</span><span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if reference samples are provided</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing FEP from reference to target potential&quot;</span><span class="p">)</span>
-            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
                 <span class="n">lambdas</span><span class="o">=</span><span class="n">list_of_lambda_values</span><span class="p">,</span>
                 <span class="n">samples</span><span class="o">=</span><span class="n">protocol_</span><span class="o">.</span><span class="n">reference_samples</span><span class="p">,</span>
@@ -374,7 +374,7 @@
         <span class="c1"># from target to reference potential</span>
         <span class="k">if</span> <span class="n">protocol_</span><span class="o">.</span><span class="n">target_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if target samples are provided</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing FEP from target to reference potential&quot;</span><span class="p">)</span>
-            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
+            <span class="n">dEs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">perform_switching</span><span class="p">(</span>
                 <span class="n">sim</span><span class="p">,</span>
                 <span class="n">lambdas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
                     <span class="n">list_of_lambda_values</span>
