@@ -33,7 +33,7 @@ class EndstateCorrectionBase(abc.ABC):
         name: str = "endstate_correction",
         work_dir: str = "./",
         potential: str = "ani2x",
-        implementation: str = "nnpops",
+        implementation: Literal["nnpops", "torchani"] = "nnpops",
         interpolate: bool = True,
     ):
         self.logger = logging.getLogger("EndstateCorrectionBase")
@@ -52,7 +52,7 @@ class EndstateCorrectionBase(abc.ABC):
             mm_system,
             ml_atoms,
             interpolate=interpolate,
-            implementation="nnpops",
+            implementation=implementation,
         )
         integrator = self.get_integrator()
         platform = get_fastest_platform(minimum_precision="mixed")
