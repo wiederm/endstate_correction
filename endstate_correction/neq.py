@@ -118,14 +118,20 @@ def perform_switching(
             unitcell_lengths = samples[0].unitcell_lengths
             unitcell_angles = samples[0].unitcell_lengths
             switching_trajectory_length = len(switching_trajectory)
-            switching_trajectory = Trajectory(
-                topology=topology,
-                xyz=np.stack(switching_trajectory),
-                unitcell_lengths=np.ones((switching_trajectory_length, 3))
-                * unitcell_lengths,
-                unitcell_angles=np.ones((switching_trajectory_length, 3))
-                * unitcell_angles,
-            )
+            if unitcell_lengths is None:
+                switching_trajectory = Trajectory(
+                    topology=topology,
+                    xyz=np.stack(switching_trajectory),
+                )
+            else:
+                switching_trajectory = Trajectory(
+                    topology=topology,
+                    xyz=np.stack(switching_trajectory),
+                    unitcell_lengths=np.ones((switching_trajectory_length, 3))
+                    * unitcell_lengths,
+                    unitcell_angles=np.ones((switching_trajectory_length, 3))
+                    * unitcell_angles,
+                )
             switching_trajectory.save(
                 f"{workdir}/switching_trajectory_{switch_index}.dcd"
             )
