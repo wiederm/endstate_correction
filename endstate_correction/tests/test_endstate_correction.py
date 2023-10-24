@@ -3,17 +3,19 @@ Unit and regression test for the endstate_correction package.
 """
 
 # Import package, test suite, and other packages as needed
-import sys, pickle, os
-import pytest
+import os
+import pickle
+import sys
+
 import numpy as np
-from endstate_correction.protocol import perform_endstate_correction
+import pytest
+
 from endstate_correction.protocol import (
-    BSSProtocol,
     FEPProtocol,
     NEQProtocol,
     SMCProtocol,
 )
-
+from endstate_correction.protocol import perform_endstate_correction
 from .test_system import setup_ZINC00077329_system
 
 
@@ -152,7 +154,7 @@ def test_SMC_protocol():
         nr_of_walkers=nr_of_walkers,
         protocol_length=protocol_length,
         nr_of_resampling_steps=nr_of_resampling_steps,
-        save_endstates=True
+        save_endstates=True,
     )
 
     r = perform_endstate_correction(protocol)
@@ -191,9 +193,14 @@ def test_smc_arguments():
     reason="Skipping tests that take too long in github actions",
 )
 def test_ALL_protocol():
-
     """Perform uni- and bidirectional FEP and NEQ & SMC protocol"""
-    from endstate_correction.protocol import perform_endstate_correction, AllProtocol, FEPProtocol, NEQProtocol, SMCProtocol, AllResults
+    from endstate_correction.protocol import (
+        perform_endstate_correction,
+        AllProtocol,
+        FEPProtocol,
+        NEQProtocol,
+        SMCProtocol,
+    )
 
     # load samples
     sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
@@ -206,7 +213,7 @@ def test_ALL_protocol():
         reference_samples=mm_samples,
         target_samples=nnp_samples,
         nr_of_switches=50,
-        )
+    )
     neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
@@ -222,9 +229,8 @@ def test_ALL_protocol():
         nr_of_resampling_steps=10,
     )
     protocol = AllProtocol(
-        fep_protocol=fep_protocol, 
-        neq_protocol=neq_protocol, 
-        smc_protocol=smc_protocol)
+        fep_protocol=fep_protocol, neq_protocol=neq_protocol, smc_protocol=smc_protocol
+    )
 
     r = perform_endstate_correction(protocol)
 
@@ -234,29 +240,48 @@ def test_ALL_protocol():
     assert len(r.neq_results.W_target_to_reference) == neq_protocol.nr_of_switches
 
     assert not np.isclose(
-        r.fep_results.dE_reference_to_target[0], r.fep_results.dE_target_to_reference[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0],
+        r.fep_results.dE_target_to_reference[0],
+        rtol=1e-8,
     )
     assert not np.isclose(
-        r.fep_results.dE_reference_to_target[0], r.neq_results.W_reference_to_target[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0],
+        r.neq_results.W_reference_to_target[0],
+        rtol=1e-8,
     )
     assert not np.isclose(
-        r.fep_results.dE_reference_to_target[0], r.neq_results.W_target_to_reference[0], rtol=1e-8
+        r.fep_results.dE_reference_to_target[0],
+        r.neq_results.W_target_to_reference[0],
+        rtol=1e-8,
     )
 
     assert not np.isclose(
-        r.neq_results.W_target_to_reference[0], r.neq_results.W_reference_to_target[0], rtol=1e-8
+        r.neq_results.W_target_to_reference[0],
+        r.neq_results.W_reference_to_target[0],
+        rtol=1e-8,
     )
 
-    assert np.all(r.neq_results.W_reference_to_target < 0)  # the dE_forw have negative values
-    assert np.all(r.neq_results.W_target_to_reference > 0)  # the dE_rev have positive values
-    assert np.all(r.fep_results.dE_reference_to_target < 0)  # the dE_forw have negative values
-    assert np.all(r.fep_results.dE_target_to_reference > 0)  # the dE_rev have positive values
+    assert np.all(
+        r.neq_results.W_reference_to_target < 0
+    )  # the dE_forw have negative values
+    assert np.all(
+        r.neq_results.W_target_to_reference > 0
+    )  # the dE_rev have positive values
+    assert np.all(
+        r.fep_results.dE_reference_to_target < 0
+    )  # the dE_forw have negative values
+    assert np.all(
+        r.fep_results.dE_target_to_reference > 0
+    )  # the dE_rev have positive values
 
 
 def test_each_protocol():
-
     """Test FEP and NEQ uni- and bidirectional protocols separately"""
-    from endstate_correction.protocol import perform_endstate_correction, FEPProtocol, NEQProtocol
+    from endstate_correction.protocol import (
+        perform_endstate_correction,
+        FEPProtocol,
+        NEQProtocol,
+    )
 
     # load samples
     sim, mm_samples, nnp_samples = setup_ZINC00077329_system()
@@ -296,7 +321,6 @@ def test_each_protocol():
     # ----------------------- NEQ ----------------------
     ####################################################
 
-
     neq_protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
@@ -333,7 +357,6 @@ def test_each_protocol():
     assert len(r.neq_results.switching_traj_target_to_reference) == 0
     assert r.equ_results == None
 
-    
     # test saving endstates and saving trajectory option
     protocol = NEQProtocol(
         sim=sim,
@@ -349,9 +372,11 @@ def test_each_protocol():
     assert r.equ_results == None
     assert len(r.neq_results.W_reference_to_target) == protocol.nr_of_switches
     assert len(r.neq_results.W_target_to_reference) == protocol.nr_of_switches
-    assert len(r.neq_results.endstate_samples_reference_to_target) == protocol.nr_of_switches
-    assert len(r.neq_results.endstate_samples_reference_to_target) == protocol.nr_of_switches
-    assert len(r.neq_results.switching_traj_reference_to_target) == protocol.nr_of_switches
-    assert len(r.neq_results.switching_traj_target_to_reference) == protocol.nr_of_switches
-    assert len(r.neq_results.switching_traj_reference_to_target[0]) == protocol.switching_length
-    assert len(r.neq_results.switching_traj_target_to_reference[0]) == protocol.switching_length
+    assert (
+        len(r.neq_results.endstate_samples_reference_to_target)
+        == protocol.nr_of_switches
+    )
+    assert (
+        len(r.neq_results.endstate_samples_reference_to_target)
+        == protocol.nr_of_switches
+    )

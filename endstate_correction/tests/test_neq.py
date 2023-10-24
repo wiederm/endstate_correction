@@ -1,13 +1,8 @@
-import pathlib
-from typing import Tuple
-
-import endstate_correction
-import mdtraj
 import numpy as np
-from endstate_correction.neq import perform_switching
 from openmm import unit
-from openmm.app import Simulation
-from .test_system import setup_vacuum_simulation, setup_ZINC00077329_system
+
+from endstate_correction.neq import perform_switching
+from .test_system import setup_ZINC00077329_system
 
 
 def test_collect_work_values():
@@ -30,7 +25,7 @@ def test_switching():
     # dU_rev = dU(x)_mm - dU(x)_nnp
     lambs = np.linspace(0, 1, 2)
     print(lambs)
-    dE_list, _, _ = perform_switching(
+    dE_list, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     assert np.isclose(
@@ -38,7 +33,7 @@ def test_switching():
     )
     lambs = np.linspace(1, 0, 2)
 
-    dE_list, _, _ = perform_switching(
+    dE_list, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm[:1], nr_of_switches=1
     )
     print(dE_list)
@@ -49,7 +44,7 @@ def test_switching():
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 21)
-    dW_forw, _, _ = perform_switching(
+    dW_forw, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
@@ -57,7 +52,7 @@ def test_switching():
 
     # perform NEQ switching
     lambs = np.linspace(0, 1, 101)
-    dW_forw, _, _ = perform_switching(
+    dW_forw, _ = perform_switching(
         sim, lambdas=lambs, samples=samples_mm, nr_of_switches=2
     )
     print(dW_forw)
@@ -65,7 +60,7 @@ def test_switching():
 
     # check return values
     lambs = np.linspace(0, 1, 3)
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -73,9 +68,9 @@ def test_switching():
         save_endstates=False,
         save_trajs=False,
     )
-    assert len(list_1) == 1 and len(list_2) == 0 and len(list_3) == 0
+    assert len(list_1) == 1 and len(list_2) == 0
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -84,14 +79,9 @@ def test_switching():
         save_trajs=True,
     )
 
-    assert (
-        len(list_1) == 1
-        and len(list_2) == 0
-        and len(list_3) == 1
-        and len(list_3[0]) == 3
-    )
+    assert len(list_1) == 1 and len(list_2) == 0
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -99,9 +89,9 @@ def test_switching():
         save_endstates=True,
         save_trajs=False,
     )
-    assert len(list_1) == 1 and len(list_2) == 1 and len(list_3) == 0
+    assert len(list_1) == 1 and len(list_2) == 1
 
-    list_1, list_2, list_3 = perform_switching(
+    list_1, list_2 = perform_switching(
         sim,
         lambdas=lambs,
         samples=samples_mm[:1],
@@ -109,9 +99,4 @@ def test_switching():
         save_endstates=True,
         save_trajs=True,
     )
-    assert (
-        len(list_1) == 1
-        and len(list_2) == 1
-        and len(list_3) == 1
-        and len(list_3[0]) == 3
-    )
+    assert len(list_1) == 1 and len(list_2) == 1

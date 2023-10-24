@@ -1,10 +1,8 @@
 from pathlib import Path
-from importlib_resources import files
 
-import pandas as pd
 import pytest
+from importlib_resources import files
 from mdtraj.core.trajectory import Trajectory as mdtraj_trajectory
-from openmm import unit
 
 import endstate_correction
 from endstate_correction.protocol import BSSProtocol
@@ -69,8 +67,9 @@ class TestEndstateCorrectionCharmm:
             env=env,
             ml_atoms=list(range(27)),
             protocol=bss_protocol,
-            name='openMM',
+            name="openMM",
             work_dir=str(output_base),
+            implementation="torchani",
         )
         simulation.start()
         return simulation

@@ -1,22 +1,12 @@
-import pandas as pd
+import mdtraj
 import pytest
 from importlib_resources import files
 
 import endstate_correction
-from endstate_correction.protocol import (
-    BSSProtocol,
-    FEPResults,
-    NEQResults,
-    SMCResults,
-    EquResults,
-    AllResults
-)
+from endstate_correction.protocol import BSSProtocol, AllResults
 from endstate_correction.protocol import (
     perform_endstate_correction,
-    AllProtocol,
-    FEPProtocol,
     NEQProtocol,
-    SMCProtocol,
 )
 from endstate_correction.simulation import (
     EndstateCorrectionAMBER,
@@ -72,20 +62,40 @@ class TestPerformCorrection:
 
     @staticmethod
     @pytest.fixture(scope="module")
-    def perform_correction(ec):
+    def perform_correction(ec, tmp_path_factory):
         sim = ec.get_simulation()
         traj = ec.get_trajectory()
+        outdir = tmp_path_factory.mktemp("out")
         neq_protocol = NEQProtocol(
             sim=sim,
             reference_samples=traj,
             nr_of_switches=5,
             switching_length=10,
             save_endstates=False,
-            save_trajs=False,
+            save_trajs=True,
         )
-
-        r = perform_endstate_correction(neq_protocol)
+        r = perform_endstate_correction(
+            neq_protocol,
+            workdir=outdir,
+        )
+        r.workdir = outdir
         return r
 
     def test_sanity(self, perform_correction):
         assert isinstance(perform_correction, AllResults)
+
+    def test_traj_num(self, perform_correction):
+        # Test if the correct number of trajectory has been generated
+        r = perform_correction
+        assert len(list((r.workdir / "reference_to_target").glob("*.dcd"))) == 5
+
+    def test_traj_length(self, perform_correction):
+        package_path = files(endstate_correction)
+        system_name = "methane"
+        parameter_base = package_path / "data" / "amber"
+        r = perform_correction
+        traj = mdtraj.load_dcd(
+            r.workdir / "reference_to_target" / "switching_trajectory_0.dcd",
+            top=str(parameter_base / f"{system_name}.prm7"),
+        )
+        assert len(traj) == 10

@@ -1,6 +1,5 @@
 """Provide the functions for non-equilibrium switching."""
-
-
+import os
 import pickle
 import random
 from typing import Tuple
@@ -22,7 +21,8 @@ def perform_switching(
     nr_of_switches: int = 50,
     save_trajs: bool = False,
     save_endstates: bool = False,
-) -> Tuple[list, list, list]:
+    workdir: str = ".",
+) -> Tuple[list, list]:
     """Perform NEQ switching using the provided lambda schema on the passed simulation instance.
 
     Args:
@@ -37,9 +37,9 @@ def perform_switching(
         RuntimeError: if the number of lambda states is less than 2
 
     Returns:
-        Tuple[list, list, list]: work values, endstate samples, switching trajectories
+        Tuple[list, list]: work values, endstate samples
     """
-
+    os.makedirs(workdir, exist_ok=True)
     if save_endstates:
         print("Endstate of each switch will be saved.")
     if save_trajs:
@@ -62,7 +62,7 @@ def perform_switching(
         print("NEQ switching: dW will be calculated")
 
     # start with switch
-    for _ in tqdm(range(nr_of_switches)):
+    for switch_index in tqdm(range(nr_of_switches)):
         if save_trajs:
             # if switching trajectories need to be saved, create an empty list at the beginning
             # of each switch for saving conformations
@@ -91,7 +91,9 @@ def perform_switching(
             sim.context.setParameter("lambda_interpolate", lambdas[idx_lamb])
             if save_trajs:
                 # save conformation at the beginning of each switch
-                switching_trajectory.append(get_positions(sim))
+                switching_trajectory.append(
+                    get_positions(sim).value_in_unit(unit.nanometer)
+                )
             # test if neq or instantaneous swithching: if neq, perform integration step
             if not inst_switching:
                 # perform 1 simulation step
@@ -108,9 +110,31 @@ def perform_switching(
             # TODO: expand to reduced potential
         if save_trajs:
             # at the end of each switch save the last conformation
-            switching_trajectory.append(get_positions(sim))
-            # collect all switching trajectories as a list of lists
-            all_switching_trajectories.append(switching_trajectory)
+            switching_trajectory.append(
+                get_positions(sim).value_in_unit(unit.nanometer)
+            )
+
+            topology = samples.topology
+            unitcell_lengths = samples[0].unitcell_lengths
+            unitcell_angles = samples[0].unitcell_lengths
+            switching_trajectory_length = len(switching_trajectory)
+            if unitcell_lengths is None:
+                switching_trajectory = Trajectory(
+                    topology=topology,
+                    xyz=np.stack(switching_trajectory),
+                )
+            else:
+                switching_trajectory = Trajectory(
+                    topology=topology,
+                    xyz=np.stack(switching_trajectory),
+                    unitcell_lengths=np.ones((switching_trajectory_length, 3))
+                    * unitcell_lengths,
+                    unitcell_angles=np.ones((switching_trajectory_length, 3))
+                    * unitcell_angles,
+                )
+            switching_trajectory.save(
+                f"{workdir}/switching_trajectory_{switch_index}.dcd"
+            )
         if save_endstates:
             # save the endstate conformation
             endstate_samples.append(get_positions(sim))
@@ -119,7 +143,6 @@ def perform_switching(
     return (
         np.array(ws) * unit.kilojoule_per_mole,
         endstate_samples,
-        all_switching_trajectories,
     )
 
 
