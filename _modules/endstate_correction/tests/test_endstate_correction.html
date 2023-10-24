@@ -76,17 +76,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># Import package, test suite, and other packages as needed</span>
-<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">perform_endstate_correction</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
 <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BSSProtocol</span><span class="p">,</span>
     <span class="n">FEPProtocol</span><span class="p">,</span>
     <span class="n">NEQProtocol</span><span class="p">,</span>
     <span class="n">SMCProtocol</span><span class="p">,</span>
 <span class="p">)</span>
-
+<span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">perform_endstate_correction</span>
 <span class="kn">from</span> <span class="nn">.test_system</span> <span class="kn">import</span> <span class="n">setup_ZINC00077329_system</span>
 
 
@@ -225,7 +227,7 @@
         <span class="n">nr_of_walkers</span><span class="o">=</span><span class="n">nr_of_walkers</span><span class="p">,</span>
         <span class="n">protocol_length</span><span class="o">=</span><span class="n">protocol_length</span><span class="p">,</span>
         <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="n">nr_of_resampling_steps</span><span class="p">,</span>
-        <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">save_endstates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
@@ -264,9 +266,14 @@
     <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Skipping tests that take too long in github actions&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_ALL_protocol</span><span class="p">():</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform uni- and bidirectional FEP and NEQ &amp; SMC protocol&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">perform_endstate_correction</span><span class="p">,</span> <span class="n">AllProtocol</span><span class="p">,</span> <span class="n">FEPProtocol</span><span class="p">,</span> <span class="n">NEQProtocol</span><span class="p">,</span> <span class="n">SMCProtocol</span><span class="p">,</span> <span class="n">AllResults</span>
+    <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">perform_endstate_correction</span><span class="p">,</span>
+        <span class="n">AllProtocol</span><span class="p">,</span>
+        <span class="n">FEPProtocol</span><span class="p">,</span>
+        <span class="n">NEQProtocol</span><span class="p">,</span>
+        <span class="n">SMCProtocol</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># load samples</span>
     <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">nnp_samples</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
@@ -279,7 +286,7 @@
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
         <span class="n">target_samples</span><span class="o">=</span><span class="n">nnp_samples</span><span class="p">,</span>
         <span class="n">nr_of_switches</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
@@ -295,9 +302,8 @@
         <span class="n">nr_of_resampling_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">AllProtocol</span><span class="p">(</span>
-        <span class="n">fep_protocol</span><span class="o">=</span><span class="n">fep_protocol</span><span class="p">,</span> 
-        <span class="n">neq_protocol</span><span class="o">=</span><span class="n">neq_protocol</span><span class="p">,</span> 
-        <span class="n">smc_protocol</span><span class="o">=</span><span class="n">smc_protocol</span><span class="p">)</span>
+        <span class="n">fep_protocol</span><span class="o">=</span><span class="n">fep_protocol</span><span class="p">,</span> <span class="n">neq_protocol</span><span class="o">=</span><span class="n">neq_protocol</span><span class="p">,</span> <span class="n">smc_protocol</span><span class="o">=</span><span class="n">smc_protocol</span>
+    <span class="p">)</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
 
@@ -307,29 +313,48 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># the dE_forw have negative values</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># the dE_rev have positive values</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># the dE_forw have negative values</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># the dE_rev have positive values</span></div>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">)</span>  <span class="c1"># the dE_forw have negative values</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">)</span>  <span class="c1"># the dE_rev have positive values</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_reference_to_target</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">)</span>  <span class="c1"># the dE_forw have negative values</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span><span class="o">.</span><span class="n">dE_target_to_reference</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">)</span>  <span class="c1"># the dE_rev have positive values</span></div>
 
 
 <div class="viewcode-block" id="test_each_protocol"><a class="viewcode-back" href="../../../autosummary/endstate_correction.tests.test_endstate_correction.test_each_protocol.html#endstate_correction.tests.test_endstate_correction.test_each_protocol">[docs]</a><span class="k">def</span> <span class="nf">test_each_protocol</span><span class="p">():</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test FEP and NEQ uni- and bidirectional protocols separately&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="n">perform_endstate_correction</span><span class="p">,</span> <span class="n">FEPProtocol</span><span class="p">,</span> <span class="n">NEQProtocol</span>
+    <span class="kn">from</span> <span class="nn">endstate_correction.protocol</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">perform_endstate_correction</span><span class="p">,</span>
+        <span class="n">FEPProtocol</span><span class="p">,</span>
+        <span class="n">NEQProtocol</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># load samples</span>
     <span class="n">sim</span><span class="p">,</span> <span class="n">mm_samples</span><span class="p">,</span> <span class="n">nnp_samples</span> <span class="o">=</span> <span class="n">setup_ZINC00077329_system</span><span class="p">()</span>
@@ -369,7 +394,6 @@
     <span class="c1"># ----------------------- NEQ ----------------------</span>
     <span class="c1">####################################################</span>
 
-
     <span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>
@@ -406,7 +430,6 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">equ_results</span> <span class="o">==</span> <span class="kc">None</span>
 
-    
     <span class="c1"># test saving endstates and saving trajectory option</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
@@ -422,12 +445,14 @@
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">equ_results</span> <span class="o">==</span> <span class="kc">None</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">switching_length</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">switching_length</span></div>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span>
+        <span class="o">==</span> <span class="n">protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
+    <span class="p">)</span></div>
 </pre></div>
 
            </div>
