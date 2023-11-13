@@ -98,4 +98,4 @@ class TestPerformCorrection:
             r.workdir / "reference_to_target" / "switching_trajectory_0.dcd",
             top=str(parameter_base / f"{system_name}.prm7"),
         )
-        assert len(traj) == 10
+        assert len(traj) == 2

@@ -63,11 +63,6 @@ def perform_switching(
 
     # start with switch
     for switch_index in tqdm(range(nr_of_switches)):
-        if save_trajs:
-            # if switching trajectories need to be saved, create an empty list at the beginning
-            # of each switch for saving conformations
-            switching_trajectory = []
-
         # select a random frame
         random_frame_idx = random.randint(0, len(samples.xyz) - 1)
         # select the coordinates of the random frame
@@ -85,12 +80,17 @@ def perform_switching(
         # initialize work
         w = 0.0
 
+        if save_trajs:
+            # if switching trajectories need to be saved, create a list at the beginning
+            # of each switch to save the starting conformation
+            switching_trajectory = [get_positions(sim).value_in_unit(unit.nanometer)]
+
         # perform NEQ switching
         for idx_lamb in range(1, len(lambdas)):
             # set lambda parameter
             sim.context.setParameter("lambda_interpolate", lambdas[idx_lamb])
-            if save_trajs:
-                # save conformation at the beginning of each switch
+            if save_trajs and idx_lamb % 1000 == 0:
+                # Save every 1000 steps
                 switching_trajectory.append(
                     get_positions(sim).value_in_unit(unit.nanometer)
                 )
