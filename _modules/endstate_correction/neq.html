@@ -136,11 +136,6 @@
 
     <span class="c1"># start with switch</span>
     <span class="k">for</span> <span class="n">switch_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_of_switches</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
-            <span class="c1"># if switching trajectories need to be saved, create an empty list at the beginning</span>
-            <span class="c1"># of each switch for saving conformations</span>
-            <span class="n">switching_trajectory</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="c1"># select a random frame</span>
         <span class="n">random_frame_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># select the coordinates of the random frame</span>
@@ -158,12 +153,17 @@
         <span class="c1"># initialize work</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">0.0</span>
 
+        <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
+            <span class="c1"># if switching trajectories need to be saved, create a list at the beginning</span>
+            <span class="c1"># of each switch to save the starting conformation</span>
+            <span class="n">switching_trajectory</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)]</span>
+
         <span class="c1"># perform NEQ switching</span>
         <span class="k">for</span> <span class="n">idx_lamb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)):</span>
             <span class="c1"># set lambda parameter</span>
             <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="s2">&quot;lambda_interpolate&quot;</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">idx_lamb</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">save_trajs</span><span class="p">:</span>
-                <span class="c1"># save conformation at the beginning of each switch</span>
+            <span class="k">if</span> <span class="n">save_trajs</span> <span class="ow">and</span> <span class="n">idx_lamb</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Save every 1000 steps</span>
                 <span class="n">switching_trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
                 <span class="p">)</span>
