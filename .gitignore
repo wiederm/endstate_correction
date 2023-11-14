@@ -108,3 +108,5 @@ ENV/
 .idea/
 
 **/.DS_Store
+
+endstate_correction/tests/animodel.pt
