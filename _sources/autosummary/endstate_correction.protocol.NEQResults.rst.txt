@@ -29,7 +29,5 @@ endstate\_correction.protocol.NEQResults
       ~NEQResults.W_target_to_reference
       ~NEQResults.endstate_samples_reference_to_target
       ~NEQResults.endstate_samples_target_to_reference
-      ~NEQResults.switching_traj_reference_to_target
-      ~NEQResults.switching_traj_target_to_reference
    
    

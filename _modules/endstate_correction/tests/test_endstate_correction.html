@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>endstate_correction.tests.test_endstate_correction &mdash; endstate_correction  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -408,8 +410,6 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">equ_results</span> <span class="o">==</span> <span class="kc">None</span>
 
     <span class="n">neq_protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
@@ -426,11 +426,18 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">W_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="n">neq_protocol</span><span class="o">.</span><span class="n">nr_of_switches</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">endstate_samples_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">neq_results</span><span class="o">.</span><span class="n">switching_traj_target_to_reference</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">equ_results</span> <span class="o">==</span> <span class="kc">None</span>
 
-    <span class="c1"># test saving endstates and saving trajectory option</span>
+    <span class="c1"># if no specific number of swithes is given, the protocol should take all provided equilibrium samples </span>
+    <span class="n">fep_protocol</span> <span class="o">=</span> <span class="n">FEPProtocol</span><span class="p">(</span>
+        <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+        <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">[:</span><span class="mi">20</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">perform_endstate_correction</span><span class="p">(</span><span class="n">fep_protocol</span><span class="p">)</span>
+    <span class="n">r_fep</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">fep_results</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">r_fep</span><span class="o">.</span><span class="n">dE_reference_to_target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20</span>
+
+    <span class="c1"># test saving endstates option</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">NEQProtocol</span><span class="p">(</span>
         <span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
         <span class="n">reference_samples</span><span class="o">=</span><span class="n">mm_samples</span><span class="p">,</span>

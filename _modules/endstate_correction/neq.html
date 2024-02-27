@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>endstate_correction.neq &mdash; endstate_correction  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -96,7 +98,7 @@
     <span class="n">save_endstates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">workdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform NEQ switching using the provided lambda schema on the passed simulation instance.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform NEQ or instantaneous switching using the provided lambda schema on the passed simulation instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sim (Simulation): simulation instance</span>
@@ -110,7 +112,7 @@
 <span class="sd">        RuntimeError: if the number of lambda states is less than 2</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Tuple[list, list]: work values, endstate samples</span>
+<span class="sd">        Tuple[list, list]: work or dE values, endstate samples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">save_endstates</span><span class="p">:</span>
@@ -122,13 +124,14 @@
     <span class="n">ws</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># list for all endstate samples (can be empty if saving is not needed)</span>
     <span class="n">endstate_samples</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># list for all switching trajectories (can be empty if saving is not needed)</span>
-    <span class="n">all_switching_trajectories</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">inst_switching</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instantanious switching: dE will be calculated&quot;</span><span class="p">)</span>
         <span class="n">inst_switching</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">nr_of_switches</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># if no specific nr_of_switches is provided (-1 is the default value), use all provided equilibrium samples</span>
+            <span class="n">nr_of_switches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2"> dE values will be calculated&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;increase the number of lambda states&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -136,14 +139,21 @@
 
     <span class="c1"># start with switch</span>
     <span class="k">for</span> <span class="n">switch_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_of_switches</span><span class="p">)):</span>
-        <span class="c1"># select a random frame</span>
-        <span class="n">random_frame_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="c1"># select the coordinates of the random frame</span>
-        <span class="n">coord</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">samples</span><span class="o">.</span><span class="n">unitcell_lengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">box_length</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_boxes</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">box_length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">inst_switching</span> <span class="ow">and</span> <span class="n">nr_of_switches</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span> <span class="c1"># if all samples should be used for instantanious switching</span>
+            <span class="n">coord</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">switch_index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">samples</span><span class="o">.</span><span class="n">unitcell_lengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">box_length</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_boxes</span><span class="p">(</span><span class="n">switch_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">box_length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># if a specific number of instantaneous switches should be calculated, random conformations will be drawn from the provided equlibirum samples</span>
+            <span class="c1"># select a random frame</span>
+            <span class="n">random_frame_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># select the coordinates of the random frame</span>
+            <span class="n">coord</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_positions</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">samples</span><span class="o">.</span><span class="n">unitcell_lengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">box_length</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">openmm_boxes</span><span class="p">(</span><span class="n">random_frame_idx</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">box_length</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># set position</span>
         <span class="n">sim</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">setPositions</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">box_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -210,12 +220,12 @@
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">save_endstates</span><span class="p">:</span>
             <span class="c1"># save the endstate conformation</span>
-            <span class="n">endstate_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">))</span>
+            <span class="n">endstate_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_positions</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">value_in_unit</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">nanometer</span><span class="p">))</span>
         <span class="c1"># get all work values</span>
         <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">*</span> <span class="n">unit</span><span class="o">.</span><span class="n">kilojoule_per_mole</span><span class="p">,</span>
-        <span class="n">endstate_samples</span><span class="p">,</span>
+        <span class="n">endstate_samples</span>
     <span class="p">)</span></div>
 
 
