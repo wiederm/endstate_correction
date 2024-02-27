@@ -92,6 +92,14 @@ def test_FEP_protocol():
     assert np.all(r_fep.dE_reference_to_target < 0)  # the dE_forw have negative values
     assert np.all(r_fep.dE_target_to_reference > 0)  # the dE_rev have positive values
 
+    # if no specific number of swithes is given, the protocol should take all provided equilibrium samples 
+    fep_protocol = FEPProtocol(
+        sim=sim,
+        reference_samples=mm_samples[:20],
+    )
+    r = perform_endstate_correction(fep_protocol)
+    r_fep = r.fep_results
+    assert len(r_fep.dE_reference_to_target) == 20
 
 @pytest.mark.skipif(
     os.getenv("CI") == "true",
