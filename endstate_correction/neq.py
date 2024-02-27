@@ -23,12 +23,12 @@ def perform_switching(
     save_trajs: bool = False,
     save_endstates: bool = False,
 ) -> Tuple[list, list, list]:
-    """Perform NEQ switching using the provided lambda schema on the passed simulation instance.
+    """Perform NEQ or instantanoues switching using the provided lambda schema on the passed simulation instance.
 
     Args:
         sim (Simulation): simulation instance
         lambdas (list): list of lambda values
-        samples (Trajectory): samples from which the starting points fo the NEQ switching simulation are drawn
+        samples (Trajectory): samples from which the starting points for the (NEQ) switching simulation are drawn
         nr_of_switches (int, optional): number of switches. Defaults to 50.
         save_trajs (bool, optional): save switching trajectories. Defaults to False.
         save_endstates (bool, optional): save endstate of switching trajectory. Defaults to False.
@@ -37,7 +37,7 @@ def perform_switching(
         RuntimeError: if the number of lambda states is less than 2
 
     Returns:
-        Tuple[list, list, list]: work values, endstate samples, switching trajectories
+        Tuple[list, list, list]: work or Delta U values, endstate samples, switching trajectories
     """
 
     if save_endstates:
@@ -54,28 +54,37 @@ def perform_switching(
 
     inst_switching = False
     if len(lambdas) == 2:
-        print("Instantanious switching: dE will be calculated")
+        print("Instantanious switching: \Delta U will be calculated")
         inst_switching = True
+        if nr_of_switches == -1: # if no specific nr_of_switches is provided (-1 is the default value), use all provided equilibrium samples
+            nr_of_switches = len(samples)
+        print(f"{nr_of_switches} \Delta U values will be calculated")
     elif len(lambdas) < 2:
         raise RuntimeError("increase the number of lambda states")
     else:
-        print("NEQ switching: dW will be calculated")
+        print("NEQ switching: w will be calculated")
 
     # start with switch
-    for _ in tqdm(range(nr_of_switches)):
+    for i in tqdm(range(nr_of_switches)):
         if save_trajs:
             # if switching trajectories need to be saved, create an empty list at the beginning
             # of each switch for saving conformations
             switching_trajectory = []
-
-        # select a random frame
-        random_frame_idx = random.randint(0, len(samples.xyz) - 1)
-        # select the coordinates of the random frame
-        coord = samples.openmm_positions(random_frame_idx)
-        if samples.unitcell_lengths is not None:
-            box_length = samples.openmm_boxes(random_frame_idx)
-        else:
-            box_length = None
+        if inst_switching and nr_of_switches == len(samples): # if all samples should be used for instantanious switching
+            coord = samples.openmm_positions(i)
+            if samples.unitcell_lengths is not None:
+                box_length = samples.openmm_boxes(i)
+            else:
+                box_length = None
+        else: # if a specific number of instantaneous switches should be calculated, random conformations will be drawn from the provided equlibirum samples
+            # select a random frame
+            random_frame_idx = random.randint(0, len(samples.xyz) - 1)
+            # select the coordinates of the random frame
+            coord = samples.openmm_positions(random_frame_idx)
+            if samples.unitcell_lengths is not None:
+                box_length = samples.openmm_boxes(random_frame_idx)
+            else:
+                box_length = None
         # set position
         sim.context.setPositions(coord)
         if box_length is not None:
