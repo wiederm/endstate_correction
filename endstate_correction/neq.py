@@ -23,7 +23,7 @@ def perform_switching(
     save_endstates: bool = False,
     workdir: str = ".",
 ) -> Tuple[list, list]:
-    """Perform NEQ switching using the provided lambda schema on the passed simulation instance.
+    """Perform NEQ or instantaneous switching using the provided lambda schema on the passed simulation instance.
 
     Args:
         sim (Simulation): simulation instance
@@ -37,7 +37,7 @@ def perform_switching(
         RuntimeError: if the number of lambda states is less than 2
 
     Returns:
-        Tuple[list, list]: work values, endstate samples
+        Tuple[list, list]: work or dE values, endstate samples
     """
     os.makedirs(workdir, exist_ok=True)
     if save_endstates:
@@ -49,13 +49,14 @@ def perform_switching(
     ws = []
     # list for all endstate samples (can be empty if saving is not needed)
     endstate_samples = []
-    # list for all switching trajectories (can be empty if saving is not needed)
-    all_switching_trajectories = []
 
     inst_switching = False
     if len(lambdas) == 2:
         print("Instantanious switching: dE will be calculated")
         inst_switching = True
+        if nr_of_switches == -1: # if no specific nr_of_switches is provided (-1 is the default value), use all provided equilibrium samples
+            nr_of_switches = len(samples)
+            print(f"{nr_of_switches} dE values will be calculated")
     elif len(lambdas) < 2:
         raise RuntimeError("increase the number of lambda states")
     else:
@@ -63,14 +64,21 @@ def perform_switching(
 
     # start with switch
     for switch_index in tqdm(range(nr_of_switches)):
-        # select a random frame
-        random_frame_idx = random.randint(0, len(samples.xyz) - 1)
-        # select the coordinates of the random frame
-        coord = samples.openmm_positions(random_frame_idx)
-        if samples.unitcell_lengths is not None:
-            box_length = samples.openmm_boxes(random_frame_idx)
-        else:
-            box_length = None
+        if inst_switching and nr_of_switches == len(samples): # if all samples should be used for instantanious switching
+            coord = samples.openmm_positions(switch_index)
+            if samples.unitcell_lengths is not None:
+                box_length = samples.openmm_boxes(switch_index)
+            else:
+                box_length = None
+        else: # if a specific number of instantaneous switches should be calculated, random conformations will be drawn from the provided equlibirum samples
+            # select a random frame
+            random_frame_idx = random.randint(0, len(samples.xyz) - 1)
+            # select the coordinates of the random frame
+            coord = samples.openmm_positions(random_frame_idx)
+            if samples.unitcell_lengths is not None:
+                box_length = samples.openmm_boxes(random_frame_idx)
+            else:
+                box_length = None
         # set position
         sim.context.setPositions(coord)
         if box_length is not None:
@@ -137,12 +145,12 @@ def perform_switching(
             )
         if save_endstates:
             # save the endstate conformation
-            endstate_samples.append(get_positions(sim))
+            endstate_samples.append(get_positions(sim).value_in_unit(unit.nanometer))
         # get all work values
         ws.append(w)
     return (
         np.array(ws) * unit.kilojoule_per_mole,
-        endstate_samples,
+        endstate_samples
     )
 
 
