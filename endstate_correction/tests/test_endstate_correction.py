@@ -335,8 +335,6 @@ def test_each_protocol():
     assert len(r.neq_results.W_target_to_reference) == 0
     assert len(r.neq_results.endstate_samples_reference_to_target) == 0
     assert len(r.neq_results.endstate_samples_reference_to_target) == 0
-    assert len(r.neq_results.switching_traj_reference_to_target) == 0
-    assert len(r.neq_results.switching_traj_target_to_reference) == 0
     assert r.equ_results == None
 
     neq_protocol = NEQProtocol(
@@ -353,11 +351,18 @@ def test_each_protocol():
     assert len(r.neq_results.W_target_to_reference) == neq_protocol.nr_of_switches
     assert len(r.neq_results.endstate_samples_reference_to_target) == 0
     assert len(r.neq_results.endstate_samples_reference_to_target) == 0
-    assert len(r.neq_results.switching_traj_reference_to_target) == 0
-    assert len(r.neq_results.switching_traj_target_to_reference) == 0
     assert r.equ_results == None
 
-    # test saving endstates and saving trajectory option
+    # if no specific number of swithes is given, the protocol should take all provided equilibrium samples 
+    fep_protocol = FEPProtocol(
+        sim=sim,
+        reference_samples=mm_samples[:20],
+    )
+    r = perform_endstate_correction(fep_protocol)
+    r_fep = r.fep_results
+    assert len(r_fep.dE_reference_to_target) == 20
+
+    # test saving endstates option
     protocol = NEQProtocol(
         sim=sim,
         reference_samples=mm_samples,
