@@ -131,7 +131,9 @@
         <span class="n">inst_switching</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">nr_of_switches</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># if no specific nr_of_switches is provided (-1 is the default value), use all provided equilibrium samples</span>
             <span class="n">nr_of_switches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2"> dE values will be calculated&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2"> dE values will be calculated using all provided equilibrium samples&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2"> dE values will be calculated using </span><span class="si">{</span><span class="n">nr_of_switches</span><span class="si">}</span><span class="s2"> random equilibrium samples&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;increase the number of lambda states&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
