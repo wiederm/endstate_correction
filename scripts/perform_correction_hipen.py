@@ -11,7 +11,7 @@ from openmm.app import (
 from endstate_correction.constant import zinc_systems, blacklist
 from endstate_correction.analysis import plot_endstate_correction_results
 import endstate_correction
-from endstate_correction.protocol import perform_endstate_correction, Protocol
+from endstate_correction.protocol import perform_endstate_correction, FEPProtocol, NEQProtocol
 import mdtraj
 from openmm import unit
 import pickle, sys, os
@@ -30,8 +30,7 @@ if system_name in blacklist:
 
 env = "vacuum"
 
-print(system_name)
-print(env)
+print(f"Setting up system {system_name} in {env}")
 
 # define directory containing parameters
 parameter_base = f"{package_path}/data/hipen_data"
@@ -53,12 +52,15 @@ with open("temp.pdb", "w") as outfile:
 chains = list(psf.topology.chains())
 ml_atoms = [atom.index for atom in chains[0].atoms()]
 print(f"{ml_atoms=}")
+print("Creating mm system...")
 mm_system = psf.createSystem(params=params)
 # define system
 potential = MLPotential("ani2x")
+print("Creating mixed system...")
 ml_system = potential.createMixedSystem(
     psf.topology, mm_system, ml_atoms, interpolate=True
 )
+print("Creating simulation object...")
 sim = Simulation(psf.topology, ml_system, LangevinIntegrator(300, 1, 0.001))
 ########################################################
 ########################################################
@@ -70,71 +72,76 @@ n_steps_per_sample = 1_000
 traj_base = f"/data/shared/projects/endstate_rew/{system_name}/sampling_charmmff/"
 
 # load MM samples
-mm_samples = []
+mm_samples_list = []
 for i in range(1, 4):
     base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_0.0000"
     # if needed, convert pickle file to dcd
     # convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
     traj = mdtraj.load_dcd(
         f"{base}.dcd",
-        top=psf_file,
-    )
-    mm_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
+        top=psf_file, # also possible to use the tmp.pdb
+    )[int((n_samples / 100) * 20):]
+    mm_samples_list.append(traj)
+    
+mm_samples = mdtraj.join(mm_samples_list) #* unit.nanometer
+assert isinstance(mm_samples, mdtraj.Trajectory)
 print(f"Initializing switch from {len(mm_samples)} MM samples")
 
 # load NNP samples
-nnp_samples = []
+nnp_samples_list = []
 for i in range(1, 4):
     base = f"{traj_base}/run0{i}/{system_name}_samples_{n_samples}_steps_{n_steps_per_sample}_lamb_1.0000"
     # if needed, convert pickle file to dcd
     # convert_pickle_to_dcd_file(f"{base}.pickle",psf_file, crd_file, f"{base}.dcd", "temp.pdb")
     traj = mdtraj.load_dcd(
         f"{base}.dcd",
-        top=psf_file,
-    )
-    nnp_samples.extend(traj[1000:].xyz * unit.nanometer)  # NOTE: this is in nanometer!
-print(f"Initializing switch from {len(mm_samples)} NNP samples")
+        top=psf_file, # also possible to use the tmp.pdb
+    )[int((n_samples / 100) * 20):]
+    nnp_samples_list.append(traj)
+    
+nnp_samples = mdtraj.join(nnp_samples_list) #* unit.nanometer
+assert isinstance(nnp_samples, mdtraj.Trajectory)
+print(f"Initializing switch from {len(nnp_samples)} NNP samples")
 
 ########################################################
 ########################################################
 # ----------------- perform correction ----------------#
 
 # define the output directory
-output_base = f"/data/shared/projects/endstate_rew/{system_name}/switching_new/"
+output_base = f"/data/shared/projects/endstate_rew/{system_name}/FEP_v1/"
 os.makedirs(output_base, exist_ok=True)
 
 ####################################################
 # ---------------- FEP protocol --------------------
 ####################################################
-fep_protocol = Protocol(
-    method="FEP",
-    direction="bidirectional",
+fep_protocol = FEPProtocol(
     sim=sim,
-    trajectories=[mm_samples, nnp_samples],
-    nr_of_switches=10,  # 2_000,
+    reference_samples=mm_samples,
+    target_samples=nnp_samples,
+    nr_of_switches=2_000,  # if not provided, the protocol will use all provided equilibrium samples
 )
 
 ####################################################
 # ----------------- NEQ protocol -------------------
 ####################################################
-neq_protocol = Protocol(
-    method="NEQ",
-    direction="bidirectional",
-    sim=sim,
-    trajectories=[mm_samples, nnp_samples],
-    nr_of_switches=3,  # 500,
-    neq_switching_length=5,  # _000,
-    save_endstates=True,
-    save_trajs=True,
-)
+# neq_protocol = NEQProtocol(
+    # sim=sim,
+    # reference_samples=mm_samples,
+    # target_samples=nnp_samples,
+    # nr_of_switches=3,  # 500,
+    # switching_length=5,  # _000,
+    # save_endstates=False,
+    # save_trajs=False,
+# )
 
 # perform correction
 r_fep = perform_endstate_correction(fep_protocol)
-r_neq = perform_endstate_correction(neq_protocol)
+#r_neq = perform_endstate_correction(neq_protocol)
 
 # save fep and neq results in a pickle file
-pickle.dump((r_fep, r_neq), open(f"{output_base}/results.pickle", "wb"))
+#pickle.dump((r_fep, r_neq), open(f"{output_base}/results.pickle", "wb"))
+pickle.dump((r_fep), open(f"{output_base}/fep_results_{system_name}.pickle", "wb"))
 
 # plot results
-plot_endstate_correction_results(system_name, r_fep, f"{output_base}/results_neq.png")
-plot_endstate_correction_results(system_name, r_neq, f"{output_base}/results_neq.png")
+plot_endstate_correction_results(system_name, r_fep, f"{output_base}/results_fep_{system_name}.png")
+#plot_endstate_correction_results(system_name, r_neq, f"{output_base}/results_neq.png")

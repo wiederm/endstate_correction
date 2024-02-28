@@ -224,12 +224,6 @@ class NEQResults(BaseResults):
     endstate_samples_target_to_reference: np.array = field(
         default_factory=lambda: np.array([])
     )  # endstate samples from target to reference
-    switching_traj_reference_to_target: np.array = field(
-        default_factory=lambda: np.array([])
-    )  # switching traj from reference to target
-    switching_traj_target_to_reference: np.array = field(
-        default_factory=lambda: np.array([])
-    )  # switching traj from target to reference
 
 
 @dataclass
