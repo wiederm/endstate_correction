@@ -56,7 +56,9 @@ def perform_switching(
         inst_switching = True
         if nr_of_switches == -1: # if no specific nr_of_switches is provided (-1 is the default value), use all provided equilibrium samples
             nr_of_switches = len(samples)
-            print(f"{nr_of_switches} dE values will be calculated")
+            print(f"{nr_of_switches} dE values will be calculated using all provided equilibrium samples")
+        else:
+            print(f"{nr_of_switches} dE values will be calculated using {nr_of_switches} random equilibrium samples")
     elif len(lambdas) < 2:
         raise RuntimeError("increase the number of lambda states")
     else:
